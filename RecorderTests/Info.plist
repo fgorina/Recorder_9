@@ -20,5 +20,7 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>As a mapping and localization application needs access to current position to be able to present you in the map and record your track.</string>
 </dict>
 </plist>
