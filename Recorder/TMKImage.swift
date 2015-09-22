@@ -43,7 +43,7 @@ class TMKImage: UIImage {
         self.beginImageContextWithSize(view.bounds.size)
         let hidden = view.hidden
         view.hidden = false
-        view.layer.renderInContext(UIGraphicsGetCurrentContext())
+        view.layer.renderInContext(UIGraphicsGetCurrentContext()!)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         self.endImageContext()
         view.hidden = hidden;

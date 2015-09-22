@@ -16,7 +16,7 @@ public extension NSMutableDictionary {
     
     public func setJSONPoint(trackPoint tp : TGLTrackPoint){
         
-        var fmt = NSDateFormatter()
+        let fmt = NSDateFormatter()
         fmt.dateFormat = "yyyy-MM-dd HH:mm:ss"
         var sdate = fmt.stringFromDate(tp.dtime)
         

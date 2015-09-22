@@ -25,6 +25,7 @@
 		00038B111ABDC3AD00540327 /* record_heart_on_32@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00038B011ABDC3AD00540327 /* record_heart_on_32@2x.png */; };
 		00038B131ABE088500540327 /* TMKAltitudeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00038B121ABE088500540327 /* TMKAltitudeData.swift */; };
 		00038B161ABE20DA00540327 /* TMKAltimeterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00038B151ABE20DA00540327 /* TMKAltimeterManager.swift */; };
+		0003AE451BAEA91F008AAF3C /* NSMutableArray+Queues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 005491771B36A844005DD749 /* NSMutableArray+Queues.swift */; };
 		00086A961AE7E37D00F50031 /* record_wp_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 00086A921AE7E37D00F50031 /* record_wp_64.png */; };
 		00086A971AE7E37D00F50031 /* record_wp_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 00086A921AE7E37D00F50031 /* record_wp_64.png */; };
 		00086A981AE7E37D00F50031 /* record_wp_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00086A931AE7E37D00F50031 /* record_wp_64@2x.png */; };
@@ -37,6 +38,14 @@
 		00086AA11AE808BF00F50031 /* record_wp_invert_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 00086A9E1AE808BF00F50031 /* record_wp_invert_64.png */; };
 		00086AA21AE808BF00F50031 /* record_wp_invert_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00086A9F1AE808BF00F50031 /* record_wp_invert_64@2x.png */; };
 		00086AA31AE808BF00F50031 /* record_wp_invert_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00086A9F1AE808BF00F50031 /* record_wp_invert_64@2x.png */; };
+		000884111BA033AE0076D47E /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000884101BA033AE0076D47E /* InterfaceController.swift */; };
+		000884131BA033AE0076D47E /* GlanceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000884121BA033AE0076D47E /* GlanceController.swift */; };
+		000884191BA033AE0076D47E /* Recorder WatchKit App.app in Resources */ = {isa = PBXBuildFile; fileRef = 000884181BA033AE0076D47E /* Recorder WatchKit App.app */; };
+		000884211BA033AE0076D47E /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0008841F1BA033AE0076D47E /* Interface.storyboard */; };
+		000884231BA033AE0076D47E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 000884221BA033AE0076D47E /* Images.xcassets */; };
+		000884271BA033AE0076D47E /* Recorder WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 0008840C1BA033AE0076D47E /* Recorder WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		0008842F1BA040C00076D47E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0008842E1BA040C00076D47E /* Images.xcassets */; };
+		000884301BA040C00076D47E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0008842E1BA040C00076D47E /* Images.xcassets */; };
 		0010ED281AED54AE00D19A33 /* act_Automotive_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 0010ED1E1AED54AE00D19A33 /* act_Automotive_64.png */; };
 		0010ED291AED54AE00D19A33 /* act_Automotive_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 0010ED1E1AED54AE00D19A33 /* act_Automotive_64.png */; };
 		0010ED2A1AED54AE00D19A33 /* act_Automotive_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0010ED1F1AED54AE00D19A33 /* act_Automotive_64@2x.png */; };
@@ -122,6 +131,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0008841A1BA033AE0076D47E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 005A14761A7BDCF60041A73E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 000884171BA033AE0076D47E;
+			remoteInfo = "Recorder WatchKit App";
+		};
+		000884241BA033AE0076D47E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 005A14761A7BDCF60041A73E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0008840B1BA033AE0076D47E;
+			remoteInfo = "Recorder WatchKit Extension";
+		};
 		005A14941A7BDCF60041A73E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 005A14761A7BDCF60041A73E /* Project object */;
@@ -131,38 +154,61 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		000884261BA033AE0076D47E /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				000884271BA033AE0076D47E /* Recorder WatchKit Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		00038AFA1ABDC3AD00540327 /* record_32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_32.png; sourceTree = "<group>"; };
-		00038AFB1ABDC3AD00540327 /* record_32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_32@2x.png"; sourceTree = "<group>"; };
-		00038AFC1ABDC3AD00540327 /* record_on_32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_on_32.png; sourceTree = "<group>"; };
-		00038AFD1ABDC3AD00540327 /* record_on_32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_on_32@2x.png"; sourceTree = "<group>"; };
-		00038AFE1ABDC3AD00540327 /* record_heart_32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_heart_32.png; sourceTree = "<group>"; };
-		00038AFF1ABDC3AD00540327 /* record_heart_32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_heart_32@2x.png"; sourceTree = "<group>"; };
-		00038B001ABDC3AD00540327 /* record_heart_on_32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_heart_on_32.png; sourceTree = "<group>"; };
-		00038B011ABDC3AD00540327 /* record_heart_on_32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_heart_on_32@2x.png"; sourceTree = "<group>"; };
+		00038AFA1ABDC3AD00540327 /* record_32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_32.png; path = RecorderTests/record_32.png; sourceTree = SOURCE_ROOT; };
+		00038AFB1ABDC3AD00540327 /* record_32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_32@2x.png"; path = "RecorderTests/record_32@2x.png"; sourceTree = SOURCE_ROOT; };
+		00038AFC1ABDC3AD00540327 /* record_on_32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_on_32.png; path = RecorderTests/record_on_32.png; sourceTree = SOURCE_ROOT; };
+		00038AFD1ABDC3AD00540327 /* record_on_32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_on_32@2x.png"; path = "RecorderTests/record_on_32@2x.png"; sourceTree = SOURCE_ROOT; };
+		00038AFE1ABDC3AD00540327 /* record_heart_32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_heart_32.png; path = RecorderTests/record_heart_32.png; sourceTree = SOURCE_ROOT; };
+		00038AFF1ABDC3AD00540327 /* record_heart_32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_heart_32@2x.png"; path = "RecorderTests/record_heart_32@2x.png"; sourceTree = SOURCE_ROOT; };
+		00038B001ABDC3AD00540327 /* record_heart_on_32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_heart_on_32.png; path = RecorderTests/record_heart_on_32.png; sourceTree = SOURCE_ROOT; };
+		00038B011ABDC3AD00540327 /* record_heart_on_32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_heart_on_32@2x.png"; path = "RecorderTests/record_heart_on_32@2x.png"; sourceTree = SOURCE_ROOT; };
 		00038B121ABE088500540327 /* TMKAltitudeData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMKAltitudeData.swift; sourceTree = "<group>"; };
 		00038B151ABE20DA00540327 /* TMKAltimeterManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMKAltimeterManager.swift; sourceTree = "<group>"; };
-		00086A921AE7E37D00F50031 /* record_wp_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_wp_64.png; sourceTree = "<group>"; };
-		00086A931AE7E37D00F50031 /* record_wp_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_wp_64@2x.png"; sourceTree = "<group>"; };
-		00086A941AE7E37D00F50031 /* record_wp_on_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_wp_on_64.png; sourceTree = "<group>"; };
-		00086A951AE7E37D00F50031 /* record_wp_on_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_wp_on_64@2x.png"; sourceTree = "<group>"; };
-		00086A9E1AE808BF00F50031 /* record_wp_invert_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_wp_invert_64.png; sourceTree = "<group>"; };
-		00086A9F1AE808BF00F50031 /* record_wp_invert_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_wp_invert_64@2x.png"; sourceTree = "<group>"; };
-		0010ED1E1AED54AE00D19A33 /* act_Automotive_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = act_Automotive_64.png; sourceTree = "<group>"; };
-		0010ED1F1AED54AE00D19A33 /* act_Automotive_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "act_Automotive_64@2x.png"; sourceTree = "<group>"; };
-		0010ED201AED54AE00D19A33 /* act_Cycling_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = act_Cycling_64.png; sourceTree = "<group>"; };
-		0010ED211AED54AE00D19A33 /* act_Cycling_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "act_Cycling_64@2x.png"; sourceTree = "<group>"; };
-		0010ED221AED54AE00D19A33 /* act_Running_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = act_Running_64.png; sourceTree = "<group>"; };
-		0010ED231AED54AE00D19A33 /* act_Running_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "act_Running_64@2x.png"; sourceTree = "<group>"; };
-		0010ED241AED54AE00D19A33 /* act_Unknown_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = act_Unknown_64.png; sourceTree = "<group>"; };
-		0010ED251AED54AE00D19A33 /* act_Unknown_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "act_Unknown_64@2x.png"; sourceTree = "<group>"; };
-		0010ED261AED54AE00D19A33 /* act_Walking_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = act_Walking_64.png; sourceTree = "<group>"; };
-		0010ED271AED54AE00D19A33 /* act_Walking_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "act_Walking_64@2x.png"; sourceTree = "<group>"; };
-		0010ED3C1AED5EC700D19A33 /* act_Stationary_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = act_Stationary_64.png; sourceTree = "<group>"; };
-		0010ED3D1AED5EC700D19A33 /* act_Stationary_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "act_Stationary_64@2x.png"; sourceTree = "<group>"; };
+		00086A921AE7E37D00F50031 /* record_wp_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_wp_64.png; path = RecorderTests/record_wp_64.png; sourceTree = SOURCE_ROOT; };
+		00086A931AE7E37D00F50031 /* record_wp_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_wp_64@2x.png"; path = "RecorderTests/record_wp_64@2x.png"; sourceTree = SOURCE_ROOT; };
+		00086A941AE7E37D00F50031 /* record_wp_on_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_wp_on_64.png; path = RecorderTests/record_wp_on_64.png; sourceTree = SOURCE_ROOT; };
+		00086A951AE7E37D00F50031 /* record_wp_on_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_wp_on_64@2x.png"; path = "RecorderTests/record_wp_on_64@2x.png"; sourceTree = SOURCE_ROOT; };
+		00086A9E1AE808BF00F50031 /* record_wp_invert_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_wp_invert_64.png; path = RecorderTests/record_wp_invert_64.png; sourceTree = SOURCE_ROOT; };
+		00086A9F1AE808BF00F50031 /* record_wp_invert_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_wp_invert_64@2x.png"; path = "RecorderTests/record_wp_invert_64@2x.png"; sourceTree = SOURCE_ROOT; };
+		0008840C1BA033AE0076D47E /* Recorder WatchKit Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Recorder WatchKit Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0008840F1BA033AE0076D47E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		000884101BA033AE0076D47E /* InterfaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceController.swift; sourceTree = "<group>"; };
+		000884121BA033AE0076D47E /* GlanceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlanceController.swift; sourceTree = "<group>"; };
+		000884181BA033AE0076D47E /* Recorder WatchKit App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Recorder WatchKit App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0008841E1BA033AE0076D47E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		000884201BA033AE0076D47E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
+		000884221BA033AE0076D47E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		0008842E1BA040C00076D47E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		0010ED1E1AED54AE00D19A33 /* act_Automotive_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = act_Automotive_64.png; path = RecorderTests/act_Automotive_64.png; sourceTree = SOURCE_ROOT; };
+		0010ED1F1AED54AE00D19A33 /* act_Automotive_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "act_Automotive_64@2x.png"; path = "RecorderTests/act_Automotive_64@2x.png"; sourceTree = SOURCE_ROOT; };
+		0010ED201AED54AE00D19A33 /* act_Cycling_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = act_Cycling_64.png; path = RecorderTests/act_Cycling_64.png; sourceTree = SOURCE_ROOT; };
+		0010ED211AED54AE00D19A33 /* act_Cycling_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "act_Cycling_64@2x.png"; path = "RecorderTests/act_Cycling_64@2x.png"; sourceTree = SOURCE_ROOT; };
+		0010ED221AED54AE00D19A33 /* act_Running_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = act_Running_64.png; path = RecorderTests/act_Running_64.png; sourceTree = SOURCE_ROOT; };
+		0010ED231AED54AE00D19A33 /* act_Running_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "act_Running_64@2x.png"; path = "RecorderTests/act_Running_64@2x.png"; sourceTree = SOURCE_ROOT; };
+		0010ED241AED54AE00D19A33 /* act_Unknown_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = act_Unknown_64.png; path = RecorderTests/act_Unknown_64.png; sourceTree = SOURCE_ROOT; };
+		0010ED251AED54AE00D19A33 /* act_Unknown_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "act_Unknown_64@2x.png"; path = "RecorderTests/act_Unknown_64@2x.png"; sourceTree = SOURCE_ROOT; };
+		0010ED261AED54AE00D19A33 /* act_Walking_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = act_Walking_64.png; path = RecorderTests/act_Walking_64.png; sourceTree = SOURCE_ROOT; };
+		0010ED271AED54AE00D19A33 /* act_Walking_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "act_Walking_64@2x.png"; path = "RecorderTests/act_Walking_64@2x.png"; sourceTree = SOURCE_ROOT; };
+		0010ED3C1AED5EC700D19A33 /* act_Stationary_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = act_Stationary_64.png; path = RecorderTests/act_Stationary_64.png; sourceTree = SOURCE_ROOT; };
+		0010ED3D1AED5EC700D19A33 /* act_Stationary_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "act_Stationary_64@2x.png"; path = "RecorderTests/act_Stationary_64@2x.png"; sourceTree = SOURCE_ROOT; };
 		001888E71AB60F740072B0DB /* TMKHeartRateMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMKHeartRateMonitor.swift; sourceTree = "<group>"; };
-		001A56FF1A7EB2A100233AC7 /* Movescount_track.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Movescount_track.gpx; sourceTree = "<group>"; };
-		001A57011A7EB2D000233AC7 /* Traces_Track.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Traces_Track.gpx; sourceTree = "<group>"; };
+		001A56FF1A7EB2A100233AC7 /* Movescount_track.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Movescount_track.gpx; path = RecorderTests/Movescount_track.gpx; sourceTree = SOURCE_ROOT; };
+		001A57011A7EB2D000233AC7 /* Traces_Track.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Traces_Track.gpx; path = RecorderTests/Traces_Track.gpx; sourceTree = SOURCE_ROOT; };
 		001A57031A7EB6D200233AC7 /* TMKTrackDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMKTrackDocument.swift; sourceTree = "<group>"; };
 		001A57051A7EB74A00233AC7 /* TGLTrack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGLTrack.swift; sourceTree = "<group>"; };
 		001A57071A7F79F900233AC7 /* TMKWaypoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMKWaypoint.swift; sourceTree = "<group>"; };
@@ -185,20 +231,20 @@
 		005A14A41A7BDD430041A73E /* TGLTrackPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGLTrackPoint.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		009B193D1ADBDC5F0071C149 /* TMKImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMKImage.swift; sourceTree = "<group>"; };
 		00AB6F0C1B9EE9FB009BA8DE /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		00AB6F0F1B9EEB03009BA8DE /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = "<group>"; };
-		00AB6F101B9EEB03009BA8DE /* iTunesArtwork@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iTunesArtwork@2x.png"; sourceTree = "<group>"; };
-		00AB6F151B9EEEDF009BA8DE /* pause_32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause_32.png; sourceTree = "<group>"; };
-		00AB6F161B9EEEDF009BA8DE /* pause_32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pause_32@2x.png"; sourceTree = "<group>"; };
-		00AB6F171B9EEEDF009BA8DE /* pause_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pause_64.png; sourceTree = "<group>"; };
-		00AB6F181B9EEEDF009BA8DE /* pause_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pause_64@2x.png"; sourceTree = "<group>"; };
-		00F071E71ACDC901006C525F /* record_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_64.png; sourceTree = "<group>"; };
-		00F071E81ACDC901006C525F /* record_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_64@2x.png"; sourceTree = "<group>"; };
-		00F071E91ACDC901006C525F /* record_on_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_on_64.png; sourceTree = "<group>"; };
-		00F071EA1ACDC901006C525F /* record_on_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_on_64@2x.png"; sourceTree = "<group>"; };
-		00F071F31ACDCB50006C525F /* record_heart_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_heart_64.png; sourceTree = "<group>"; };
-		00F071F41ACDCB50006C525F /* record_heart_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_heart_64@2x.png"; sourceTree = "<group>"; };
-		00F071F51ACDCB50006C525F /* record_heart_on_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_heart_on_64.png; sourceTree = "<group>"; };
-		00F071F61ACDCB50006C525F /* record_heart_on_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_heart_on_64@2x.png"; sourceTree = "<group>"; };
+		00AB6F0F1B9EEB03009BA8DE /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iTunesArtwork.png; path = RecorderTests/iTunesArtwork.png; sourceTree = SOURCE_ROOT; };
+		00AB6F101B9EEB03009BA8DE /* iTunesArtwork@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iTunesArtwork@2x.png"; path = "RecorderTests/iTunesArtwork@2x.png"; sourceTree = SOURCE_ROOT; };
+		00AB6F151B9EEEDF009BA8DE /* pause_32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pause_32.png; path = RecorderTests/pause_32.png; sourceTree = SOURCE_ROOT; };
+		00AB6F161B9EEEDF009BA8DE /* pause_32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "pause_32@2x.png"; path = "RecorderTests/pause_32@2x.png"; sourceTree = SOURCE_ROOT; };
+		00AB6F171B9EEEDF009BA8DE /* pause_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pause_64.png; path = RecorderTests/pause_64.png; sourceTree = SOURCE_ROOT; };
+		00AB6F181B9EEEDF009BA8DE /* pause_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "pause_64@2x.png"; path = "RecorderTests/pause_64@2x.png"; sourceTree = SOURCE_ROOT; };
+		00F071E71ACDC901006C525F /* record_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_64.png; path = RecorderTests/record_64.png; sourceTree = SOURCE_ROOT; };
+		00F071E81ACDC901006C525F /* record_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_64@2x.png"; path = "RecorderTests/record_64@2x.png"; sourceTree = SOURCE_ROOT; };
+		00F071E91ACDC901006C525F /* record_on_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_on_64.png; path = RecorderTests/record_on_64.png; sourceTree = SOURCE_ROOT; };
+		00F071EA1ACDC901006C525F /* record_on_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_on_64@2x.png"; path = "RecorderTests/record_on_64@2x.png"; sourceTree = SOURCE_ROOT; };
+		00F071F31ACDCB50006C525F /* record_heart_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_heart_64.png; path = RecorderTests/record_heart_64.png; sourceTree = SOURCE_ROOT; };
+		00F071F41ACDCB50006C525F /* record_heart_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_heart_64@2x.png"; path = "RecorderTests/record_heart_64@2x.png"; sourceTree = SOURCE_ROOT; };
+		00F071F51ACDCB50006C525F /* record_heart_on_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_heart_on_64.png; path = RecorderTests/record_heart_on_64.png; sourceTree = SOURCE_ROOT; };
+		00F071F61ACDCB50006C525F /* record_heart_on_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_heart_on_64@2x.png"; path = "RecorderTests/record_heart_on_64@2x.png"; sourceTree = SOURCE_ROOT; };
 		00F244871ADE7A530097D462 /* Recorder-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Recorder-Bridging-Header.h"; sourceTree = "<group>"; };
 		00F244881ADE7A530097D462 /* ISO8601DateFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISO8601DateFormatter.h; sourceTree = "<group>"; };
 		00F244891ADE7A530097D462 /* ISO8601DateFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISO8601DateFormatter.m; sourceTree = "<group>"; };
@@ -208,6 +254,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		000884091BA033AE0076D47E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		005A147B1A7BDCF60041A73E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -226,11 +279,50 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0008840D1BA033AE0076D47E /* Recorder WatchKit Extension */ = {
+			isa = PBXGroup;
+			children = (
+				000884101BA033AE0076D47E /* InterfaceController.swift */,
+				000884121BA033AE0076D47E /* GlanceController.swift */,
+				0008840E1BA033AE0076D47E /* Supporting Files */,
+			);
+			path = "Recorder WatchKit Extension";
+			sourceTree = "<group>";
+		};
+		0008840E1BA033AE0076D47E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0008842E1BA040C00076D47E /* Images.xcassets */,
+				0008840F1BA033AE0076D47E /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0008841C1BA033AE0076D47E /* Recorder WatchKit App */ = {
+			isa = PBXGroup;
+			children = (
+				0008841F1BA033AE0076D47E /* Interface.storyboard */,
+				000884221BA033AE0076D47E /* Images.xcassets */,
+				0008841D1BA033AE0076D47E /* Supporting Files */,
+			);
+			path = "Recorder WatchKit App";
+			sourceTree = "<group>";
+		};
+		0008841D1BA033AE0076D47E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0008841E1BA033AE0076D47E /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		005A14751A7BDCF60041A73E = {
 			isa = PBXGroup;
 			children = (
 				005A14801A7BDCF60041A73E /* Recorder */,
 				005A14961A7BDCF60041A73E /* RecorderTests */,
+				0008840D1BA033AE0076D47E /* Recorder WatchKit Extension */,
+				0008841C1BA033AE0076D47E /* Recorder WatchKit App */,
 				005A147F1A7BDCF60041A73E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -240,6 +332,8 @@
 			children = (
 				005A147E1A7BDCF60041A73E /* Recorder.app */,
 				005A14931A7BDCF60041A73E /* RecorderTests.xctest */,
+				0008840C1BA033AE0076D47E /* Recorder WatchKit Extension.appex */,
+				000884181BA033AE0076D47E /* Recorder WatchKit App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -261,26 +355,6 @@
 			sourceTree = "<group>";
 		};
 		005A14811A7BDCF60041A73E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				00FC97FB1B81FBDA009BF533 /* Gear_32.png */,
-				00FC97FC1B81FBDA009BF533 /* Gear_32@2x.png */,
-				0023C2C81AECD20D0080A27A /* MapKit.framework */,
-				005A14821A7BDCF60041A73E /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		005A14961A7BDCF60041A73E /* RecorderTests */ = {
-			isa = PBXGroup;
-			children = (
-				005A14991A7BDCF60041A73E /* RecorderTests.swift */,
-				005A14971A7BDCF60041A73E /* Supporting Files */,
-			);
-			path = RecorderTests;
-			sourceTree = "<group>";
-		};
-		005A14971A7BDCF60041A73E /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
 				0010ED3C1AED5EC700D19A33 /* act_Stationary_64.png */,
@@ -325,6 +399,26 @@
 				00AB6F101B9EEB03009BA8DE /* iTunesArtwork@2x.png */,
 				001A57011A7EB2D000233AC7 /* Traces_Track.gpx */,
 				001A56FF1A7EB2A100233AC7 /* Movescount_track.gpx */,
+				00FC97FB1B81FBDA009BF533 /* Gear_32.png */,
+				00FC97FC1B81FBDA009BF533 /* Gear_32@2x.png */,
+				0023C2C81AECD20D0080A27A /* MapKit.framework */,
+				005A14821A7BDCF60041A73E /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		005A14961A7BDCF60041A73E /* RecorderTests */ = {
+			isa = PBXGroup;
+			children = (
+				005A14991A7BDCF60041A73E /* RecorderTests.swift */,
+				005A14971A7BDCF60041A73E /* Supporting Files */,
+			);
+			path = RecorderTests;
+			sourceTree = "<group>";
+		};
+		005A14971A7BDCF60041A73E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
 				005A14981A7BDCF60041A73E /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -356,6 +450,39 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0008840B1BA033AE0076D47E /* Recorder WatchKit Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0008842D1BA033AE0076D47E /* Build configuration list for PBXNativeTarget "Recorder WatchKit Extension" */;
+			buildPhases = (
+				000884081BA033AE0076D47E /* Sources */,
+				000884091BA033AE0076D47E /* Frameworks */,
+				0008840A1BA033AE0076D47E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0008841B1BA033AE0076D47E /* PBXTargetDependency */,
+			);
+			name = "Recorder WatchKit Extension";
+			productName = "Recorder WatchKit Extension";
+			productReference = 0008840C1BA033AE0076D47E /* Recorder WatchKit Extension.appex */;
+			productType = "com.apple.product-type.watchkit-extension";
+		};
+		000884171BA033AE0076D47E /* Recorder WatchKit App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0008842C1BA033AE0076D47E /* Build configuration list for PBXNativeTarget "Recorder WatchKit App" */;
+			buildPhases = (
+				000884161BA033AE0076D47E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Recorder WatchKit App";
+			productName = "Recorder WatchKit App";
+			productReference = 000884181BA033AE0076D47E /* Recorder WatchKit App.app */;
+			productType = "com.apple.product-type.application.watchapp";
+		};
 		005A147D1A7BDCF60041A73E /* Recorder */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 005A149D1A7BDCF60041A73E /* Build configuration list for PBXNativeTarget "Recorder" */;
@@ -363,10 +490,12 @@
 				005A147A1A7BDCF60041A73E /* Sources */,
 				005A147B1A7BDCF60041A73E /* Frameworks */,
 				005A147C1A7BDCF60041A73E /* Resources */,
+				000884261BA033AE0076D47E /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				000884251BA033AE0076D47E /* PBXTargetDependency */,
 			);
 			name = Recorder;
 			productName = Recorder;
@@ -401,6 +530,14 @@
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Paco Gorina";
 				TargetAttributes = {
+					0008840B1BA033AE0076D47E = {
+						CreatedOnToolsVersion = 6.4;
+						DevelopmentTeam = N72U6DTDRE;
+					};
+					000884171BA033AE0076D47E = {
+						CreatedOnToolsVersion = 6.4;
+						DevelopmentTeam = N72U6DTDRE;
+					};
 					005A147D1A7BDCF60041A73E = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = N72U6DTDRE;
@@ -438,11 +575,32 @@
 			targets = (
 				005A147D1A7BDCF60041A73E /* Recorder */,
 				005A14921A7BDCF60041A73E /* RecorderTests */,
+				0008840B1BA033AE0076D47E /* Recorder WatchKit Extension */,
+				000884171BA033AE0076D47E /* Recorder WatchKit App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0008840A1BA033AE0076D47E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0008842F1BA040C00076D47E /* Images.xcassets in Resources */,
+				000884191BA033AE0076D47E /* Recorder WatchKit App.app in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		000884161BA033AE0076D47E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				000884301BA040C00076D47E /* Images.xcassets in Resources */,
+				000884211BA033AE0076D47E /* Interface.storyboard in Resources */,
+				000884231BA033AE0076D47E /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		005A147C1A7BDCF60041A73E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -553,6 +711,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		000884081BA033AE0076D47E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0003AE451BAEA91F008AAF3C /* NSMutableArray+Queues.swift in Sources */,
+				000884111BA033AE0076D47E /* InterfaceController.swift in Sources */,
+				000884131BA033AE0076D47E /* GlanceController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		005A147A1A7BDCF60041A73E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -588,6 +756,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0008841B1BA033AE0076D47E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 000884171BA033AE0076D47E /* Recorder WatchKit App */;
+			targetProxy = 0008841A1BA033AE0076D47E /* PBXContainerItemProxy */;
+		};
+		000884251BA033AE0076D47E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0008840B1BA033AE0076D47E /* Recorder WatchKit Extension */;
+			targetProxy = 000884241BA033AE0076D47E /* PBXContainerItemProxy */;
+		};
 		005A14951A7BDCF60041A73E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 005A147D1A7BDCF60041A73E /* Recorder */;
@@ -596,6 +774,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		0008841F1BA033AE0076D47E /* Interface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				000884201BA033AE0076D47E /* Base */,
+			);
+			name = Interface.storyboard;
+			sourceTree = "<group>";
+		};
 		005A14871A7BDCF60041A73E /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -615,6 +801,86 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		000884281BA033AE0076D47E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Recorder WatchKit Extension/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				PROVISIONING_PROFILE = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		000884291BA033AE0076D47E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Recorder WatchKit Extension/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				PROVISIONING_PROFILE = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		0008842A1BA033AE0076D47E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IBSC_MODULE = Recorder_WatchKit_Extension;
+				INFOPLIST_FILE = "Recorder WatchKit App/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				"TARGETED_DEVICE_FAMILY[sdk=iphonesimulator*]" = "1,4";
+			};
+			name = Debug;
+		};
+		0008842B1BA033AE0076D47E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				IBSC_MODULE = Recorder_WatchKit_Extension;
+				INFOPLIST_FILE = "Recorder WatchKit App/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				"TARGETED_DEVICE_FAMILY[sdk=iphonesimulator*]" = "1,4";
+			};
+			name = Release;
+		};
 		005A149B1A7BDCF60041A73E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -650,7 +916,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PROVISIONING_PROFILE = "b76eaf11-d717-48a2-8ca2-a86683b8db06";
@@ -688,7 +954,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PROVISIONING_PROFILE = "b76eaf11-d717-48a2-8ca2-a86683b8db06";
 				SDKROOT = iphoneos;
@@ -703,9 +969,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Recorder/Recorder.entitlements;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
 				INFOPLIST_FILE = Recorder/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "b76eaf11-d717-48a2-8ca2-a86683b8db06";
@@ -721,9 +988,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Recorder/Recorder.entitlements;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				INFOPLIST_FILE = Recorder/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "b76eaf11-d717-48a2-8ca2-a86683b8db06";
@@ -777,6 +1045,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0008842C1BA033AE0076D47E /* Build configuration list for PBXNativeTarget "Recorder WatchKit App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0008842A1BA033AE0076D47E /* Debug */,
+				0008842B1BA033AE0076D47E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0008842D1BA033AE0076D47E /* Build configuration list for PBXNativeTarget "Recorder WatchKit Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000884281BA033AE0076D47E /* Debug */,
+				000884291BA033AE0076D47E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		005A14791A7BDCF60041A73E /* Build configuration list for PBXProject "Recorder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

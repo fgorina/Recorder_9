@@ -83,15 +83,18 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         if CMMotionActivityManager.isActivityAvailable(){
             motionActivityManager = CMMotionActivityManager();
             
-            motionActivityManager?.startActivityUpdatesToQueue(self.actQueue, withHandler: { (act : CMMotionActivity!) -> Void in
+            motionActivityManager?.startActivityUpdatesToQueue(self.actQueue, withHandler: { (acts : CMMotionActivity?) -> Void in
                 
-                if !act.unknown{
-                    self.actualActivity = act;
-                    
-                    if let dele = self.delegate, act = self.actualActivity{
-                        if dele.activity != act.stringDescription {
-                            dele.activity = act.stringDescription
-                            dele.updateActivity()
+                
+                if let act = acts {
+                    if act.unknown {
+                        self.actualActivity = act
+                        NSLog("Activity %@", act)
+                        if let dele = self.delegate, act = self.actualActivity{
+                            if dele.activity != act.stringDescription {
+                                dele.activity = act.stringDescription
+                                dele.updateActivity()
+                            }
                         }
                     }
                 }
@@ -133,7 +136,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         
         self.startTime = NSDate()                   // When we start tracking
         
-        // Clear instant data 
+        // Clear instant data
         
         self.lastLoc = nil
         self.actualLocation = nil
@@ -149,7 +152,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         self.deferringUpdates = false
         
         // Clear Buffers
-
+        
         self.medidas.removeAll(keepCapacity: false)
         self.posiciones.removeAll(keepCapacity: false)
         self.distancias.removeAll(keepCapacity: false)
@@ -163,14 +166,17 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         if let altm = self.altimeter{
             self.updating = true
             
-            altm.startRelativeAltitudeUpdatesToQueue(self.altQueue,
-                withHandler: { (alt : CMAltitudeData!, error : NSError!) -> Void in
+            altm.startRelativeAltitudeUpdatesToQueue(self.altQueue!,
+                withHandler: { (alts : CMAltitudeData?, error : NSError?) -> Void in
                     
-                    let dat = TMKAltitudeData(altitude: alt.relativeAltitude.doubleValue, pressure: alt.pressure.doubleValue, timestamp: alt.timestamp+self.bootTime)
-                    
-                    objc_sync_enter(self)
-                    self.medidas.append(dat)
-                    objc_sync_exit(self)
+                    if let alt = alts {
+                        let dat = TMKAltitudeData(altitude: alt.relativeAltitude.doubleValue, pressure: alt.pressure.doubleValue, timestamp: alt.timestamp+self.bootTime)
+                        
+                        
+                        objc_sync_enter(self)
+                        self.medidas.append(dat)
+                        objc_sync_exit(self)
+                    }
                     
             })
             
@@ -186,6 +192,11 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 locm.activityType = CLActivityType.Fitness
                 locm.desiredAccuracy = kCLLocationAccuracyBest
                 locm.distanceFilter = kCLDistanceFilterNone
+                if #available(iOS 9.0, *) {
+                    locm.allowsBackgroundLocationUpdates = true
+                } else {
+                    // Fallback on earlier versions
+                }
                 
                 if CLLocationManager.authorizationStatus() == CLAuthorizationStatus.NotDetermined
                     || CLLocationManager.authorizationStatus() == CLAuthorizationStatus.Denied {
@@ -204,17 +215,14 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         
         if let p = self.pedometer{
             
-             p.startPedometerUpdatesFromDate(self.startTime!, withHandler: { (data:CMPedometerData!, err:NSError!) -> Void in
-                self.distancias.append(data)
+            p.startPedometerUpdatesFromDate(self.startTime!, withHandler: { (datas:CMPedometerData?, err:NSError?) -> Void in
+                
+                if let data = datas {
+                    self.distancias.append(data)
+                }
             })
         }
         
-        if self.locationManager == nil { // Res a fer si no podem  llegir posicions
-            return
-        }
-        
-      
-
         // Start reading position data
         
         if let locm = self.locationManager {
@@ -287,27 +295,26 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 
                 // Calculem el punt mitg
                 
-                let dt : Double = 0.0
                 
                 if let od = oldData {
                     
                     let dt = dat.endDate.timeIntervalSince1970 - od.endDate.timeIntervalSince1970
                     
                     if dt == 0 {
-                        return Double(dat.distance)
+                        return Double(dat.distance!)
                     }
                     else
                     {
                         let dx = tim.timeIntervalSince1970-od.endDate.timeIntervalSince1970
-                        let dd = dat.distance.doubleValue - od.distance.doubleValue
-                        let d = od.distance.doubleValue + dd/dt*dx
+                        let dd = dat.distance!.doubleValue - od.distance!.doubleValue
+                        let d = od.distance!.doubleValue + dd/dt*dx
                         
                         return d
                     }
                 }
                 else
                 {
-                    return Double(dat.distance)
+                    return Double(dat.distance!)
                 }
                 
             }
@@ -319,7 +326,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         }
         
         if let l = self.distancias.last {
-            return l.distance.doubleValue
+            return l.distance!.doubleValue
         }
         return -1.0
     }
@@ -340,7 +347,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         
         if n != 0 {
             for i in 0...n-1 {
-                var dat = self.medidas[i]
+                let dat = self.medidas[i]
                 
                 if dat.timestamp <= time{
                     before = i
@@ -373,7 +380,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         if n != 0 {
             
             for i in 0...n-1{
-                var dat = self.medidas[i]
+                let dat = self.medidas[i]
                 
                 if dat.timestamp >= time
                 {
@@ -409,11 +416,11 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         
         // Lookup a measure before and another after
         
-        var n = self.medidas.count
+        let n = self.medidas.count
         var stop = false
         
         for var i = 0; i < n && !stop; i++ {
-            var dat : TMKAltitudeData = self.medidas[i]
+            let dat : TMKAltitudeData = self.medidas[i]
             if dat.timestamp <= time {
                 before = dat;
             }
@@ -427,7 +434,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         stop = false
         
         for var i = 0; i < n && !stop; i++ {
-            var dat : TMKAltitudeData = self.medidas[i]
+            let dat : TMKAltitudeData = self.medidas[i]
             if dat.timestamp >= time {
                 after = dat;
                 stop = true
@@ -576,10 +583,10 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         {
             // pt es el nou punt. Fem servir les nostres funcions per calcular quan ha pujat segons barometre
             
-            var pt = self.posiciones[0]
+            let pt = self.posiciones[0]
             
-            var before = self.beforeTimestamp(pt.timestamp.timeIntervalSince1970)
-            var after =  self.afterTimestamp(pt.timestamp.timeIntervalSince1970)
+            let before = self.beforeTimestamp(pt.timestamp.timeIntervalSince1970)
+            let after =  self.afterTimestamp(pt.timestamp.timeIntervalSince1970)
             
             if before == -1{     // En aquest cas el passem i no podem fer res de res doncs no tenim dades de alçada
                 
@@ -617,8 +624,8 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
             {
                 
                 
-                var beforeData = self.medidas[before]
-                var afterData = self.medidas[after]
+                let beforeData = self.medidas[before]
+                let afterData = self.medidas[after]
                 
                 let deltat = afterData.timestamp - beforeData.timestamp
                 let deltah = afterData.relativeAltitude - beforeData.relativeAltitude
@@ -643,7 +650,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 var deltaN : Double?
                 
                 if let actAlt = self.actualAltitude{
-                    var delta = hpt - actAlt.relativeAltitude
+                    let delta = hpt - actAlt.relativeAltitude
                     deltaN = delta
                 }
                 else
@@ -656,7 +663,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 
                 var newHeight = self.actualHeight
                 var newPrecission = self.actualPrecission
-                var mPrecission = pt.verticalAccuracy*pt.verticalAccuracy
+                let mPrecission = pt.verticalAccuracy*pt.verticalAccuracy
                 
                 // Inicialitcem h, sigma2 a les dades del GPS
                 
@@ -683,7 +690,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 
                 // Actualitzem el punt
                 
-                var newLocation = CLLocation(coordinate: pt.coordinate, altitude: h, horizontalAccuracy: pt.horizontalAccuracy, verticalAccuracy: sqrt(sigma2), course: pt.course, speed: pt.speed, timestamp: pt.timestamp)
+                let newLocation = CLLocation(coordinate: pt.coordinate, altitude: h, horizontalAccuracy: pt.horizontalAccuracy, verticalAccuracy: sqrt(sigma2), course: pt.course, speed: pt.speed, timestamp: pt.timestamp)
                 
                 objc_sync_enter(self)
                 self.posiciones.removeAtIndex(0)
@@ -766,7 +773,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 
                 
                 
-                var  ptx = TGLTrackPoint()
+                let  ptx = TGLTrackPoint()
                 
                 
                 ptx.coordinate = loc.coordinate
@@ -816,10 +823,10 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         {
             // pt es el nou punt. Fem servir les nostres funcions per calcular quan ha pujat segons barometre
             
-            var loc = self.posiciones[0]
+            let loc = self.posiciones[0]
             
-            var before = self.beforeTimestamp(loc.timestamp.timeIntervalSince1970)
-            var after =  self.afterTimestamp(loc.timestamp.timeIntervalSince1970)
+            let before = self.beforeTimestamp(loc.timestamp.timeIntervalSince1970)
+            let after =  self.afterTimestamp(loc.timestamp.timeIntervalSince1970)
             
             if before == -1{     // En aquest cas el passem i no podem fer res de res doncs no tenim dades de alçada
                 
@@ -829,7 +836,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 self.actualTime = loc.timestamp.timeIntervalSince1970
                 
                 
-                var ptx : TGLTrackPoint = TGLTrackPoint()
+                let ptx : TGLTrackPoint = TGLTrackPoint()
                 
                 ptx.coordinate = loc.coordinate
                 ptx.ele = loc.altitude
@@ -886,7 +893,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                     self.actualTime = loc.timestamp.timeIntervalSince1970
                     
                     
-                    var ptx : TGLTrackPoint = TGLTrackPoint()
+                    let ptx : TGLTrackPoint = TGLTrackPoint()
                     
                     ptx.coordinate = loc.coordinate
                     ptx.ele = loc.altitude
@@ -932,8 +939,8 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
             {
                 
                 
-                var beforeData = self.medidas[before]
-                var afterData = self.medidas[after]
+                let beforeData = self.medidas[before]
+                let afterData = self.medidas[after]
                 
                 let deltat = afterData.timestamp - beforeData.timestamp
                 let deltah = afterData.relativeAltitude - beforeData.relativeAltitude
@@ -958,7 +965,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 var deltaN : Double?
                 
                 if let actAlt = self.actualAltitude{
-                    var delta = hpt - actAlt.relativeAltitude
+                    let delta = hpt - actAlt.relativeAltitude
                     deltaN = delta
                 }
                 else
@@ -971,7 +978,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 
                 var newHeight = self.actualHeight
                 var newPrecission = self.actualPrecission
-                var mPrecission = loc.verticalAccuracy*loc.verticalAccuracy
+                let mPrecission = loc.verticalAccuracy*loc.verticalAccuracy
                 
                 // Inicialitcem h, sigma2 a les dades del GPS
                 
@@ -998,10 +1005,10 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 
                 // Actualitzem el punt
                 
-                var newLocation = CLLocation(coordinate: loc.coordinate, altitude: h, horizontalAccuracy: loc.horizontalAccuracy, verticalAccuracy: sqrt(sigma2), course: loc.course, speed: loc.speed, timestamp: loc.timestamp)
+                let newLocation = CLLocation(coordinate: loc.coordinate, altitude: h, horizontalAccuracy: loc.horizontalAccuracy, verticalAccuracy: sqrt(sigma2), course: loc.course, speed: loc.speed, timestamp: loc.timestamp)
                 
                 
-                var ptx : TGLTrackPoint = TGLTrackPoint()
+                let ptx : TGLTrackPoint = TGLTrackPoint()
                 
                 ptx.coordinate = loc.coordinate
                 ptx.ele = h
@@ -1101,25 +1108,26 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
     
     //MARK: - CLLocationManagerDelegate
     
-    func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus){
+    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus){
         
         if let dele = self.delegate{
-            if let mgr = manager {
+       
                 //TODO: Add check for method existence
-                dele.locationManager(mgr, didChangeAuthorizationStatus:status )
+                dele.locationManager(manager, didChangeAuthorizationStatus:status )
                 
-            }
+            
         }
     }
     
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-        if let mgr = manager {
+    func locationManager(manager: CLLocationManager,
+        didUpdateLocations locations: [CLLocation])
+    {
+        
             
             // dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
-            if let locs = locations{
                 objc_sync_enter(self)
                 
-                for loc : CLLocation in locations as! [CLLocation]{
+                for loc : CLLocation in locations {
                     
                     
                     if loc.horizontalAccuracy <= 20.0{  // Other data is really bad bad bad. probably GPS not fixes
@@ -1138,7 +1146,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                     }
                 }
                 objc_sync_exit(self)
-            }
+            
             //self.filterAltura()
             if self.posiciones.count > 0{
                 self.processData()
@@ -1147,32 +1155,31 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
             
             if !self.deferringUpdates {
                 let distance : CLLocationDistance =  1000.0 // Update every km
-                let time : NSTimeInterval = 600.0 // Or every 10'
+                let time : NSTimeInterval = 60.0 // Or every 1'
                 
-                if let mgr = manager {
-                    mgr.allowDeferredLocationUpdatesUntilTraveled(distance,  timeout:time)
-                    self.deferringUpdates = true
-                }
+                manager.allowDeferredLocationUpdatesUntilTraveled(distance,  timeout:time)
+                self.deferringUpdates = true
+                
             }
             
-        }
+        
     }
     
     
-    func locationManager(manager: CLLocationManager!, didFinishDeferredUpdatesWithError error: NSError!) {
+    func locationManager(manager: CLLocationManager, didFinishDeferredUpdatesWithError error: NSError?) {
         
         self.deferringUpdates = false
     }
     
     
-    func locationManager(manager: CLLocationManager!, didEnterRegion region: CLRegion!) {
+    func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
     }
     
     
-    func locationManager(manager: CLLocationManager!, didExitRegion region: CLRegion!) {
+    func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
     }
     
-    func locationManager(manager: CLLocationManager!, monitoringDidFailForRegion region: CLRegion!, withError error: NSError!) {
+    func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: NSError) {
     }
     
     

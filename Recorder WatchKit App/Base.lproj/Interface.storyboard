@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="8191" systemVersion="15A282b" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="AgC-eL-Hgc">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="8092"/>
+    </dependencies>
+    <scenes>
+        <!--Interface Controller-->
+        <scene sceneID="aou-V4-d1y">
+            <objects>
+                <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModule="Recorder_WatchKit_App" customModuleProvider="target">
+                    <items>
+                        <group width="1" alignment="left" id="dKj-Y3-22K">
+                            <items>
+                                <timer width="96" alignment="left" verticalAlignment="center" textAlignment="left" id="Iv8-C9-1P1">
+                                    <fontDescription key="font" type="system" pointSize="28"/>
+                                    <variation key="device=watch38mm" width="92"/>
+                                    <variation key="device=watch42mm" minimumScaleFactor="0.80000000000000004" width="88"/>
+                                </timer>
+                                <label width="100" alignment="right" verticalAlignment="center" text="Label" textAlignment="right" id="epX-Xj-Cj4">
+                                    <fontDescription key="font" type="system" pointSize="18"/>
+                                    <variation key="device=watch38mm" text="12,5" width="33">
+                                        <fontDescription key="font" type="system" pointSize="18"/>
+                                    </variation>
+                                    <variation key="device=watch42mm" text="12,1 Km" width="62">
+                                        <fontDescription key="font" type="system" pointSize="16"/>
+                                    </variation>
+                                </label>
+                            </items>
+                        </group>
+                        <group width="1" alignment="left" verticalAlignment="center" id="W1Q-0S-FFz">
+                            <items>
+                                <button alignment="center" title="123" backgroundImage="record_64" id="K8d-aG-S2k">
+                                    <fontDescription key="font" type="system" pointSize="30"/>
+                                    <connections>
+                                        <action selector="start" destination="AgC-eL-Hgc" id="Ebm-Nv-mN0"/>
+                                    </connections>
+                                </button>
+                            </items>
+                        </group>
+                        <group width="1" alignment="left" verticalAlignment="bottom" id="0mC-rE-z1I">
+                            <items>
+                                <label width="100" alignment="left" verticalAlignment="center" text="Label" id="gxk-1C-CqA">
+                                    <fontDescription key="font" type="system" pointSize="18"/>
+                                    <variation key="device=watch38mm" text="1,2" width="40">
+                                        <fontDescription key="font" type="system" pointSize="18"/>
+                                    </variation>
+                                    <variation key="device=watch42mm" text="1,2 Km" width="61">
+                                        <fontDescription key="font" type="system" pointSize="16"/>
+                                    </variation>
+                                </label>
+                                <timer width="100" alignment="right" textAlignment="right" id="18U-Rg-tWm">
+                                    <fontDescription key="font" type="system" pointSize="26"/>
+                                    <variation key="device=watch38mm" width="87"/>
+                                    <variation key="device=watch42mm" minimumScaleFactor="0.80000000000000004" width="87"/>
+                                </timer>
+                            </items>
+                        </group>
+                    </items>
+                    <menu key="menu" id="w5m-JD-ItO">
+                        <items>
+                            <menuItem title="Pause" image="pause_64" id="cUy-La-5I6">
+                                <connections>
+                                    <action selector="pause" destination="AgC-eL-Hgc" id="W7c-Ld-7lV"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Stop" image="record_on_64" id="yDb-0X-K1J">
+                                <connections>
+                                    <action selector="stop" destination="AgC-eL-Hgc" id="wcJ-DT-BQo"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                    <connections>
+                        <outlet property="distLabel" destination="epX-Xj-Cj4" id="wvU-oI-DHv"/>
+                        <outlet property="distLapLabel" destination="gxk-1C-CqA" id="KEv-qC-0NU"/>
+                        <outlet property="lapTimer" destination="18U-Rg-tWm" id="pai-Dc-1AQ"/>
+                        <outlet property="startButton" destination="K8d-aG-S2k" id="68Z-of-WNz"/>
+                        <outlet property="workoutTimer" destination="Iv8-C9-1P1" id="WLk-7p-aKm"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="162" y="215"/>
+        </scene>
+        <!--Glance Interface Controller-->
+        <scene sceneID="rjY-Ar-IMT">
+            <objects>
+                <glanceController spacing="0.0" id="Sv0-Ai-Zie" customClass="GlanceController" customModule="Recorder_WatchKit_App" customModuleProvider="target">
+                    <items>
+                        <group alignment="left" id="gv7-I2-MZq"/>
+                        <group alignment="left" id="eew-Gs-W6Y"/>
+                    </items>
+                    <edgeInsets key="margins" left="0.0" right="0.0" top="0.0" bottom="14"/>
+                </glanceController>
+            </objects>
+            <point key="canvasLocation" x="164" y="514"/>
+        </scene>
+    </scenes>
+    <color key="tintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+</document>

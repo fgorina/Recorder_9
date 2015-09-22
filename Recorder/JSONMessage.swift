@@ -18,17 +18,25 @@ public class JSONMessage {
     public init(punts : NSArray){
         
         let uuid = UIDevice.currentDevice().identifierForVendor
-        self.dispositivo = uuid.UUIDString
+        self.dispositivo = uuid!.UUIDString
         self.dades = punts
         
     }
     
     public func getJSONData() -> NSData? {
     
-        var err : NSError?
+        do {
+        let data : NSData? = try NSJSONSerialization.dataWithJSONObject(self, options: NSJSONWritingOptions())
+        
     
-        var data : NSData? = NSJSONSerialization.dataWithJSONObject(self, options: NSJSONWritingOptions.allZeros, error: &err)
-    
+        return data
+        }
+        catch _ {
+            
+        }
+        
+        let data : NSData? = nil
+        
         return data
     
     }

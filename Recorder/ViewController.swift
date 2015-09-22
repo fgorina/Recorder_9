@@ -10,8 +10,8 @@ import UIKit
 import MapKit
 import CoreMotion
 
-enum appState {
-    case Stopped
+enum appState : Int {
+    case Stopped = 0
     case Recording
     case Paused
 }
@@ -32,6 +32,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var lHR: UILabel!
     @IBOutlet weak var bStartStop: UIButton!
     @IBOutlet weak var wpButton: UIButton!
+    @IBOutlet weak var lwActivityButton: UIButton!
     
     @IBOutlet weak var lwTemps: UILabel!
     @IBOutlet weak var lwDistancia: UILabel!
@@ -40,7 +41,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var lwActivity: UILabel!
     
     
-    @IBOutlet weak var lwActivityButton: UIButton!
     
     
     var temps : NSTimeInterval = 0.0
@@ -89,13 +89,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     //
     //    }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         
         self.hrMonitor = TMKHeartRateMonitor()
         self.almeter = TMKAltimeterManager()
         super.init(coder: aDecoder)
         self.almeter.delegate = self
         self.almeter.hrMonitor = self.hrMonitor // Probablement ho haurem de canviar per aue el hrMonitor tambe el tingui el almeter
+        
+        let del = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        del.rootController = self
         
         self.initNotifications()
         
@@ -134,7 +138,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         NSLog("Notification %@", not)
         
-        var img : UIImage? = UIImage(named: "record_heart_on_64.png")
+        let img : UIImage? = UIImage(named: "record_heart_on_64.png")
         self.bStartStop.setImage(img, forState: UIControlState.Normal)
         self.heartOn = true
     }
@@ -152,12 +156,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     func hrReceived(not : NSNotification)
     {
-        var value = not.object as! Int
+        let value = not.object as! Int
         self.HR = value
         if UIApplication.sharedApplication().applicationState == UIApplicationState.Active{
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                var txt = NSString(format: "%d bpm", value)
+                let txt = NSString(format: "%d bpm", value)
                 self.lHR.text = txt as String;
                 if self.heartOn {
                     self.bStartStop.setImage(UIImage(named: "record_heart_64.png"), forState: UIControlState.Normal)
@@ -203,23 +207,27 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
         else
         {
-            if let track = self.recordingTrack {    // Get recording track
-                
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
-                    if let tp = track.data.last {
-                        self.setWpData()
-                        let wp = TMKWaypoint.newWaypointFromTrackPoint(_trackPoint: tp)
-                        track.addWaypoint(wp)
-                        var del : AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                        let tpJSON = wp.toJSON()
-                        tpJSON.setValue(2, forKey: "start");
-                        
-                        del.pushPoint(tpJSON)
-                        del.procesServerQueue(false)    // Force a processQueue to send the WP if connected
-                        
-                    }
-                })
-            }
+            self.doAddWaypoint()    
+         }
+    }
+    
+    func doAddWaypoint(){
+        if let track = self.recordingTrack {    // Get recording track
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
+                if let tp = track.data.last {
+                    self.setWpData()
+                    let wp = TMKWaypoint.newWaypointFromTrackPoint(_trackPoint: tp)
+                    track.addWaypoint(wp)
+                    let del : AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                    let tpJSON = wp.toJSON()
+                    tpJSON.setValue(2, forKey: "start");
+                    
+                    del.pushPoint(tpJSON)
+                    del.procesServerQueue(false)    // Force a processQueue to send the WP if connected
+                    
+                }
+            })
         }
     }
     
@@ -264,7 +272,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             
             // Resend last point with a 3 in start to stop server status
             if let tpx = tp {
-                var del : AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                let del : AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
                 let tpJSON = tpx.toJSON()
                 tpJSON.setValue(3, forKey: "start")     // Code for end of track
                 del.pushPoint(tpJSON)
@@ -286,6 +294,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func startRecording(){
+        
+        if self.doRecord == .Recording{
+            return
+        }
         
         self.recordingTrack = TGLTrack()
         self.resetViewData()
@@ -343,12 +355,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         if UIApplication.sharedApplication().applicationState == UIApplicationState.Active{
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                self.lwActivity.text = self.activity
                 
-                let imgName = "act_" + self.activity + "_64"
-                
-                let img = UIImage(named: imgName)
-                self.lwActivityButton.setImage(img, forState: UIControlState.Normal)
+                if self.lwActivity != nil{
+                    self.lwActivity.text = self.activity
+                    let imgName = "act_" + self.activity + "_64"
+                    if let img = UIImage(named: imgName)
+                    {
+                        self.lwActivityButton.setImage(img, forState: UIControlState.Normal)
+                    }
+                }
             })
         }
         
@@ -400,7 +415,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     //MARK: - CLLocationManagerDelegate
     
-    func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         
         if self.debug {
             NSLog("User Auth Request answered")
@@ -425,26 +440,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                     self.descent = track.totalDescent
                     self.vdop = lpt.vPrecision
                     
+                    NSLog("Dades processades %l", dat.count)
+                    
                     if UIApplication.sharedApplication().applicationState == UIApplicationState.Active{
                         
                         dispatch_async(dispatch_get_main_queue(), { () -> Void in
                             self.updateViewData()
                         })
                     }
-                    
-                    
                 }
                 
             }
-            
-            
         }
     }
     
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         if self.debug {
-            if let myLoc = locations?.last as? CLLocation {
+            if let myLoc = locations.last {
                 NSLog("Posicio amb alçada %f +/- %f", myLoc.altitude, myLoc.verticalAccuracy)
             }
         }
@@ -452,7 +465,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         
         if self.doRecord == .Recording {
-            if let locs : [CLLocation] = locations as? [CLLocation] {
+             let locs  = locations
                 
                 if let track = self.recordingTrack {    // Send data to the track
                     track.addLocations(locs, hr:self.HR, force:false, activity:self.almeter.actualActivity)
@@ -480,36 +493,35 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                     
                     
                 }
-            }
+            
         }
         
         if !self.deferringUpdates {
             let distance : CLLocationDistance =  1000.0 // Update every km
             let time : NSTimeInterval = 600.0 // Or every 10'
             
-            if let mgr = manager {
-                mgr.allowDeferredLocationUpdatesUntilTraveled(distance,  timeout:time)
+                manager.allowDeferredLocationUpdatesUntilTraveled(distance,  timeout:time)
                 self.deferringUpdates = true
-            }
+            
         }
     }
     
     
-    func locationManager(manager: CLLocationManager!, didFinishDeferredUpdatesWithError error: NSError!){
+    func locationManager(manager: CLLocationManager, didFinishDeferredUpdatesWithError error: NSError?){
         self.deferringUpdates = false
     }
     
     
-    func locationManager(manager: CLLocationManager!, didEnterRegion region: CLRegion!) {
+    func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
         
     }
     
-    func locationManager(manager: CLLocationManager!, didExitRegion region: CLRegion!) {
+    func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
         
     }
     
     
-    func locationManager(manager: CLLocationManager!, monitoringDidFailForRegion region: CLRegion!, withError error: NSError!) {
+    func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: NSError) {
         NSLog("Error a la regio %@", error);
     }
     

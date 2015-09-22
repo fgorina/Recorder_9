@@ -179,7 +179,7 @@ public class TGLTrackPoint  {
             var sdate = fmt.stringFromDate(self.dtime)
             
             let uuid = UIDevice.currentDevice().identifierForVendor
-            let suuid = uuid.UUIDString
+            let suuid = uuid!.UUIDString
             
             let param = String(format: "%@?id=%@&date=%@&lat=%0.5f&lon=%0.5f&ele=%0.2f", server,suuid, sdate, self.coordinate.latitude, self.coordinate.longitude, self.ele)
         

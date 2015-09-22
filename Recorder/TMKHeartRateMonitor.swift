@@ -121,32 +121,31 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
             if device != nil    // Try to connect to last connected peripheral
             {
                 
-                let ids = NSArray(object:CBUUID(string:device))
-                let devs : [CBPeripheral] = self.centralManager!.retrievePeripheralsWithIdentifiers(ids as [AnyObject]) as! [CBPeripheral]
+                let ids = [NSUUID(UUIDString:device!)!]
                 
+
+                
+                let devs : [CBPeripheral] = self.centralManager!.retrievePeripheralsWithIdentifiers(ids)
                 if devs.count > 0
                 {
                     let peri : CBPeripheral = devs[0]
                     
-                    let o : AnyObject? = nil
-                    let n : NSNumber? = nil
-                    
-                    
-                    self.centralManager(central,  didDiscoverPeripheral:peri, advertisementData:nil,  RSSI:nil)
+                    self.centralManager(central,  didDiscoverPeripheral:peri, advertisementData:["Heelo":"Hello"],  RSSI:NSNumber())
                     return
                 }
+                
             }
             
             // If we are here we may try to look for a connected device known to the central manager
             
-            let services = NSArray(object:CBUUID(string:kUUIDHeartRateService))
-            let moreDevs : [CBPeripheral] = self.centralManager!.retrieveConnectedPeripheralsWithServices(services as [AnyObject]) as! [CBPeripheral]
+            let services = [CBUUID(string:kUUIDHeartRateService)]
+            let moreDevs : [CBPeripheral] = self.centralManager!.retrieveConnectedPeripheralsWithServices(services) 
             
             if  moreDevs.count > 0
             {
                 let peri : CBPeripheral = moreDevs[0]
                 
-                self.centralManager(central, didDiscoverPeripheral:peri,  advertisementData:nil,  RSSI:nil)
+                self.centralManager(central, didDiscoverPeripheral:peri,  advertisementData:["Hello": "Hello"],  RSSI:NSNumber(double: 0.0))
                 return
             }
             
@@ -172,12 +171,12 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
     }
     
     
-    public func centralManager(central: CBCentralManager!,
-        didDiscoverPeripheral peripheral: CBPeripheral!,
-        advertisementData: [NSObject : AnyObject]!,
-        RSSI: NSNumber!){
+    public func centralManager(central: CBCentralManager,
+        didDiscoverPeripheral peripheral: CBPeripheral,
+        advertisementData: [String : AnyObject],
+        RSSI: NSNumber){
             
-            NSLog("Discovered %@ - %@", peripheral.name, peripheral.identifier);
+            NSLog("Discovered %@ - %@", peripheral.name!, peripheral.identifier);
             
             self.discoveredPeripheral = peripheral;
             NSLog("Connecting to peripheral %@", peripheral);
@@ -197,7 +196,7 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
         self.centralManager!.connectPeripheral(peripheral, options:nil)
     }
     
-    public func centralManager(central : CBCentralManager, didFailToConnectPeripheral peripheral : CBPeripheral,  error : NSError)
+    public func centralManager(central : CBCentralManager, didFailToConnectPeripheral peripheral : CBPeripheral,  error : NSError?)
     {
         
         NSLog("Failed to connect to HR monitor %@", peripheral.identifier);
@@ -235,9 +234,9 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
         peripheral.discoverServices([CBUUID(string:kUUIDHeartRateService),CBUUID(string:kUUIDBatteryLevelService), CBUUID(string:kUUIDMioLinkHRZonesService)])
     }
     
-    public func centralManager(central: CBCentralManager!,
-        didDisconnectPeripheral peripheral: CBPeripheral!,
-        error: NSError!)
+    public func centralManager(central: CBCentralManager,
+        didDisconnectPeripheral peripheral: CBPeripheral,
+        error: NSError?)
         
     {
         
@@ -251,14 +250,14 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
             if(device != nil)   // Try to connect to last connected peripheral
             {
                 
-                let ids  = NSArray(object:CBUUID(string:device))
-                let devs : [CBPeripheral] = self.centralManager!.retrievePeripheralsWithIdentifiers(ids as [AnyObject]) as! [CBPeripheral]
+                let ids  = [NSUUID(UUIDString:device!)!]
+                let devs : [CBPeripheral] = self.centralManager!.retrievePeripheralsWithIdentifiers(ids) 
                 
                 if devs.count > 0
                 {
                     let peri : CBPeripheral = devs[0]
                     
-                    self.centralManager(central,  didDiscoverPeripheral:peri,  advertisementData:nil,  RSSI:nil)
+                    self.centralManager(central,  didDiscoverPeripheral:peri,  advertisementData:["Hello" : "Hello"],  RSSI:NSNumber())
                     return;
                 }
             }
@@ -272,12 +271,12 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
     
     //MARK: - CBPeripheralDelegate
     
-    public func peripheral(peripheral: CBPeripheral!,
-        didDiscoverServices error: NSError!)
+    public func peripheral(peripheral: CBPeripheral,
+        didDiscoverServices error: NSError?)
     {
         
-        let serv = peripheral.services as! [CBService]
-        
+
+        if let serv = peripheral.services{
         for sr in serv
         {
             NSLog("Service %@", sr.UUID.UUIDString)
@@ -299,13 +298,14 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
                 peripheral.discoverCharacteristics(charUUIDs, forService:sr)
             }
         }
+        }
         
     }
     
     
-    public func peripheral(peripheral: CBPeripheral!,
-        didDiscoverCharacteristicsForService service: CBService!,
-        error: NSError!)
+    public func peripheral(peripheral: CBPeripheral,
+        didDiscoverCharacteristicsForService service: CBService,
+        error: NSError?)
     {
         
         // Sembla una bona conexio, la guardem per mes endavant
@@ -313,7 +313,7 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
         let idPeripheral = peripheral.identifier.UUIDString
         store.setObject(idPeripheral, forKey:kLastHRDeviceAccessedKey)
         
-        if let characteristics = service.characteristics as? [CBCharacteristic]{
+        if let characteristics = service.characteristics {
             var cho : CBCharacteristic?
             
             if characteristics.count > 0{
@@ -342,9 +342,9 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
         
     }
     
-    public func peripheral(peripheral: CBPeripheral!,
-        didUpdateValueForCharacteristic characteristic: CBCharacteristic!,
-        error: NSError!){
+    public func peripheral(peripheral: CBPeripheral,
+        didUpdateValueForCharacteristic characteristic: CBCharacteristic,
+        error: NSError?){
             
             // Primer obtenim el TMKPeripheralObject
             
@@ -354,7 +354,7 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
                 var dades = hrdata(flags: 0, hr: 0, rr: [0])
                 
                 
-                characteristic.value.getBytes(&dades, length: 2)
+                characteristic.value!.getBytes(&dades, length: 2)
                 
                 let value = dades.hr
                 //UInt8   flags = dades ->flags;
@@ -382,7 +382,7 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
             {
                 
                 var dades = battData(value: 0)
-                characteristic.value.getBytes(&dades, length: 1)
+                characteristic.value!.getBytes(&dades, length: 1)
                 
                 self.battery = Int(dades.value)
                 
@@ -445,10 +445,10 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
         if let thePeripheral = self.discoveredPeripheral  {
             if let theServices = thePeripheral.services {
                 
-                for service : CBService in theServices as! [CBService]{
+                for service : CBService in theServices {
                     
                     if let theCharacteristics = service.characteristics {
-                        for characteristic : CBCharacteristic in service.characteristics as! [CBCharacteristic] {
+                        for characteristic : CBCharacteristic in theCharacteristics {
                             if characteristic.UUID == CBUUID(string:"2A67") {
                                 if characteristic.isNotifying {
                                     self.discoveredPeripheral!.setNotifyValue(false, forCharacteristic:characteristic)

@@ -19,11 +19,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
     
     //let serverUrl = "http://www.gorina.es/insert.php"
     let serverUrl = "http://www.gorina.es/traces/insertJSON.php"
-
+    
     var serverSession : NSURLSession
     var serverQueue : NSMutableArray
     var unsentRequests : NSMutableArray
     let reachability : Reachability
+    
+    var rootController : ViewController?
     
     override init()
     {
@@ -74,7 +76,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
         
         var start = 0
         
-        var JSONBody = NSMutableArray(capacity: serverQueue.count+10)
+        let JSONBody = NSMutableArray(capacity: serverQueue.count+10)
         
         while let tp : NSDictionary = serverQueue.dequeue() as? NSDictionary {
             JSONBody.addObject(tp)
@@ -86,27 +88,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
                     start = 3
                 }
             }
-         }
+        }
         
         let message = NSMutableDictionary()
         
         let uuid = UIDevice.currentDevice().identifierForVendor
-        message.setValue(uuid.UUIDString, forKey: "dispositivo")
-
+        message.setValue(uuid!.UUIDString, forKey: "dispositivo")
+        
         let devName = UIDevice.currentDevice().name
         message.setValue(devName, forKey: "deviceName")
         message.setValue(start, forKey: "start")    // Activate start
         message.setValue(JSONBody, forKey: "dades")
         
         
-        var err : NSError?
+        let bodyData : NSData?
         
-        let bodyData : NSData? = NSJSONSerialization.dataWithJSONObject(message, options: NSJSONWritingOptions.allZeros, error: &err)
+        do {
+            
+            bodyData = try  NSJSONSerialization.dataWithJSONObject(message, options: NSJSONWritingOptions())
+        } catch _{
+            bodyData = nil
+        }
         
         
         if let url = NSURL(string: self.serverUrl) {
             
-            var request = NSMutableURLRequest(URL: url)
+            let request = NSMutableURLRequest(URL: url)
             request.HTTPMethod = "POST"
             request.HTTPBody = bodyData
             
@@ -119,24 +126,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
         // Now process unsent requests
         
         while let rq : NSMutableURLRequest = unsentRequests.dequeue() as? NSMutableURLRequest{
-            var task = serverSession.dataTaskWithRequest(rq, completionHandler: { (data:NSData!,  resp: NSURLResponse!,  err: NSError!) -> Void in
+            let task = serverSession.dataTaskWithRequest(rq, completionHandler: { (datas:NSData?,  resp: NSURLResponse?,  err: NSError?) -> Void in
                 if err != nil {
                     self.unsentRequests.enqueue(rq);        // retry. Perhaps put maxNumber and lastTimeRetried
                 }
                 else{
-                    var astr = NSString(data: data, encoding: NSUTF8StringEncoding)
-                    if let str = astr {
-                        NSLog("Resposta  : %@", str)
+                    if let data = datas{
+                        let astr = NSString(data: data, encoding: NSUTF8StringEncoding)
+                        if let str = astr {
+                            NSLog("Resposta  : %@", str)
+                        }
+                        else
+                        {
+                            NSLog("No Answer")
+                        }
                     }
                     else
                     {
-                        NSLog("No Answer")
+                        NSLog("No Data")
                     }
                 }
             })
             task.resume()
-          }
-
+        }
+        
     }
     
     
@@ -158,7 +171,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
             if let data = NSData(contentsOfURL: url){
                 track.loadData(data, fromFilesystem:FileOrigin.Document, withPath:url.path!)
                 
-                 if track.data.count == 0{
+                if track.data.count == 0{
                     NSLog( "Error in number of points in track")
                 }
                 
@@ -170,7 +183,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
                 if w != 250 || h != 250 {
                     NSLog("Medidas erroneas")
                 }
-             }
+            }
         }
     }
     
@@ -215,25 +228,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
     func movePendingTracks(){
         
         let localTracksUrl = self.localTracksDirectory()
-        let del = UIApplication.sharedApplication().delegate as! AppDelegate
         
         
         let mgr = NSFileManager()
-        var err : NSError?
         
         let enume = mgr.enumeratorAtURL(localTracksUrl,
             includingPropertiesForKeys: nil,
-            options:NSDirectoryEnumerationOptions.SkipsSubdirectoryDescendants | NSDirectoryEnumerationOptions.SkipsHiddenFiles) {
+            options:[NSDirectoryEnumerationOptions.SkipsSubdirectoryDescendants, NSDirectoryEnumerationOptions.SkipsHiddenFiles]) {
                 (url :NSURL!, error: NSError!) -> Bool in
                 
                 NSLog("Error a enumerar fitxers per  %@", url, error)
                 return true
         }
-        
-        var files = Array<NSURL>()
-        
-        var rsrc : AnyObject?
-        var anyError : NSError?
         
         
         if let enu : NSDirectoryEnumerator = enume {
@@ -247,13 +253,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
                         let nom = "X" + name.substringFromIndex(name.startIndex.successor())
                         
                         let destUrl = self.applicationDocumentsDirectory().URLByAppendingPathComponent(nom)
-                        mgr.setUbiquitous(true, itemAtURL: url, destinationURL: destUrl, error: &anyError)
                         
-                        if let err = anyError{
-                            NSLog("Error al passar al iCLoud %@", err)
-                        }
-                        else{
+                        do {
+                            try mgr.setUbiquitous(true, itemAtURL: url, destinationURL: destUrl)
+                            
                             NSLog("Recuperat %@", name)
+                            
+                        }
+                        catch _{
+                            NSLog("Error al passar al iCLoud ")
+                            
                         }
                         
                     }
@@ -318,6 +327,81 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
     }
     
     
+    func application(application: UIApplication,
+        handleWatchKitExtensionRequest userInfo: [NSObject : AnyObject]?,
+        reply: ([NSObject : AnyObject]?) -> Void)
+    {
+        if let rc = rootController{
+            if let info = userInfo{
+                
+                let ops = info["op"] as! String?
+                
+                if let op = ops
+                {
+                    switch op {
+                        
+                    case "start":
+                        rc.startRecording()
+                        
+                    case "stop" :
+                        rc.stopRecording()
+                        
+                        
+                    case "pause" :
+                        rc.pauseRecording()
+                        
+                        
+                    case "resume" :
+                        rc.resumeRecording()
+                        
+                    case "wp" :
+                        rc.doAddWaypoint()
+                        
+  
+                    case "update" :
+                        break
+                        
+                    default:
+                        NSLog("Unknown command %@", op)
+                        
+                        
+                    }
+                }
+            }
+        
+            var dades : [NSObject : AnyObject] = [
+                "altura"  : rc.altura,
+                "distancia" : rc.distancia,
+                "ascent" : rc.ascent,
+                "descent" : rc.descent,
+                "wDistancia" : rc.distancia - rc.wDistancia,
+                "wAscent" : rc.wAscent,
+                "wDescent" : rc.wDescent,
+                "hr" : rc.HR,
+                "state" : rc.doRecord.rawValue]
+            
+            if let st = rc.startTime {
+                dades["startTime"] = st
+            }
+            else{
+                dades["startTime"] = NSDate()
+            }
+            
+            if let st = rc.wStartTime {
+                dades["wStartTime"] = st
+            }
+            else{
+                dades["wStartTime"] = dades["startTime"]
+            }
+            
+            
+            
+            reply(dades)
+             
+        }
+        
+    }
+    
     //MARK: - Utilities
     
     
@@ -342,20 +426,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
     
     func localTracksDirectory() -> NSURL
     {
-        let path = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true).last as! String
+        let path = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true).last!
         
         
         if !NSFileManager.defaultManager().fileExistsAtPath(path){
-            var error : NSError? = nil
             
-            if !NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil, error: &error){
-                NSLog("Unresolved error %@", error!)
+            
+            do {
+                
+                try NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
+            } catch _{
+                NSLog("Unresolved error")
                 abort()
                 
             }
         }
         
-        let docs = NSFileManager.defaultManager().URLsForDirectory(NSSearchPathDirectory.DocumentDirectory, inDomains: NSSearchPathDomainMask.UserDomainMask).last as! NSURL
+        let docs = NSFileManager.defaultManager().URLsForDirectory(NSSearchPathDirectory.DocumentDirectory, inDomains: NSSearchPathDomainMask.UserDomainMask).last!
         
         return docs
         

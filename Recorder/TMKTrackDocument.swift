@@ -16,7 +16,7 @@ public class TMKTrackDocument: UIDocument {
     
     init(track : TGLTrack){
         self.track = track;
-        super.init(fileURL:NSURL(fileURLWithPath:track.path!)!);
+        super.init(fileURL:NSURL(fileURLWithPath:track.path!));
     }
     
     init(fileURL url: NSURL, track:TGLTrack) {
@@ -36,7 +36,7 @@ public class TMKTrackDocument: UIDocument {
     //
     //
     
-    public override func contentsForType(typeName: String, error outError: NSErrorPointer) -> AnyObject? {
+    public override func contentsForType(typeName: String) throws -> AnyObject {
         return self.track;
     }
     
@@ -44,9 +44,9 @@ public class TMKTrackDocument: UIDocument {
     // Sustituim aquest metode per poder parsejar a mida que llegim de l'arxiu
     //
     
-    public override func readFromURL(url: NSURL, error outError: NSErrorPointer) -> Bool {
+    public override func readFromURL(url: NSURL) throws {
         self.track.loadURL(url, fromFilesystem:FileOrigin.Document);
-        return true;
+        
     }
     
     
@@ -56,9 +56,9 @@ public class TMKTrackDocument: UIDocument {
     // D'aquesta forma la traduccio a xml no cal tenir-la a memoria
     //
     
-    override public func writeContents(contents: AnyObject, toURL url: NSURL, forSaveOperation saveOperation: UIDocumentSaveOperation, originalContentsURL: NSURL?, error outError: NSErrorPointer) -> Bool {
+    override public func writeContents(contents: AnyObject, toURL url: NSURL, forSaveOperation saveOperation: UIDocumentSaveOperation, originalContentsURL: NSURL?) throws {
         
-        return self.track.writeToURL(url)
+        self.track.writeToURL(url)
     }
     
     
