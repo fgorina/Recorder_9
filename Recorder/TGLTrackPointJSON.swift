@@ -18,7 +18,7 @@ public extension NSMutableDictionary {
         
         let fmt = NSDateFormatter()
         fmt.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        var sdate = fmt.stringFromDate(tp.dtime)
+        let sdate = fmt.stringFromDate(tp.dtime)
         
         
         self.setValue(tp.coordinate.longitude, forKey: "lon")

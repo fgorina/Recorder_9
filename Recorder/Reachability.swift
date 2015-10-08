@@ -120,7 +120,7 @@ public class Reachability: NSObject {
     public func startNotifier() -> Bool {
         
         reachabilityObject = self
-        let reachability = self.reachabilityRef!
+      //  let reachability = self.reachabilityRef!
         
         previousReachabilityFlags = reachabilityFlags
         if let timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, timer_queue) {
@@ -213,7 +213,7 @@ public class Reachability: NSObject {
     
     func timerFired() {
         let currentReachabilityFlags = reachabilityFlags
-        if let _previousReachabilityFlags = previousReachabilityFlags {
+        if let _ = previousReachabilityFlags {
             if currentReachabilityFlags != previousReachabilityFlags {
                 dispatch_async(dispatch_get_main_queue(), { [unowned self] in
                     self.reachabilityChanged(currentReachabilityFlags)

@@ -79,10 +79,10 @@ public class TGLTrackPoint  {
     
     public var xmlText : String
     {
-        var str : NSMutableString = NSMutableString();
+        let str : NSMutableString = NSMutableString();
         str.appendFormat("<trkpt lat=\"%7.5f\" lon=\"%7.5f\">\n", self.coordinate.latitude, self.coordinate.longitude)
         
-        var timeString :String = self.time.stringByReplacingOccurrencesOfString(" ",  withString: "").stringByReplacingOccurrencesOfString("\n",withString: "").stringByReplacingOccurrencesOfString("\r",withString: "")
+        let timeString :String = self.time.stringByReplacingOccurrencesOfString(" ",  withString: "").stringByReplacingOccurrencesOfString("\n",withString: "").stringByReplacingOccurrencesOfString("\r",withString: "")
         
         str.appendFormat("<ele>%3.0f</ele>\n", self.ele)
         str.appendFormat("<time>\(timeString)</time>\n")
@@ -174,9 +174,9 @@ public class TGLTrackPoint  {
     
     func getUrl(server : String) -> NSURL? {
         
-            var fmt = NSDateFormatter()
+            let fmt = NSDateFormatter()
             fmt.dateFormat = "yyyy-MM-dd+HH:mm:ss"
-            var sdate = fmt.stringFromDate(self.dtime)
+            let sdate = fmt.stringFromDate(self.dtime)
             
             let uuid = UIDevice.currentDevice().identifierForVendor
             let suuid = uuid!.UUIDString

@@ -7,9 +7,11 @@
 //
 
 import UIKit
+import WatchConnectivity
+import HealthKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
     
     
     let kiCloudChanged = "iCloudChanged"
@@ -26,32 +28,45 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
     let reachability : Reachability
     
     var rootController : ViewController?
+    var dataController : DataController?
+    
     
     override init()
     {
+        debugLaunch("AppDelegate.init enter")
         
         reachability = Reachability.reachabilityForInternetConnection()
         let config = NSURLSessionConfiguration.ephemeralSessionConfiguration()
         serverSession = NSURLSession(configuration: config)
         serverQueue = NSMutableArray()
         unsentRequests = NSMutableArray()
-        
         super.init()
+        
+        if HKHealthStore.isHealthDataAvailable(){
+            
+            self.requestAuthorization()
+            
+        }
+
+        
+        // If iCloud set iCloud up for copying recorded tracks.
+        // Data goes to Traces icloud container :)
+        if NSFileManager.defaultManager().ubiquityIdentityToken != nil
+        {
+            self.checkForiCloud()
+        }
+        
+        debugLaunch("AppDelegate.init exit")
     }
     
     
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        // If iCloud set iCloud up for copying recorded tracks.
-        // Data goes to Traces icloud container :)
-        
-        if NSFileManager.defaultManager().ubiquityIdentityToken != nil
-        {
-            self.checkForiCloud()
-        }
-        
-        testImg()
+        debugLaunch("AppDelegate didFinishLaunchingWithOptions enter")
+          //testImg()  // Just to test icon creation
+        debugLaunch("AppDelegate didFinishLaunchingWithOptions enter")
+
         
         return true
     }
@@ -304,15 +319,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
         if let w = self.window{
-            if let vcontroller = w.rootViewController as? ViewController{
-                if vcontroller.doRecord != .Stopped{
+            if let vcontroller = w.rootViewController as? ViewController, data = self.dataController{
+                if data.doRecord != .Stopped{
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         
                         let tim = NSTimer.scheduledTimerWithTimeInterval(1.0, target: vcontroller, selector: "updateTime:", userInfo: nil, repeats: true)
                         
                         vcontroller.timer = tim
                         vcontroller.updateTime(tim)
-                        vcontroller.updateViewData()
+                        vcontroller.updateViewData(nil)
                         
                     })
                     
@@ -331,7 +346,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
         handleWatchKitExtensionRequest userInfo: [NSObject : AnyObject]?,
         reply: ([NSObject : AnyObject]?) -> Void)
     {
-        if let rc = rootController{
+        if let rc = self.dataController{
             if let info = userInfo{
                 
                 let ops = info["op"] as! String?
@@ -459,6 +474,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate {
         }
     }
     
+    //MARK: HealhtStore
+    
+    func getTypesForIdentifiers(identifiers: [String]) -> Set<HKSampleType>{
+        
+        var types : Set<HKSampleType> = Set<HKSampleType>()
+        
+        
+        for v in identifiers{
+            let d = HKSampleType.quantityTypeForIdentifier(v)
+            if let dok = d{
+                types.insert(dok)
+            }
+        }
+        
+        types.insert(HKWorkoutType.workoutType())
+        
+        
+        return types
+        
+    }
+    
+    
+    func requestAuthorization(){
+        
+        let dataTypes = [HKQuantityTypeIdentifierHeartRate, HKQuantityTypeIdentifierFlightsClimbed, HKQuantityTypeIdentifierDistanceWalkingRunning]
+        
+        let types = self.getTypesForIdentifiers(dataTypes)
+        
+        let hs = HKHealthStore()
+        
+            hs.requestAuthorizationToShareTypes(nil , readTypes: types, completion: { (success:Bool, err:NSError?) -> Void in
+                if !success{
+                    if let error = err {
+                        NSLog("Error al demanar autorizacio %@", error)
+                    }
+                }
+            })
+        
+    }
+    
+
+    
     
 }
-

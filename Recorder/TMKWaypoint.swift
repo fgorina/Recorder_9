@@ -41,7 +41,7 @@ public class TMKWaypoint: TGLTrackPoint {
         var str = self.title;
         
         
-        var timeString :String = self.time.stringByReplacingOccurrencesOfString(" ",  withString: "").stringByReplacingOccurrencesOfString("\n",withString: "").stringByReplacingOccurrencesOfString("\r",withString: "")
+        let timeString :String = self.time.stringByReplacingOccurrencesOfString(" ",  withString: "").stringByReplacingOccurrencesOfString("\n",withString: "").stringByReplacingOccurrencesOfString("\r",withString: "")
         
         
         str += String(format: "\nLon = %7.5f Lat = %7.5f",self.coordinate.longitude, self.coordinate.latitude)
@@ -64,10 +64,10 @@ public class TMKWaypoint: TGLTrackPoint {
     
     override public var xmlText : String
         {
-            var str : NSMutableString = NSMutableString()
+            let str : NSMutableString = NSMutableString()
             str.appendFormat("<wpt lat=\"%7.5f\" lon=\"%7.5f\">\n", self.coordinate.latitude, self.coordinate.longitude)
             
-            var timeString :String = self.time.stringByReplacingOccurrencesOfString(" ",  withString: "").stringByReplacingOccurrencesOfString("\n",withString: "").stringByReplacingOccurrencesOfString("\r",withString: "")
+            let timeString :String = self.time.stringByReplacingOccurrencesOfString(" ",  withString: "").stringByReplacingOccurrencesOfString("\n",withString: "").stringByReplacingOccurrencesOfString("\r",withString: "")
             
             str.appendFormat("<ele>%3.0f</ele>\n", self.ele)
             str.appendFormat("<time>\(timeString)</time>\n")
@@ -93,7 +93,7 @@ public class TMKWaypoint: TGLTrackPoint {
     
     public var xmlFileText : String
     {
-        var str : NSMutableString = NSMutableString()
+        let str : NSMutableString = NSMutableString()
 
     
         str.appendString("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
@@ -114,7 +114,7 @@ public class TMKWaypoint: TGLTrackPoint {
     public class func newWaypointFromTrackPoint(_trackPoint tp: TGLTrackPoint) -> (TMKWaypoint){
         
         
-        var tw = TMKWaypoint()
+        let tw = TMKWaypoint()
         
         tw.coordinate = tp.coordinate;
         tw.ele = tp.ele;

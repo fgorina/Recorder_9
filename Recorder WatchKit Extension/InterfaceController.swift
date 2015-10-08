@@ -26,7 +26,7 @@ class InterfaceController: WKInterfaceController {
     var timer : NSTimer?
     
     var state : appState = .Stopped
-    var op_queue = NSMutableArray()
+    var op_queue = NSOperationQueue()
 
     
     
@@ -35,6 +35,8 @@ class InterfaceController: WKInterfaceController {
         super.awakeWithContext(context)
         
         distLabel.setText("XIM")
+        op_queue.maxConcurrentOperationCount = 1
+        
         
         // Configure interface objects here.
     }
@@ -42,6 +44,7 @@ class InterfaceController: WKInterfaceController {
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
         
+        op_queue.suspended = false
         startTimer()
         
         if self.state == .Recording{
@@ -65,6 +68,7 @@ class InterfaceController: WKInterfaceController {
             tim.invalidate()
             timer = nil
         }
+        op_queue.suspended = true
         super.didDeactivate()
     }
     
@@ -155,28 +159,23 @@ class InterfaceController: WKInterfaceController {
     
     
     func doCallRecorder(op : String){
-        self.op_queue.enqueue(op)
         
-    }
-
-    func callRecorder(){
-        
-        while let op = op_queue.dequeue(){
+        self.op_queue.addOperationWithBlock { () -> Void in
             WKInterfaceController.openParentApplication(["op" : op]) { (data : [NSObject : AnyObject], error :NSError?) -> Void in
                 self.updateData(data)
             }
+
         }
+        
     }
-    
+
     func doUpdate(timer : NSTimer?){
         
         // check if free is free
         
-        if self.op_queue.count == 0{
+        if self.op_queue.operationCount == 0{
             doCallRecorder("update")
         }
-        
-        self.callRecorder()
         
      }
     
@@ -204,15 +203,9 @@ class InterfaceController: WKInterfaceController {
                     if self.state != .Recording{
                         self.doStart()
                     }
-                    
                 }
-                
-  
             }
-            
         }
-        
-       
         
         if let v : NSDate = dades["startTime"] as? NSDate{
             if self.state == .Recording{

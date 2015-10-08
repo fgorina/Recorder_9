@@ -10,6 +10,7 @@ import UIKit
 import MapKit
 import AssetsLibrary
 import CoreMotion
+import HealthKit
 
 
 
@@ -20,7 +21,6 @@ public enum FileOrigin {
 
 public class TGLTrack: NSObject, NSXMLParserDelegate {
     
-    var debug = true
     // Some Constants
     
     let DISTANCE = 0.0 // 10.0 m
@@ -299,13 +299,13 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     
     public func writeToURL(url : NSURL) -> (Bool)
     {
-        let cord : NSFileCoordinator = NSFileCoordinator(filePresenter: self.doc)
-        var error : NSError?
+        //let cord : NSFileCoordinator = NSFileCoordinator(filePresenter: self.doc)
+        //var error : NSError?
         
-        cord.coordinateWritingItemAtURL(url,
-            options: NSFileCoordinatorWritingOptions.ForReplacing,
-            error: &error)
-            { ( newURL :NSURL!) -> Void in
+//        cord.coordinateWritingItemAtURL(url,
+ //           options: NSFileCoordinatorWritingOptions.ForReplacing,
+  //          error: &error)
+  //          { ( newURL :NSURL!) -> Void in
                 
                 // Check if it exits
                 
@@ -316,7 +316,6 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                 let exists = mgr.fileExistsAtPath(url.path!)
                 
                 if !exists{
-                    
                     mgr.createFileAtPath(url.path!, contents: "Hello".dataUsingEncoding(NSUTF8StringEncoding), attributes:nil)
                 }
                 
@@ -330,30 +329,26 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                         if wp.type != WaypointType.Start && wp.type != WaypointType.End{
                             hdl.writeData(wp.xmlText.dataUsingEncoding(NSUTF8StringEncoding)!)
                         }
-                        
-                        hdl.writeData(self.trackHeader.dataUsingEncoding(NSUTF8StringEncoding)!)
-                        
-                        for tp in self.data {
-                            hdl.writeData(tp.xmlText.dataUsingEncoding(NSUTF8StringEncoding)!)
-                        }
-                        
-                        hdl.writeData(self.xmlFooter.dataUsingEncoding(NSUTF8StringEncoding)!)
-                        hdl.closeFile()
                     }
+                    
+                    hdl.writeData(self.trackHeader.dataUsingEncoding(NSUTF8StringEncoding)!)
+                        
+                    for tp in self.data {
+                        hdl.writeData(tp.xmlText.dataUsingEncoding(NSUTF8StringEncoding)!)
+                    }
+                        
+                    hdl.writeData(self.xmlFooter.dataUsingEncoding(NSUTF8StringEncoding)!)
+                    hdl.closeFile()
+                    return true
                 }
                 else
                 {
+                    return false
                     //error = err
                 }
                 
-        }
+     //   } Fora manager
         
-        if error == nil{
-            return true
-        }
-        else{
-            return false
-        }
     }
     
     func openRecording()
@@ -417,7 +412,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     }
     
     
-    func closeRecording()
+    func closeRecording(heartRates : [HKQuantitySample]?)
     {
         
         self.updateBoundingBox()
@@ -427,6 +422,10 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             hd.closeFile()
             self.hdl = nil
         }
+        
+        
+      
+        
         
         if let pth = self.path {
             if self.data.count < 2  {// No Data!!! De moment canviar per fer proves
@@ -439,6 +438,12 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             }
             else
             {
+                
+                if let ha = heartRates{  // Update Heart Rates
+                    if self.updateHR(ha){
+                        self.writeToURL( NSURL(fileURLWithPath: pth))
+                    }
+                }
                 
                 let thumb = self.imageWithWidth(256, height: 256)
                 
@@ -538,7 +543,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                     
                     self.data.append(tp)
                     
-                    if self.debug {
+                    if GlobalConstants.debug {
                         NSLog("Logged first item");
                     }
                 }
@@ -562,7 +567,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                         
                         
                         self.data.append(tp)
-                        if self.debug {
+                        if GlobalConstants.debug {
                             NSLog("Logged %@", tp.description())
                         }
                     }   // End of check owith Distance and dTime
@@ -626,10 +631,10 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     func addPoints(arr: [TGLTrackPoint])
     {
         var pt1 : TGLTrackPoint?
-        var pt0 : TGLTrackPoint?
+//        var pt0 : TGLTrackPoint?
         
         if self.data.count > 0{
-            pt0 = self.data[0]
+//            pt0 = self.data[0]
             pt1 = self.data.last
         }
         else{
@@ -992,6 +997,58 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         
     }
     
+    func updateHR(results : [HKQuantitySample]) -> Bool {
+    
+        var somethingDone = false
+    
+    // Load HeartRate from HealthStore between the two dates
+    
+        let unit = HKUnit(fromString: "count/min")
+    
+        for tp in self.data {
+            if tp.heartRate == 0.0{
+                let d = tp.dtime
+                var s0 = results.first!
+                if d.timeIntervalSince1970 < s0.startDate.timeIntervalSince1970 {
+                    continue
+                }
+    
+                var s1 = results.last!
+    
+                if d.timeIntervalSince1970 > s1.endDate.timeIntervalSince1970{
+                    continue
+                }
+                for i in 1..<results.count {
+                
+                    s1 = results[i]
+    
+                    if s1.startDate.timeIntervalSince1970 >= d.timeIntervalSince1970{
+    
+                        let v0 = s0.quantity.doubleValueForUnit(unit)
+                        let v1 = s1.quantity.doubleValueForUnit(unit)
+                        let deltav = v1 - v0
+    
+                        let deltat = s1.startDate.timeIntervalSince1970-s0.startDate.timeIntervalSince1970
+                        let x = d.timeIntervalSince1970 - s0.startDate.timeIntervalSince1970
+    
+                        let hr = v0 + deltav / deltat * x
+                        tp.heartRate = hr
+                        tp.filteredHeartRate = hr
+                        somethingDone = true
+                        break;
+                    }
+                    else{
+                        s0 = s1
+                    }
+    
+                }
+            }
+        }
+        
+        return somethingDone
+    
+    }
+    
     //MARK: - Connection with server to register track
     
     func sendPoint(tp : TGLTrackPoint, procesa : Bool)
@@ -1142,7 +1199,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                     scanRed.scanHexInt(&iRed)
                     
                     let scanGreen = NSScanner(string:sGreen)
-                    scanRed.scanHexInt(&iGreen)
+                    scanGreen.scanHexInt(&iGreen)
                     
                     let scanBlue = NSScanner(string:sBlue)
                     scanBlue.scanHexInt(&iBlue)

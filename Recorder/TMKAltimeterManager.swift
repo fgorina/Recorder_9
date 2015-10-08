@@ -14,14 +14,10 @@ import MapKit
 class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
     
     
-    // MARK: Debug
-    
-    let debug = true
-    
     //MARK: - Controllers and system
     
-    var delegate : ViewController?
-    var locationManager : CLLocationManager?
+    var delegate : TMKAltimeterManagerDelegate?
+    var locationManager : CLLocationManager? = CLLocationManager()
     var motionActivityManager : CMMotionActivityManager?
     var location : CLLocation?
     var altimeter : CMAltimeter?
@@ -67,6 +63,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
     //MARK: - Init
     
     override init(){
+        debugLaunch("TMKAltimeterManager init enter")
         
         medidas = [TMKAltitudeData]()
         posiciones = [CLLocation]()
@@ -91,15 +88,40 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                         self.actualActivity = act
                         NSLog("Activity %@", act)
                         if let dele = self.delegate, act = self.actualActivity{
-                            if dele.activity != act.stringDescription {
-                                dele.activity = act.stringDescription
-                                dele.updateActivity()
-                            }
+                            dele.updateActivity(act)
                         }
                     }
                 }
             })
         }
+        
+        if let locm = self.locationManager {
+            debugLaunch("Configuring LocationManager")
+            
+            
+            locm.delegate = self
+            locm.activityType = CLActivityType.Fitness
+            locm.desiredAccuracy = kCLLocationAccuracyBest
+            locm.distanceFilter = kCLDistanceFilterNone
+            if #available(iOS 9.0, *) {
+                locm.allowsBackgroundLocationUpdates = true
+            } else {
+                // Fallback on earlier versions
+            }
+            
+            if CLLocationManager.authorizationStatus() == CLAuthorizationStatus.NotDetermined
+                || CLLocationManager.authorizationStatus() == CLAuthorizationStatus.Denied {
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        
+                        locm.requestAlwaysAuthorization()
+                    })
+                    
+            }
+            
+            debugLaunch("End Configuring LocationManager")
+            
+        }
+        debugLaunch("TMKAltimeterManager init exit")
     }
     
     
@@ -157,11 +179,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         self.posiciones.removeAll(keepCapacity: false)
         self.distancias.removeAll(keepCapacity: false)
         
-        
-        
         // Start reading altimeter data
-        
-        
         
         if let altm = self.altimeter{
             self.updating = true
@@ -177,38 +195,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                         self.medidas.append(dat)
                         objc_sync_exit(self)
                     }
-                    
             })
-            
-        }
-        
-        if self.locationManager == nil {
-            
-            self.locationManager = CLLocationManager()
-            
-            if let locm = self.locationManager {
-                
-                locm.delegate = self
-                locm.activityType = CLActivityType.Fitness
-                locm.desiredAccuracy = kCLLocationAccuracyBest
-                locm.distanceFilter = kCLDistanceFilterNone
-                if #available(iOS 9.0, *) {
-                    locm.allowsBackgroundLocationUpdates = true
-                } else {
-                    // Fallback on earlier versions
-                }
-                
-                if CLLocationManager.authorizationStatus() == CLAuthorizationStatus.NotDetermined
-                    || CLLocationManager.authorizationStatus() == CLAuthorizationStatus.Denied {
-                        
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                            locm.requestAlwaysAuthorization()
-                            
-                        })
-                        
-                }
-                
-            }
         }
         
         // Start updating pedometer data
@@ -227,6 +214,8 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         
         if let locm = self.locationManager {
             locm.startUpdatingLocation() // Haurem de modificar posteriorment
+            debugLaunch("LocationManager started")
+            
         }
         
         
@@ -260,10 +249,14 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         
         if let locm = self.locationManager{
             locm.stopUpdatingLocation() // Haurem de modificar posteriorment
+            debugLaunch("LocationManager stopped")
+            
         }
         
         if let altm = self.altimeter{
             altm.stopRelativeAltitudeUpdates()
+            debugLaunch("Altimeter stopped")
+            
         }
         
         self.medidas = Array()
@@ -682,7 +675,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                     h = (newHeight * mPrecission + pt.altitude * newPrecission)/(newPrecission + mPrecission)    // h bona?
                     sigma2 = 1/((1.0/mPrecission) + (1.0/newPrecission))
                     
-                    if self.debug{
+                    if GlobalConstants.debug{
                         NSLog("Calculant nova sigma a partir de %f i %f = %f", sqrt(mPrecission), sqrt(newPrecission), sqrt(sigma2))
                     }
                 }
@@ -701,7 +694,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 // Shift dels punts
                 
                 
-                if self.debug{
+                if GlobalConstants.debug{
                     NSLog("Filtrat h de %f +/- %f a %f +/- %f", pt.altitude, pt.verticalAccuracy, newLocation.altitude, newLocation.verticalAccuracy)
                 }
                 
@@ -786,7 +779,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 ptx.distanciaPedometer = 0.0
                 ptx.heading = loc.course
                 ptx.speed = loc.speed
-                
+                                
                 if let hrm = self.hrMonitor{
                     ptx.heartRate = Double(hrm.hr)
                 }
@@ -997,7 +990,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                     h = (newHeight * mPrecission + loc.altitude * newPrecission)/(newPrecission + mPrecission)    // h bona?
                     sigma2 = 1/((1.0/mPrecission) + (1.0/newPrecission))
                     
-                    if self.debug{
+                    if GlobalConstants.debug{
                         NSLog("Calculant nova sigma a partir de %f i %f = %f", sqrt(mPrecission), sqrt(newPrecission), sqrt(sigma2))
                     }
                 }
@@ -1053,7 +1046,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 // Shift dels punts
                 
                 
-                if self.debug{
+                if GlobalConstants.debug{
                     NSLog("Filtrat h de %f +/- %f a %f +/- %f", loc.altitude, loc.verticalAccuracy, ptx.ele, ptx.vPrecision)
                 }
                 
@@ -1109,59 +1102,58 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
     //MARK: - CLLocationManagerDelegate
     
     func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus){
+        //TODO: Add check for method existence
+        // dele.locationManager(manager, didChangeAuthorizationStatus:status )
         
-        if let dele = self.delegate{
-       
-                //TODO: Add check for method existence
-                dele.locationManager(manager, didChangeAuthorizationStatus:status )
-                
-            
+        if GlobalConstants.debug {
+            NSLog("Location Manager auth status changed")
         }
+        
     }
     
     func locationManager(manager: CLLocationManager,
         didUpdateLocations locations: [CLLocation])
     {
+        debugLaunch("LocationManager received locations")
         
+        // dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
+        objc_sync_enter(self)
+        
+        for loc : CLLocation in locations {
             
-            // dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
-                objc_sync_enter(self)
+            
+            if loc.horizontalAccuracy <= 20.0{  // Other data is really bad bad bad. probably GPS not fixes
                 
-                for loc : CLLocation in locations {
-                    
-                    
-                    if loc.horizontalAccuracy <= 20.0{  // Other data is really bad bad bad. probably GPS not fixes
-                        
-                        if let llc = self.lastLoc{
-                            if llc.distanceFromLocation(loc) >= 10.0{       // one point every 10 meters. Not less
-                                self.posiciones.append(loc)
-                                self.lastLoc = loc
-                            }
-                        }
-                        else
-                        {
-                            self.posiciones.append(loc)
-                            self.lastLoc = loc
-                        }
+                if let llc = self.lastLoc{
+                    if llc.distanceFromLocation(loc) >= 10.0{       // one point every 10 meters. Not less
+                        self.posiciones.append(loc)
+                        self.lastLoc = loc
                     }
                 }
-                objc_sync_exit(self)
-            
-            //self.filterAltura()
-            if self.posiciones.count > 0{
-                self.processData()
+                else
+                {
+                    self.posiciones.append(loc)
+                    self.lastLoc = loc
+                }
             }
-            //})
+        }
+        objc_sync_exit(self)
+        
+        //self.filterAltura()
+        if self.posiciones.count > 0{
+            self.processData()
+        }
+        //})
+        
+        if !self.deferringUpdates  {
+            let distance : CLLocationDistance =  1000.0 // Update every km
+            let time : NSTimeInterval = 60.0 // Or every 1'
             
-            if !self.deferringUpdates {
-                let distance : CLLocationDistance =  1000.0 // Update every km
-                let time : NSTimeInterval = 60.0 // Or every 1'
-                
-                manager.allowDeferredLocationUpdatesUntilTraveled(distance,  timeout:time)
-                self.deferringUpdates = true
-                
-            }
+            manager.allowDeferredLocationUpdatesUntilTraveled(distance,  timeout:time)
+            self.deferringUpdates = true
             
+        }
+        
         
     }
     

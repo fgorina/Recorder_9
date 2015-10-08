@@ -8,8 +8,8 @@
 
 import CoreMotion
 
-public enum ActivityEnum {
-    case Unknown
+public enum ActivityEnum : Int{
+    case Unknown = 0
     case Stationary
     case Walking
     case Running
