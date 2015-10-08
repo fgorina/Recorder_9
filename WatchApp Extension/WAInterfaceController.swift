@@ -15,30 +15,60 @@ import HealthKit
 
 class WAInterfaceController: WKInterfaceController {
     
+    //MARK: UI elements
+    
     @IBOutlet weak  var startButton : WKInterfaceButton!
     @IBOutlet weak  var workoutTimer :WKInterfaceTimer!
-    //@IBOutlet weak  var lapTimer : WKInterfaceTimer!
+    @IBOutlet weak  var lapTimer : WKInterfaceTimer!
     @IBOutlet weak  var distLabel : WKInterfaceLabel!
-    @IBOutlet weak  var hrCounterLabel : WKInterfaceLabel!
-    // @IBOutlet weak  var distLapLabel : WKInterfaceLabel!
+    //@IBOutlet weak  var hrCounterLabel : WKInterfaceLabel!
+    @IBOutlet weak  var distLapLabel : WKInterfaceLabel!
     
     @IBOutlet weak var sessionOnLabel : WKInterfaceImage!
+    
+    //MARK: State
     
     
     var distancia : Double? = 0
     var startTime : NSDate?
+    var ascent : Double? = 0
+    var descent : Double? = 0
+    var altura : Double? = 0
+    
+    var wStartTime : NSDate?
+    var wDistancia : Double? = 0
+    var wAscent : Double? = 0
+    var wDescent : Double? = 0
+    
     var state : appState = .Stopped
-    var query : HKQuery?
+    
     var counter : Int = 0
+   
+    //MARK: Other properties
+    
+    var query : HKQuery?
+    
+    var wcsession : WCSession? = WCSession.defaultSession()
+
     
     // Heart Rate Follow
    
     let heartRateUnit = HKUnit(fromString: "count/min")
     var anchor = HKQueryAnchor(fromValue: Int(HKAnchoredObjectQueryNoAnchor))
     
+    
+    //MARK: Controller Life Cicle
+    
     override func awakeWithContext(context: AnyObject?) {
         super.awakeWithContext(context)
         
+        
+        if let session = wcsession{
+            session.delegate = self
+            session.activateSession()
+            
+        }
+
         // Configure interface objects here.
     }
     
@@ -52,12 +82,17 @@ class WAInterfaceController: WKInterfaceController {
         super.didDeactivate()
     }
     
+    //MARK: User Actions
+    
     @IBAction func start()
     {
         /// Do start function with Recorder
         
         self.workoutTimer.setDate(NSDate())
         self.workoutTimer.start()
+        
+        self.lapTimer.setDate(NSDate())
+        self.lapTimer.start()
         
         // Try to send a message with start order to iPhone application
         
@@ -70,6 +105,7 @@ class WAInterfaceController: WKInterfaceController {
         /// Do start function with Recorder
         
         self.workoutTimer.stop()
+        self.lapTimer.stop()
         
         // Try to send a message with start order to iPhone application
         
@@ -82,6 +118,7 @@ class WAInterfaceController: WKInterfaceController {
         /// Do start function with Recorder
         
         self.workoutTimer.stop()
+        self.lapTimer.stop()
         
         // Try to send a message with start order to iPhone application
         
@@ -89,8 +126,10 @@ class WAInterfaceController: WKInterfaceController {
         
     }
     
+    //MARK: iOS Communication
+    
     func sendOp(op : String, value : AnyObject?){
-        if let session = (WKExtension.sharedExtension().delegate as? ExtensionDelegate)?.wcsession{
+        if let session = self.wcsession{
             
             if session.reachable {
                 
@@ -109,7 +148,7 @@ class WAInterfaceController: WKInterfaceController {
     
     func sendData(object: [HKQuantitySample]){
         
-         if let session = (WKExtension.sharedExtension().delegate as? ExtensionDelegate)?.wcsession{
+         if let session = self.wcsession{
         
             let data : NSData = NSKeyedArchiver.archivedDataWithRootObject(object)
             
@@ -137,10 +176,22 @@ class WAInterfaceController: WKInterfaceController {
         }
         distancia = applicationContext["distancia"] as? Double
         startTime = applicationContext["startTime"] as? NSDate
+        ascent = applicationContext["ascent"] as? Double
+        descent = applicationContext["descent"] as? Double
+        altura = applicationContext["altura"] as? Double
+        
+        wDistancia = applicationContext["wDistancia"] as? Double
+        wStartTime = applicationContext["wStartTime"] as? NSDate
+        wAscent = applicationContext["wAscent"] as? Double
+        wDescent = applicationContext["wDescent"] as? Double
+
         
         updateFields()
         
     }
+    
+    
+    //MARK: Internal actions
     
     func startRecording(){
         
@@ -184,7 +235,7 @@ class WAInterfaceController: WKInterfaceController {
         }
     }
     
-    
+    //MARK: Update Screen data
     
     
     func updateFields(){
@@ -202,6 +253,17 @@ class WAInterfaceController: WKInterfaceController {
                 }
             }
             
+            if let time = self.wStartTime {
+                self.lapTimer.setDate(time)
+                if self.state == .Recording{
+                    self.lapTimer.start()
+                }
+                else{
+                    self.lapTimer.stop()
+                }
+            }
+
+            
             if let v = self.distancia {
                 if v < 1000.0 {
                     
@@ -214,6 +276,20 @@ class WAInterfaceController: WKInterfaceController {
                 }
   
             }
+            
+            if let v = self.wDistancia {
+                if v < 1000.0 {
+                    
+                    let units = "m"
+                    self.distLapLabel.setText(String(format: "%3.0f%@", v, units))
+                }
+                else{
+                    let units = "Km"
+                    self.distLapLabel.setText(String(format: "%5.2f%@", v/1000.0, units))
+                }
+                
+            }
+
             
             var stateIcon = "record_64"
             
@@ -236,6 +312,22 @@ class WAInterfaceController: WKInterfaceController {
         })
     }
 }
+
+//MARK: WCSessionDelegate
+
+extension WAInterfaceController : WCSessionDelegate{
+    
+    func sessionWatchStateDidChange(session: WCSession) {
+        
+        NSLog("WCSessionState changed. Reachable %@", session.reachable)
+    }
+    
+    func session(session: WCSession, didReceiveApplicationContext applicationContext: [String : AnyObject]){
+
+        self.updateData(applicationContext)
+    }
+}
+
 
 
 //MARK: HKWorkoutSessionDelegate
@@ -329,7 +421,7 @@ extension WAInterfaceController : HKWorkoutSessionDelegate{
             self.startButton.setTitle(String(UInt16(value)))
             self.sendData(heartRateSamples)
             self.counter += heartRateSamples.count
-            self.hrCounterLabel.setText(String(self.counter))
+           // self.hrCounterLabel.setText(String(self.counter))
             
             // retrieve source from sample
             //let name = sample.sourceRevision.source.name
@@ -337,5 +429,4 @@ extension WAInterfaceController : HKWorkoutSessionDelegate{
             //self.animateHeart()
         }
     }
-    
 }

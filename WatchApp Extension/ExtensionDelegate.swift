@@ -12,18 +12,11 @@ import HealthKit
 
 class ExtensionDelegate: NSObject, WKExtensionDelegate {
     
-    var wcsession : WCSession?
     var healthStore : HKHealthStore?
     var wkSession : HKWorkoutSession?
     
     func applicationDidFinishLaunching() {
         // Perform any final initialization of your application.
-         wcsession = WCSession.defaultSession()
-        if let session = wcsession{
-            session.delegate = self
-            session.activateSession()
-        
-        }
         
         if HKHealthStore.isHealthDataAvailable() {
             self.requestAuthorization()
@@ -85,25 +78,3 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate {
     
 }
 
-//MARK: WCSessionDelegate
-
-extension ExtensionDelegate : WCSessionDelegate{
-    
-    func sessionWatchStateDidChange(session: WCSession) {
-        
-        NSLog("WCSessionState changed. Reachable %@", session.reachable)
-    }
-    
-    func session(session: WCSession, didReceiveApplicationContext applicationContext: [String : AnyObject]){
-        
-        let ext = WKExtension.sharedExtension()
-        if let rootController : WAInterfaceController = ext.rootInterfaceController as?WAInterfaceController{
-        
-            // Check if applicationContext
-            
-            
-            rootController.updateData(applicationContext)
-        }
-    }
-    
-}

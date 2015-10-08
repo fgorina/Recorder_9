@@ -15,7 +15,7 @@
                                 <timer alignment="left" id="Xyd-dB-fd3">
                                     <fontDescription key="font" type="system" pointSize="28"/>
                                 </timer>
-                                <imageView width="30" height="30" alignment="right" verticalAlignment="center" hidden="YES" image="record_on_64" id="6KX-xW-FPK">
+                                <imageView width="20" height="20" alignment="right" verticalAlignment="center" hidden="YES" image="indicator_full_64" id="6KX-xW-FPK">
                                     <color key="tintColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 </imageView>
                             </items>
@@ -25,19 +25,26 @@
                                 <button width="77" height="77" alignment="center" verticalAlignment="center" backgroundImage="record_64" id="MbM-23-rRY">
                                     <color key="titleColor" red="1" green="0.1039528395" blue="0.073276212359999995" alpha="1" colorSpace="calibratedRGB"/>
                                     <fontDescription key="font" type="system" pointSize="40"/>
+                                    <variation key="device=watch38mm" height="62" width="60"/>
                                     <connections>
                                         <action selector="start" destination="AgC-eL-Hgc" id="Jwj-3M-eWI"/>
                                     </connections>
                                 </button>
                             </items>
                         </group>
-                        <group width="1" alignment="left" verticalAlignment="bottom" id="2p0-uY-o7O">
+                        <group width="135" alignment="left" verticalAlignment="bottom" id="2p0-uY-o7O">
                             <items>
-                                <label alignment="left" text="0" id="Vge-gc-njE">
+                                <label alignment="left" verticalAlignment="bottom" text="0" id="Vge-gc-njE">
                                     <fontDescription key="font" type="system" pointSize="25"/>
                                 </label>
-                                <label alignment="right" verticalAlignment="center" text="0" id="fE7-G4-NMy"/>
+                                <group width="58" alignment="right" verticalAlignment="bottom" layout="vertical" id="cc4-ZO-Za1">
+                                    <items>
+                                        <timer alignment="right" verticalAlignment="bottom" id="LbM-fv-Og1"/>
+                                        <label alignment="right" verticalAlignment="bottom" text="0" id="fE7-G4-NMy"/>
+                                    </items>
+                                </group>
                             </items>
+                            <variation key="device=watch42mm" width="156"/>
                         </group>
                     </items>
                     <menu key="menu" id="KKr-qZ-7Tc">
@@ -56,14 +63,15 @@
                     </menu>
                     <connections>
                         <outlet property="distLabel" destination="Vge-gc-njE" id="CUB-Ay-Y3U"/>
-                        <outlet property="hrCounterLabel" destination="fE7-G4-NMy" id="083-d5-5Sb"/>
+                        <outlet property="distLapLabel" destination="fE7-G4-NMy" id="jHb-9g-Dzn"/>
+                        <outlet property="lapTimer" destination="LbM-fv-Og1" id="pRG-gR-Z3r"/>
                         <outlet property="sessionOnLabel" destination="6KX-xW-FPK" id="L51-k4-z0A"/>
                         <outlet property="startButton" destination="MbM-23-rRY" id="DoL-UR-jOe"/>
                         <outlet property="workoutTimer" destination="Xyd-dB-fd3" id="OU7-TR-BaA"/>
                     </connections>
                 </controller>
             </objects>
-            <point key="canvasLocation" x="164" y="217.5"/>
+            <point key="canvasLocation" x="163.89743589743591" y="216.64102564102566"/>
         </scene>
         <!--Glance Interface Controller-->
         <scene sceneID="rjY-Ar-IMT">
