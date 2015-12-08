@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="8191" systemVersion="15B22c" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="AgC-eL-Hgc">
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="8191" systemVersion="15B38b" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="AgC-eL-Hgc">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="8092"/>
@@ -22,10 +22,20 @@
                         </group>
                         <group width="1" alignment="left" verticalAlignment="center" id="Zkz-mS-euB">
                             <items>
-                                <button width="77" height="77" alignment="center" verticalAlignment="center" backgroundImage="record_64" id="MbM-23-rRY">
-                                    <color key="titleColor" red="1" green="0.1039528395" blue="0.073276212359999995" alpha="1" colorSpace="calibratedRGB"/>
-                                    <fontDescription key="font" type="system" pointSize="40"/>
-                                    <variation key="device=watch38mm" height="62" width="60"/>
+                                <button alignment="center" verticalAlignment="center" id="MbM-23-rRY">
+                                    <group key="contentGroup" width="1" alignment="left" layout="vertical" spacing="0.0" id="yJt-h8-SAa">
+                                        <items>
+                                            <label width="100" height="31" alignment="center" verticalAlignment="center" text="START" textAlignment="center" id="AB0-tq-7Hu">
+                                                <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <fontDescription key="font" type="system" pointSize="38"/>
+                                                <variation key="device=watch38mm" width="136"/>
+                                            </label>
+                                            <label width="1" height="18.5" alignment="center" verticalAlignment="center" text="bps" textAlignment="center" id="gdY-h5-SWt">
+                                                <color key="textColor" red="1" green="0.1039528395" blue="0.073276212359999995" alpha="1" colorSpace="calibratedRGB"/>
+                                                <fontDescription key="font" type="system" pointSize="15"/>
+                                            </label>
+                                        </items>
+                                    </group>
                                     <connections>
                                         <action selector="start" destination="AgC-eL-Hgc" id="Jwj-3M-eWI"/>
                                     </connections>
@@ -64,14 +74,153 @@
                     <connections>
                         <outlet property="distLabel" destination="Vge-gc-njE" id="CUB-Ay-Y3U"/>
                         <outlet property="distLapLabel" destination="fE7-G4-NMy" id="jHb-9g-Dzn"/>
+                        <outlet property="hrLabel" destination="AB0-tq-7Hu" id="uSk-ka-Y5X"/>
                         <outlet property="lapTimer" destination="LbM-fv-Og1" id="pRG-gR-Z3r"/>
                         <outlet property="sessionOnLabel" destination="6KX-xW-FPK" id="L51-k4-z0A"/>
                         <outlet property="startButton" destination="MbM-23-rRY" id="DoL-UR-jOe"/>
+                        <outlet property="unitsLabel" destination="gdY-h5-SWt" id="Nmk-bx-mUJ"/>
                         <outlet property="workoutTimer" destination="Xyd-dB-fd3" id="OU7-TR-BaA"/>
+                        <segue destination="FJc-9i-wfl" kind="relationship" relationship="nextPage" id="YHu-AB-uk2"/>
                     </connections>
                 </controller>
             </objects>
-            <point key="canvasLocation" x="163.89743589743591" y="216.64102564102566"/>
+            <point key="canvasLocation" x="156" y="209"/>
+        </scene>
+        <!--Speed Interface Controller-->
+        <scene sceneID="g0Y-qk-N4N">
+            <objects>
+                <controller hidesWhenLoading="NO" id="FJc-9i-wfl" customClass="WASpeedInterfaceController" customModule="WatchApp_Extension">
+                    <items>
+                        <group width="1" alignment="left" id="wYa-DH-GWF">
+                            <items>
+                                <timer alignment="left" id="L1L-Vb-Vno">
+                                    <fontDescription key="font" type="system" pointSize="28"/>
+                                </timer>
+                                <imageView width="20" height="20" alignment="right" verticalAlignment="center" hidden="YES" image="indicator_full_64" id="0pn-oU-3nc">
+                                    <color key="tintColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                </imageView>
+                            </items>
+                        </group>
+                        <group width="1" alignment="left" verticalAlignment="center" id="U1k-Gv-Lx3">
+                            <items>
+                                <button alignment="center" verticalAlignment="center" id="f0P-NW-h8L">
+                                    <group key="contentGroup" width="136" alignment="left" layout="vertical" spacing="0.0" id="ghE-NV-Gq6">
+                                        <items>
+                                            <label width="127" height="31" alignment="center" text="10,3" textAlignment="center" id="LgX-XK-HU9">
+                                                <color key="textColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <fontDescription key="font" type="system" pointSize="38"/>
+                                                <variation key="device=watch38mm" text="5:00"/>
+                                            </label>
+                                            <label width="136" height="13.5" alignment="center" text="km/h" textAlignment="center" id="HKe-I1-lcF">
+                                                <color key="textColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <fontDescription key="font" type="system" pointSize="15"/>
+                                                <variation key="device=watch38mm" text="min/km"/>
+                                            </label>
+                                        </items>
+                                        <variation key="device=watch38mm" width="136"/>
+                                    </group>
+                                    <connections>
+                                        <action selector="start" destination="AgC-eL-Hgc" id="YuA-sf-Pjh"/>
+                                    </connections>
+                                </button>
+                            </items>
+                        </group>
+                        <group width="135" alignment="left" verticalAlignment="bottom" id="wje-iL-q3B">
+                            <items>
+                                <label alignment="left" verticalAlignment="bottom" text="0" id="8sy-Y6-iI9">
+                                    <fontDescription key="font" type="system" pointSize="25"/>
+                                </label>
+                                <group width="58" alignment="right" verticalAlignment="bottom" layout="vertical" id="ajq-aK-rT0">
+                                    <items>
+                                        <timer alignment="right" verticalAlignment="bottom" id="eky-yL-E3g"/>
+                                        <label alignment="right" verticalAlignment="bottom" text="0" id="jfi-UV-Tw2"/>
+                                    </items>
+                                </group>
+                            </items>
+                            <variation key="device=watch42mm" width="156"/>
+                        </group>
+                    </items>
+                    <connections>
+                        <outlet property="distLabel" destination="8sy-Y6-iI9" id="nvo-JG-dd3"/>
+                        <outlet property="distLapLabel" destination="jfi-UV-Tw2" id="7Y5-0T-Xqk"/>
+                        <outlet property="lapTimer" destination="eky-yL-E3g" id="FK9-x6-8dj"/>
+                        <outlet property="sessionOnLabel" destination="0pn-oU-3nc" id="171-3i-MJw"/>
+                        <outlet property="speedLabel" destination="LgX-XK-HU9" id="cbT-Yy-n7W"/>
+                        <outlet property="unitsLabel" destination="HKe-I1-lcF" id="DTI-OS-blg"/>
+                        <outlet property="workoutTimer" destination="L1L-Vb-Vno" id="whv-q9-wEm"/>
+                        <segue destination="6G6-vV-rlo" kind="relationship" relationship="nextPage" id="cUR-wf-Y6C"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="413" y="209"/>
+        </scene>
+        <!--Climb Interface Controller-->
+        <scene sceneID="Ejq-Lx-NdG">
+            <objects>
+                <controller hidesWhenLoading="NO" id="6G6-vV-rlo" customClass="WAClimbInterfaceController" customModule="WatchApp_Extension">
+                    <items>
+                        <group width="1" alignment="left" id="JGT-th-QGu">
+                            <items>
+                                <timer alignment="left" id="6h0-PH-seU">
+                                    <fontDescription key="font" type="system" pointSize="28"/>
+                                </timer>
+                                <imageView width="20" height="20" alignment="right" verticalAlignment="center" hidden="YES" image="indicator_full_64" id="uP0-ui-ZPA">
+                                    <color key="tintColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                </imageView>
+                            </items>
+                        </group>
+                        <group width="1" alignment="left" verticalAlignment="center" id="4TA-1H-T4m">
+                            <items>
+                                <button alignment="center" verticalAlignment="center" id="1ZV-XY-QKH">
+                                    <group key="contentGroup" width="136" height="44.5" alignment="left" layout="vertical" spacing="0.0" id="Knv-oE-sS2">
+                                        <items>
+                                            <label width="127" height="31" alignment="center" text="600" textAlignment="center" id="Jy6-dK-9Ws">
+                                                <color key="textColor" red="0.0" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                <fontDescription key="font" type="system" pointSize="38"/>
+                                                <variation key="device=watch38mm" text="5:00"/>
+                                            </label>
+                                            <label width="136" height="13.5" alignment="center" text="m/h" textAlignment="center" id="Win-Vq-VRs">
+                                                <color key="textColor" red="0.0" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                <fontDescription key="font" type="system" pointSize="15"/>
+                                                <variation key="device=watch38mm" text="min/km"/>
+                                            </label>
+                                        </items>
+                                        <variation key="device=watch38mm" width="136"/>
+                                    </group>
+                                    <connections>
+                                        <action selector="start" destination="AgC-eL-Hgc" id="bT3-OW-xhx"/>
+                                    </connections>
+                                </button>
+                            </items>
+                        </group>
+                        <group width="135" alignment="left" verticalAlignment="bottom" id="XUY-qP-bTd">
+                            <items>
+                                <label alignment="left" verticalAlignment="bottom" text="0" id="9YJ-57-zKc">
+                                    <fontDescription key="font" type="system" pointSize="25"/>
+                                </label>
+                                <group width="58" alignment="right" verticalAlignment="bottom" layout="vertical" id="DGm-jC-xkN">
+                                    <items>
+                                        <timer alignment="right" verticalAlignment="bottom" id="u1E-8V-PdV"/>
+                                        <label alignment="right" verticalAlignment="bottom" text="0" id="aEC-Kv-qQi"/>
+                                    </items>
+                                </group>
+                            </items>
+                            <variation key="device=watch42mm" width="156"/>
+                        </group>
+                    </items>
+                    <connections>
+                        <outlet property="distLabel" destination="9YJ-57-zKc" id="WtJ-M3-vSJ"/>
+                        <outlet property="heightLabel" destination="Jy6-dK-9Ws" id="6Co-6R-bz9"/>
+                        <outlet property="hrlabel" destination="aEC-Kv-qQi" id="06l-gU-kuf"/>
+                        <outlet property="lapTimer" destination="u1E-8V-PdV" id="gaD-cJ-fk8"/>
+                        <outlet property="sessionOnLabel" destination="uP0-ui-ZPA" id="bxO-Ei-v4y"/>
+                        <outlet property="startButton" destination="1ZV-XY-QKH" id="9RF-xp-gw4"/>
+                        <outlet property="unitsLabel" destination="Win-Vq-VRs" id="RQh-f4-dci"/>
+                        <outlet property="workoutTimer" destination="6h0-PH-seU" id="AR8-OV-WWv"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="664" y="209"/>
         </scene>
         <!--Glance Interface Controller-->
         <scene sceneID="rjY-Ar-IMT">
