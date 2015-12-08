@@ -17,6 +17,7 @@ protocol TMKAltimeterManagerDelegate {
     func updateActivity(activity: CMMotionActivity)
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
     func updateTrackPoints(dat : [TGLTrackPoint])
+    func updateSpeed(speed : CLLocationSpeed)
 
     
 }

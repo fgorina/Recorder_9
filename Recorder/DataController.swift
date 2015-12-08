@@ -36,6 +36,7 @@ class DataController: NSObject {
     var ascent : Double = 0.0
     var descent : Double = 0.0
     var altura : Double = 0.0
+    var speed : Double = 0.0
     var vdop : Double = 0.0
     var HR : Int = 0
     var startTime : NSDate?
@@ -86,7 +87,7 @@ class DataController: NSObject {
         }
         
         self.almeter.delegate = self
-        self.almeter.hrMonitor = self.hrMonitor // Probablement ho haurem de canviar per aue el hrMonitor tambe el tingui el almeter
+        self.almeter.hrMonitor = self.hrMonitor // Probablement ho haurem de canviar per que el hrMonitor tambe el tingui el almeter
         
         self.initNotifications()
         debugLaunch("DataController init exit")
@@ -106,16 +107,19 @@ class DataController: NSObject {
         dict["ascent"]  =  ascent
         dict["descent"]  =  descent
         dict["altura"]  =  altura
+        dict["speed"] = speed
         dict["vdop"]  =  vdop
         dict["HR"]  =  HR
         dict["startTime"]  =  startTime
         dict["activity"]  =  activity?.activEnum().rawValue
+        dict["ascentSpeed"] = self.almeter.ascentSpeed
+        dict["descentSpeed"] = self.almeter.descentSpeed
         
         dict["wStartTime"]  =  wStartTime
         dict["wDistancia"]  =  wDistancia
         dict["wAscent"]  =  wAscent
         dict["wDescent"]  =  wDescent
-        
+        dict["hasHrMonitor"] = self.hrMonitor.connected
         
         return dict
         
@@ -123,21 +127,34 @@ class DataController: NSObject {
     
     func initNotifications()
     {
-        //       NSNotificationCenter.defaultCenter().addObserver(self, selector: "conexionActive:", name: TMKHeartRateMonitor.kSubscribedToHRStartedNotification, object: nil)
-        //        NSNotificationCenter.defaultCenter().addObserver(self, selector: "conexionClosed:", name: TMKHeartRateMonitor.kSubscribedToHRStopedNotification, object: nil)
+           // NSNotificationCenter.defaultCenter().addObserver(self, selector: "conexionActive:", name: TMKHeartRateMonitor.kSubscribedToHRStartedNotification, object: nil)
+           // NSNotificationCenter.defaultCenter().addObserver(self, selector: "conexionClosed:", name: TMKHeartRateMonitor.kSubscribedToHRStopedNotification, object: nil)
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "hrReceived:", name: TMKHeartRateMonitor.kHRReceivedNotification, object: nil)
         
         
     }
     
-    
-    
     func hrReceived(not : NSNotification)
     {
-        if let value = not.object as? Int {
+        if let sample = not.object as? HKQuantitySample {
+            
+            if self.heartArray == nil{
+                self.heartArray = [HKQuantitySample]()
+            }
+            
+            self.heartArray!.append(sample)
+            
+            let value = Int(floor(sample.quantity.doubleValueForUnit(heartRateUnit)))
             if value != self.HR {
                 self.HR = value
                 self.sendHRUpdatedNotification()
+                if #available(iOS 9,*){
+                    if self.sendToWatch{
+                        self.sendStateToWatch()
+                    }
+                }
+
             }
         }
     }
@@ -237,20 +254,21 @@ class DataController: NSObject {
     func doAddWaypoint(){
         if let track = self.recordingTrack {    // Get recording track
             
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
                 if let tp = track.data.last {
                     self.setWpData()
                     let wp = TMKWaypoint.newWaypointFromTrackPoint(_trackPoint: tp)
                     track.addWaypoint(wp)
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
+
                     let del : AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
                     let tpJSON = wp.toJSON()
                     tpJSON.setValue(2, forKey: "start");
                     
                     del.pushPoint(tpJSON)
                     del.procesServerQueue(false)    // Force a processQueue to send the WP if connected
-                    
+                    })
+                    self.sendStateUpdatedNotification()
                 }
-            })
         }
     }
     
@@ -481,6 +499,10 @@ extension DataController : TMKAltimeterManagerDelegate {
     }
     
     
+    func updateSpeed(speed: CLLocationSpeed) {
+        self.speed = speed
+    }
+    
 }
 
 
@@ -501,6 +523,12 @@ extension DataController :  WCSessionDelegate{
     func session(session: WCSession, didReceiveMessageData messageData: NSData) {
 
         if let dades = NSKeyedUnarchiver.unarchiveObjectWithData(messageData) as? [HKQuantitySample]{
+            
+            // Check if we already have a heart monitor. Forget local data
+            
+            if self.hrMonitor.connected{
+                return
+            }
             
             if self.heartArray != nil{
                 self.heartArray!.appendContentsOf(dades)
@@ -532,14 +560,19 @@ extension DataController :  WCSessionDelegate{
                     self.stopRecording()
                 }
                 
-                
+            case "waypoint" :
+                if self.doRecord == .Recording || self.doRecord == .Paused {
+                    
+                    self.doAddWaypoint()
+                }
+               
             default:
                 NSLog("Op de Watch desconeguda", op)
             }
             
         }
     }
-    
+
 }
 
 

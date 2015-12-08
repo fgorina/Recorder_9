@@ -25,7 +25,6 @@
 		00038B111ABDC3AD00540327 /* record_heart_on_32@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00038B011ABDC3AD00540327 /* record_heart_on_32@2x.png */; };
 		00038B131ABE088500540327 /* TMKAltitudeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00038B121ABE088500540327 /* TMKAltitudeData.swift */; };
 		00038B161ABE20DA00540327 /* TMKAltimeterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00038B151ABE20DA00540327 /* TMKAltimeterManager.swift */; };
-		0003AE451BAEA91F008AAF3C /* NSMutableArray+Queues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 005491771B36A844005DD749 /* NSMutableArray+Queues.swift */; };
 		00086A961AE7E37D00F50031 /* record_wp_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 00086A921AE7E37D00F50031 /* record_wp_64.png */; };
 		00086A971AE7E37D00F50031 /* record_wp_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 00086A921AE7E37D00F50031 /* record_wp_64.png */; };
 		00086A981AE7E37D00F50031 /* record_wp_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00086A931AE7E37D00F50031 /* record_wp_64@2x.png */; };
@@ -38,14 +37,6 @@
 		00086AA11AE808BF00F50031 /* record_wp_invert_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 00086A9E1AE808BF00F50031 /* record_wp_invert_64.png */; };
 		00086AA21AE808BF00F50031 /* record_wp_invert_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00086A9F1AE808BF00F50031 /* record_wp_invert_64@2x.png */; };
 		00086AA31AE808BF00F50031 /* record_wp_invert_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00086A9F1AE808BF00F50031 /* record_wp_invert_64@2x.png */; };
-		000884111BA033AE0076D47E /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000884101BA033AE0076D47E /* InterfaceController.swift */; };
-		000884131BA033AE0076D47E /* GlanceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000884121BA033AE0076D47E /* GlanceController.swift */; };
-		000884191BA033AE0076D47E /* Recorder WatchKit App.app in Resources */ = {isa = PBXBuildFile; fileRef = 000884181BA033AE0076D47E /* Recorder WatchKit App.app */; };
-		000884211BA033AE0076D47E /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0008841F1BA033AE0076D47E /* Interface.storyboard */; };
-		000884231BA033AE0076D47E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 000884221BA033AE0076D47E /* Images.xcassets */; };
-		000884271BA033AE0076D47E /* Recorder WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 0008840C1BA033AE0076D47E /* Recorder WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		0008842F1BA040C00076D47E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0008842E1BA040C00076D47E /* Images.xcassets */; };
-		000884301BA040C00076D47E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0008842E1BA040C00076D47E /* Images.xcassets */; };
 		0010ED281AED54AE00D19A33 /* act_Automotive_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 0010ED1E1AED54AE00D19A33 /* act_Automotive_64.png */; };
 		0010ED291AED54AE00D19A33 /* act_Automotive_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 0010ED1E1AED54AE00D19A33 /* act_Automotive_64.png */; };
 		0010ED2A1AED54AE00D19A33 /* act_Automotive_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0010ED1F1AED54AE00D19A33 /* act_Automotive_64@2x.png */; };
@@ -70,9 +61,10 @@
 		0010ED3F1AED5EC700D19A33 /* act_Stationary_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 0010ED3C1AED5EC700D19A33 /* act_Stationary_64.png */; };
 		0010ED401AED5EC700D19A33 /* act_Stationary_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0010ED3D1AED5EC700D19A33 /* act_Stationary_64@2x.png */; };
 		0010ED411AED5EC700D19A33 /* act_Stationary_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0010ED3D1AED5EC700D19A33 /* act_Stationary_64@2x.png */; };
-		001158B21BB5A4A800DF237B /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001158B11BB5A4A800DF237B /* DataController.swift */; settings = {ASSET_TAGS = (); }; };
-		001158B41BB5A78600DF237B /* TMKAltimeterManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001158B31BB5A78600DF237B /* TMKAltimeterManagerDelegate.swift */; settings = {ASSET_TAGS = (); }; };
-		001158B61BB85D6700DF237B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001158B51BB85D6700DF237B /* AppState.swift */; settings = {ASSET_TAGS = (); }; };
+		001158B21BB5A4A800DF237B /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001158B11BB5A4A800DF237B /* DataController.swift */; };
+		001158B41BB5A78600DF237B /* TMKAltimeterManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001158B31BB5A78600DF237B /* TMKAltimeterManagerDelegate.swift */; };
+		001158B61BB85D6700DF237B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001158B51BB85D6700DF237B /* AppState.swift */; };
+		0014AF4B1BEBD50400F7951C /* TMKMapUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0014AF4A1BEBD50400F7951C /* TMKMapUtilities.swift */; };
 		001888E81AB60F740072B0DB /* TMKHeartRateMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001888E71AB60F740072B0DB /* TMKHeartRateMonitor.swift */; };
 		001A57001A7EB2A100233AC7 /* Movescount_track.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 001A56FF1A7EB2A100233AC7 /* Movescount_track.gpx */; };
 		001A57021A7EB2D000233AC7 /* Traces_Track.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 001A57011A7EB2D000233AC7 /* Traces_Track.gpx */; };
@@ -83,7 +75,7 @@
 		0023C2C41AECCD640080A27A /* Traces_Track.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 001A57011A7EB2D000233AC7 /* Traces_Track.gpx */; };
 		0023C2C61AECCD640080A27A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 005A14981A7BDCF60041A73E /* Info.plist */; };
 		0023C2C91AECD20D0080A27A /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0023C2C81AECD20D0080A27A /* MapKit.framework */; };
-		0031BCF01BBE9A8200589CAC /* GlobalConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0031BCEF1BBE9A8200589CAC /* GlobalConstants.swift */; settings = {ASSET_TAGS = (); }; };
+		0031BCF01BBE9A8200589CAC /* GlobalConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0031BCEF1BBE9A8200589CAC /* GlobalConstants.swift */; };
 		005270FA1BB173EE00187BF1 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 005270F81BB173EE00187BF1 /* Interface.storyboard */; };
 		005270FC1BB173EE00187BF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 005270FB1BB173EE00187BF1 /* Assets.xcassets */; };
 		005271031BB173EE00187BF1 /* WatchApp Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 005271021BB173EE00187BF1 /* WatchApp Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -102,6 +94,9 @@
 		005A14891A7BDCF60041A73E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 005A14871A7BDCF60041A73E /* Main.storyboard */; };
 		005A148E1A7BDCF60041A73E /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 005A148C1A7BDCF60041A73E /* LaunchScreen.xib */; };
 		005A14A51A7BDD430041A73E /* TGLTrackPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 005A14A41A7BDD430041A73E /* TGLTrackPoint.swift */; };
+		005C1E5A1BC694130074C262 /* WAInterfaceNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 005C1E591BC694130074C262 /* WAInterfaceNavigation.swift */; };
+		005F9F811C16C823002C2655 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 005F9F801C16C823002C2655 /* Settings.bundle */; };
+		008C18F71BCFB7F7005CA5EE /* WAClimbInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008C18F61BCFB7F7005CA5EE /* WAClimbInterfaceController.swift */; };
 		009683821BC28A5800F50B01 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 009683811BC28A5800F50B01 /* HealthKit.framework */; };
 		009683851BC28D3400F50B01 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 009683841BC28D3400F50B01 /* HealthKit.framework */; };
 		009B193E1ADBDC5F0071C149 /* TMKImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009B193D1ADBDC5F0071C149 /* TMKImage.swift */; };
@@ -119,7 +114,9 @@
 		00AB6F1E1B9EEEDF009BA8DE /* pause_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 00AB6F171B9EEEDF009BA8DE /* pause_64.png */; };
 		00AB6F1F1B9EEEDF009BA8DE /* pause_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00AB6F181B9EEEDF009BA8DE /* pause_64@2x.png */; };
 		00AB6F201B9EEEDF009BA8DE /* pause_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00AB6F181B9EEEDF009BA8DE /* pause_64@2x.png */; };
+		00C981651BC6832E002A4D68 /* WASpeedInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C981641BC6832E002A4D68 /* WASpeedInterfaceController.swift */; };
 		00EB9D911BBB06EF00E313C2 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001158B51BB85D6700DF237B /* AppState.swift */; };
+		00EDB45B1BF3480B0067F4F7 /* HealthAuxiliar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00EDB45A1BF3480B0067F4F7 /* HealthAuxiliar.swift */; };
 		00F071EB1ACDC901006C525F /* record_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 00F071E71ACDC901006C525F /* record_64.png */; };
 		00F071EC1ACDC901006C525F /* record_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 00F071E71ACDC901006C525F /* record_64.png */; };
 		00F071ED1ACDC901006C525F /* record_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00F071E81ACDC901006C525F /* record_64@2x.png */; };
@@ -147,20 +144,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0008841A1BA033AE0076D47E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 005A14761A7BDCF60041A73E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 000884171BA033AE0076D47E;
-			remoteInfo = "Recorder WatchKit App";
-		};
-		000884241BA033AE0076D47E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 005A14761A7BDCF60041A73E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0008840B1BA033AE0076D47E;
-			remoteInfo = "Recorder WatchKit Extension";
-		};
 		005271041BB173EE00187BF1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 005A14761A7BDCF60041A73E /* Project object */;
@@ -191,7 +174,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				000884271BA033AE0076D47E /* Recorder WatchKit Extension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -237,15 +219,6 @@
 		00086A951AE7E37D00F50031 /* record_wp_on_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_wp_on_64@2x.png"; path = "RecorderTests/record_wp_on_64@2x.png"; sourceTree = SOURCE_ROOT; };
 		00086A9E1AE808BF00F50031 /* record_wp_invert_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_wp_invert_64.png; path = RecorderTests/record_wp_invert_64.png; sourceTree = SOURCE_ROOT; };
 		00086A9F1AE808BF00F50031 /* record_wp_invert_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_wp_invert_64@2x.png"; path = "RecorderTests/record_wp_invert_64@2x.png"; sourceTree = SOURCE_ROOT; };
-		0008840C1BA033AE0076D47E /* Recorder WatchKit Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Recorder WatchKit Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0008840F1BA033AE0076D47E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		000884101BA033AE0076D47E /* InterfaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceController.swift; sourceTree = "<group>"; };
-		000884121BA033AE0076D47E /* GlanceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlanceController.swift; sourceTree = "<group>"; };
-		000884181BA033AE0076D47E /* Recorder WatchKit App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Recorder WatchKit App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0008841E1BA033AE0076D47E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		000884201BA033AE0076D47E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
-		000884221BA033AE0076D47E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		0008842E1BA040C00076D47E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		0010ED1E1AED54AE00D19A33 /* act_Automotive_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = act_Automotive_64.png; path = RecorderTests/act_Automotive_64.png; sourceTree = SOURCE_ROOT; };
 		0010ED1F1AED54AE00D19A33 /* act_Automotive_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "act_Automotive_64@2x.png"; path = "RecorderTests/act_Automotive_64@2x.png"; sourceTree = SOURCE_ROOT; };
 		0010ED201AED54AE00D19A33 /* act_Cycling_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = act_Cycling_64.png; path = RecorderTests/act_Cycling_64.png; sourceTree = SOURCE_ROOT; };
@@ -261,6 +234,7 @@
 		001158B11BB5A4A800DF237B /* DataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		001158B31BB5A78600DF237B /* TMKAltimeterManagerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMKAltimeterManagerDelegate.swift; sourceTree = "<group>"; };
 		001158B51BB85D6700DF237B /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		0014AF4A1BEBD50400F7951C /* TMKMapUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMKMapUtilities.swift; sourceTree = "<group>"; };
 		001888E71AB60F740072B0DB /* TMKHeartRateMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMKHeartRateMonitor.swift; sourceTree = "<group>"; };
 		001A56FF1A7EB2A100233AC7 /* Movescount_track.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Movescount_track.gpx; path = RecorderTests/Movescount_track.gpx; sourceTree = SOURCE_ROOT; };
 		001A57011A7EB2D000233AC7 /* Traces_Track.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Traces_Track.gpx; path = RecorderTests/Traces_Track.gpx; sourceTree = SOURCE_ROOT; };
@@ -296,6 +270,9 @@
 		005A14981A7BDCF60041A73E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		005A14991A7BDCF60041A73E /* RecorderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderTests.swift; sourceTree = "<group>"; };
 		005A14A41A7BDD430041A73E /* TGLTrackPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGLTrackPoint.swift; sourceTree = "<group>"; wrapsLines = 0; };
+		005C1E591BC694130074C262 /* WAInterfaceNavigation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WAInterfaceNavigation.swift; sourceTree = "<group>"; };
+		005F9F801C16C823002C2655 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		008C18F61BCFB7F7005CA5EE /* WAClimbInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WAClimbInterfaceController.swift; sourceTree = "<group>"; };
 		009683811BC28A5800F50B01 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS2.0.sdk/System/Library/Frameworks/HealthKit.framework; sourceTree = DEVELOPER_DIR; };
 		009683831BC28A5800F50B01 /* WatchApp Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "WatchApp Extension.entitlements"; sourceTree = "<group>"; };
 		009683841BC28D3400F50B01 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
@@ -307,6 +284,8 @@
 		00AB6F161B9EEEDF009BA8DE /* pause_32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "pause_32@2x.png"; path = "RecorderTests/pause_32@2x.png"; sourceTree = SOURCE_ROOT; };
 		00AB6F171B9EEEDF009BA8DE /* pause_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pause_64.png; path = RecorderTests/pause_64.png; sourceTree = SOURCE_ROOT; };
 		00AB6F181B9EEEDF009BA8DE /* pause_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "pause_64@2x.png"; path = "RecorderTests/pause_64@2x.png"; sourceTree = SOURCE_ROOT; };
+		00C981641BC6832E002A4D68 /* WASpeedInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WASpeedInterfaceController.swift; sourceTree = "<group>"; };
+		00EDB45A1BF3480B0067F4F7 /* HealthAuxiliar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HealthAuxiliar.swift; sourceTree = "<group>"; };
 		00F071E71ACDC901006C525F /* record_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_64.png; path = RecorderTests/record_64.png; sourceTree = SOURCE_ROOT; };
 		00F071E81ACDC901006C525F /* record_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_64@2x.png"; path = "RecorderTests/record_64@2x.png"; sourceTree = SOURCE_ROOT; };
 		00F071E91ACDC901006C525F /* record_on_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_on_64.png; path = RecorderTests/record_on_64.png; sourceTree = SOURCE_ROOT; };
@@ -324,13 +303,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		000884091BA033AE0076D47E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		005270FF1BB173EE00187BF1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -358,43 +330,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0008840D1BA033AE0076D47E /* Recorder WatchKit Extension */ = {
-			isa = PBXGroup;
-			children = (
-				000884101BA033AE0076D47E /* InterfaceController.swift */,
-				000884121BA033AE0076D47E /* GlanceController.swift */,
-				0008840E1BA033AE0076D47E /* Supporting Files */,
-			);
-			path = "Recorder WatchKit Extension";
-			sourceTree = "<group>";
-		};
-		0008840E1BA033AE0076D47E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				0008842E1BA040C00076D47E /* Images.xcassets */,
-				0008840F1BA033AE0076D47E /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		0008841C1BA033AE0076D47E /* Recorder WatchKit App */ = {
-			isa = PBXGroup;
-			children = (
-				0008841F1BA033AE0076D47E /* Interface.storyboard */,
-				000884221BA033AE0076D47E /* Images.xcassets */,
-				0008841D1BA033AE0076D47E /* Supporting Files */,
-			);
-			path = "Recorder WatchKit App";
-			sourceTree = "<group>";
-		};
-		0008841D1BA033AE0076D47E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				0008841E1BA033AE0076D47E /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		005270F71BB173EE00187BF1 /* WatchApp */ = {
 			isa = PBXGroup;
 			children = (
@@ -410,6 +345,9 @@
 			children = (
 				009683831BC28A5800F50B01 /* WatchApp Extension.entitlements */,
 				005271071BB173EE00187BF1 /* WAInterfaceController.swift */,
+				00C981641BC6832E002A4D68 /* WASpeedInterfaceController.swift */,
+				008C18F61BCFB7F7005CA5EE /* WAClimbInterfaceController.swift */,
+				005C1E591BC694130074C262 /* WAInterfaceNavigation.swift */,
 				005271091BB173EE00187BF1 /* ExtensionDelegate.swift */,
 				0052710B1BB173EE00187BF1 /* GlanceController.swift */,
 				0052710D1BB173EE00187BF1 /* ComplicationController.swift */,
@@ -425,8 +363,6 @@
 			children = (
 				005A14801A7BDCF60041A73E /* Recorder */,
 				005A14961A7BDCF60041A73E /* RecorderTests */,
-				0008840D1BA033AE0076D47E /* Recorder WatchKit Extension */,
-				0008841C1BA033AE0076D47E /* Recorder WatchKit App */,
 				005270F71BB173EE00187BF1 /* WatchApp */,
 				005271061BB173EE00187BF1 /* WatchApp Extension */,
 				005A147F1A7BDCF60041A73E /* Products */,
@@ -438,8 +374,6 @@
 			children = (
 				005A147E1A7BDCF60041A73E /* Recorder.app */,
 				005A14931A7BDCF60041A73E /* RecorderTests.xctest */,
-				0008840C1BA033AE0076D47E /* Recorder WatchKit Extension.appex */,
-				000884181BA033AE0076D47E /* Recorder WatchKit App.app */,
 				005270F61BB173EE00187BF1 /* WatchApp.app */,
 				005271021BB173EE00187BF1 /* WatchApp Extension.appex */,
 			);
@@ -459,6 +393,7 @@
 				00AB6F0C1B9EE9FB009BA8DE /* Images.xcassets */,
 				005A14811A7BDCF60041A73E /* Supporting Files */,
 				009683841BC28D3400F50B01 /* HealthKit.framework */,
+				005F9F801C16C823002C2655 /* Settings.bundle */,
 			);
 			path = Recorder;
 			sourceTree = "<group>";
@@ -556,6 +491,8 @@
 				001158B11BB5A4A800DF237B /* DataController.swift */,
 				001158B31BB5A78600DF237B /* TMKAltimeterManagerDelegate.swift */,
 				0031BCEF1BBE9A8200589CAC /* GlobalConstants.swift */,
+				0014AF4A1BEBD50400F7951C /* TMKMapUtilities.swift */,
+				00EDB45A1BF3480B0067F4F7 /* HealthAuxiliar.swift */,
 			);
 			name = Objects;
 			sourceTree = "<group>";
@@ -563,39 +500,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0008840B1BA033AE0076D47E /* Recorder WatchKit Extension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0008842D1BA033AE0076D47E /* Build configuration list for PBXNativeTarget "Recorder WatchKit Extension" */;
-			buildPhases = (
-				000884081BA033AE0076D47E /* Sources */,
-				000884091BA033AE0076D47E /* Frameworks */,
-				0008840A1BA033AE0076D47E /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0008841B1BA033AE0076D47E /* PBXTargetDependency */,
-			);
-			name = "Recorder WatchKit Extension";
-			productName = "Recorder WatchKit Extension";
-			productReference = 0008840C1BA033AE0076D47E /* Recorder WatchKit Extension.appex */;
-			productType = "com.apple.product-type.watchkit-extension";
-		};
-		000884171BA033AE0076D47E /* Recorder WatchKit App */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0008842C1BA033AE0076D47E /* Build configuration list for PBXNativeTarget "Recorder WatchKit App" */;
-			buildPhases = (
-				000884161BA033AE0076D47E /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Recorder WatchKit App";
-			productName = "Recorder WatchKit App";
-			productReference = 000884181BA033AE0076D47E /* Recorder WatchKit App.app */;
-			productType = "com.apple.product-type.application.watchapp";
-		};
 		005270F51BB173EE00187BF1 /* WatchApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0052711C1BB173EE00187BF1 /* Build configuration list for PBXNativeTarget "WatchApp" */;
@@ -643,7 +547,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				000884251BA033AE0076D47E /* PBXTargetDependency */,
 				005271131BB173EE00187BF1 /* PBXTargetDependency */,
 			);
 			name = Recorder;
@@ -679,14 +582,6 @@
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Paco Gorina";
 				TargetAttributes = {
-					0008840B1BA033AE0076D47E = {
-						CreatedOnToolsVersion = 6.4;
-						DevelopmentTeam = N72U6DTDRE;
-					};
-					000884171BA033AE0076D47E = {
-						CreatedOnToolsVersion = 6.4;
-						DevelopmentTeam = N72U6DTDRE;
-					};
 					005270F51BB173EE00187BF1 = {
 						CreatedOnToolsVersion = 7.0;
 						DevelopmentTeam = N72U6DTDRE;
@@ -740,8 +635,6 @@
 			targets = (
 				005A147D1A7BDCF60041A73E /* Recorder */,
 				005A14921A7BDCF60041A73E /* RecorderTests */,
-				0008840B1BA033AE0076D47E /* Recorder WatchKit Extension */,
-				000884171BA033AE0076D47E /* Recorder WatchKit App */,
 				005270F51BB173EE00187BF1 /* WatchApp */,
 				005271011BB173EE00187BF1 /* WatchApp Extension */,
 			);
@@ -749,25 +642,6 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0008840A1BA033AE0076D47E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0008842F1BA040C00076D47E /* Images.xcassets in Resources */,
-				000884191BA033AE0076D47E /* Recorder WatchKit App.app in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		000884161BA033AE0076D47E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				000884301BA040C00076D47E /* Images.xcassets in Resources */,
-				000884211BA033AE0076D47E /* Interface.storyboard in Resources */,
-				000884231BA033AE0076D47E /* Images.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		005270F41BB173EE00187BF1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -816,6 +690,7 @@
 				00F071ED1ACDC901006C525F /* record_64@2x.png in Resources */,
 				0010ED361AED54AE00D19A33 /* act_Unknown_64@2x.png in Resources */,
 				00F071EF1ACDC901006C525F /* record_on_64.png in Resources */,
+				005F9F811C16C823002C2655 /* Settings.bundle in Resources */,
 				00F071F11ACDC901006C525F /* record_on_64@2x.png in Resources */,
 				00038B021ABDC3AD00540327 /* record_32.png in Resources */,
 				00038B041ABDC3AD00540327 /* record_32@2x.png in Resources */,
@@ -895,24 +770,17 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		000884081BA033AE0076D47E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0003AE451BAEA91F008AAF3C /* NSMutableArray+Queues.swift in Sources */,
-				000884111BA033AE0076D47E /* InterfaceController.swift in Sources */,
-				000884131BA033AE0076D47E /* GlanceController.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		005270FE1BB173EE00187BF1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				00C981651BC6832E002A4D68 /* WASpeedInterfaceController.swift in Sources */,
 				00EB9D911BBB06EF00E313C2 /* AppState.swift in Sources */,
 				0052710A1BB173EE00187BF1 /* ExtensionDelegate.swift in Sources */,
 				0052710E1BB173EE00187BF1 /* ComplicationController.swift in Sources */,
 				005271081BB173EE00187BF1 /* WAInterfaceController.swift in Sources */,
+				005C1E5A1BC694130074C262 /* WAInterfaceNavigation.swift in Sources */,
+				008C18F71BCFB7F7005CA5EE /* WAClimbInterfaceController.swift in Sources */,
 				0052710C1BB173EE00187BF1 /* GlanceController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -932,11 +800,13 @@
 				00038B131ABE088500540327 /* TMKAltitudeData.swift in Sources */,
 				001A57041A7EB6D200233AC7 /* TMKTrackDocument.swift in Sources */,
 				001A57061A7EB74A00233AC7 /* TGLTrack.swift in Sources */,
+				00EDB45B1BF3480B0067F4F7 /* HealthAuxiliar.swift in Sources */,
 				0054917C1B36EB11005DD749 /* TGLTrackPointJSON.swift in Sources */,
 				001158B61BB85D6700DF237B /* AppState.swift in Sources */,
 				005A14861A7BDCF60041A73E /* ViewController.swift in Sources */,
 				005491801B36FD1F005DD749 /* JSONMessage.swift in Sources */,
 				00FC98021B82018A009BF533 /* SettingsViewController.swift in Sources */,
+				0014AF4B1BEBD50400F7951C /* TMKMapUtilities.swift in Sources */,
 				001158B21BB5A4A800DF237B /* DataController.swift in Sources */,
 				005A14841A7BDCF60041A73E /* AppDelegate.swift in Sources */,
 				001A57081A7F79F900233AC7 /* TMKWaypoint.swift in Sources */,
@@ -956,16 +826,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0008841B1BA033AE0076D47E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 000884171BA033AE0076D47E /* Recorder WatchKit App */;
-			targetProxy = 0008841A1BA033AE0076D47E /* PBXContainerItemProxy */;
-		};
-		000884251BA033AE0076D47E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0008840B1BA033AE0076D47E /* Recorder WatchKit Extension */;
-			targetProxy = 000884241BA033AE0076D47E /* PBXContainerItemProxy */;
-		};
 		005271051BB173EE00187BF1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 005271011BB173EE00187BF1 /* WatchApp Extension */;
@@ -984,14 +844,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		0008841F1BA033AE0076D47E /* Interface.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				000884201BA033AE0076D47E /* Base */,
-			);
-			name = Interface.storyboard;
-			sourceTree = "<group>";
-		};
 		005270F81BB173EE00187BF1 /* Interface.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1019,96 +871,12 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		000884281BA033AE0076D47E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "Recorder WatchKit Extension/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = es.gorina.Recorder.watchkitextension;
-				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE = "";
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		000884291BA033AE0076D47E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "Recorder WatchKit Extension/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = es.gorina.Recorder.watchkitextension;
-				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE = "";
-				SKIP_INSTALL = YES;
-			};
-			name = Release;
-		};
-		0008842A1BA033AE0076D47E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				IBSC_MODULE = Recorder_WatchKit_Extension;
-				INFOPLIST_FILE = "Recorder WatchKit App/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
-				PRODUCT_BUNDLE_IDENTIFIER = es.gorina.Recorder.watchkitapp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 4;
-				"TARGETED_DEVICE_FAMILY[sdk=iphonesimulator*]" = "1,4";
-			};
-			name = Debug;
-		};
-		0008842B1BA033AE0076D47E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_NO_COMMON_BLOCKS = YES;
-				IBSC_MODULE = Recorder_WatchKit_Extension;
-				INFOPLIST_FILE = "Recorder WatchKit App/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
-				PRODUCT_BUNDLE_IDENTIFIER = es.gorina.Recorder.watchkitapp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 4;
-				"TARGETED_DEVICE_FAMILY[sdk=iphonesimulator*]" = "1,4";
-			};
-			name = Release;
-		};
 		005271161BB173EE00187BF1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
@@ -1131,7 +899,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1362,24 +1130,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0008842C1BA033AE0076D47E /* Build configuration list for PBXNativeTarget "Recorder WatchKit App" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0008842A1BA033AE0076D47E /* Debug */,
-				0008842B1BA033AE0076D47E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0008842D1BA033AE0076D47E /* Build configuration list for PBXNativeTarget "Recorder WatchKit Extension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				000884281BA033AE0076D47E /* Debug */,
-				000884291BA033AE0076D47E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		0052711A1BB173EE00187BF1 /* Build configuration list for PBXNativeTarget "WatchApp Extension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

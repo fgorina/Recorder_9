@@ -280,7 +280,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         // Si oldPath existeix es que ha petat la gravació. Recuperem les dades
         var newName : String = "new track.gpx"
         oldPath = nil   // Desactivem
-       
+        
         if let path = oldPath { // Desactivat per tests
             newName = NSString(string: path).lastPathComponent
         }
@@ -302,52 +302,52 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         //let cord : NSFileCoordinator = NSFileCoordinator(filePresenter: self.doc)
         //var error : NSError?
         
-//        cord.coordinateWritingItemAtURL(url,
- //           options: NSFileCoordinatorWritingOptions.ForReplacing,
-  //          error: &error)
-  //          { ( newURL :NSURL!) -> Void in
-                
-                // Check if it exits
-                
-                let mgr =  NSFileManager()
-                
-                
-                
-                let exists = mgr.fileExistsAtPath(url.path!)
-                
-                if !exists{
-                    mgr.createFileAtPath(url.path!, contents: "Hello".dataUsingEncoding(NSUTF8StringEncoding), attributes:nil)
+        //        cord.coordinateWritingItemAtURL(url,
+        //           options: NSFileCoordinatorWritingOptions.ForReplacing,
+        //          error: &error)
+        //          { ( newURL :NSURL!) -> Void in
+        
+        // Check if it exits
+        
+        let mgr =  NSFileManager()
+        
+        
+        
+        let exists = mgr.fileExistsAtPath(url.path!)
+        
+        if !exists{
+            mgr.createFileAtPath(url.path!, contents: "Hello".dataUsingEncoding(NSUTF8StringEncoding), attributes:nil)
+        }
+        
+        
+        
+        if let hdl = NSFileHandle(forWritingAtPath: url.path!){
+            hdl.truncateFileAtOffset(0)
+            hdl.writeData(self.xmlHeader.dataUsingEncoding(NSUTF8StringEncoding)!)
+            
+            for wp in self.waypoints {
+                if wp.type != WaypointType.Start && wp.type != WaypointType.End{
+                    hdl.writeData(wp.xmlText.dataUsingEncoding(NSUTF8StringEncoding)!)
                 }
-                
-                
-                
-                if let hdl = NSFileHandle(forWritingAtPath: url.path!){
-                    hdl.truncateFileAtOffset(0)
-                    hdl.writeData(self.xmlHeader.dataUsingEncoding(NSUTF8StringEncoding)!)
-                    
-                    for wp in self.waypoints {
-                        if wp.type != WaypointType.Start && wp.type != WaypointType.End{
-                            hdl.writeData(wp.xmlText.dataUsingEncoding(NSUTF8StringEncoding)!)
-                        }
-                    }
-                    
-                    hdl.writeData(self.trackHeader.dataUsingEncoding(NSUTF8StringEncoding)!)
-                        
-                    for tp in self.data {
-                        hdl.writeData(tp.xmlText.dataUsingEncoding(NSUTF8StringEncoding)!)
-                    }
-                        
-                    hdl.writeData(self.xmlFooter.dataUsingEncoding(NSUTF8StringEncoding)!)
-                    hdl.closeFile()
-                    return true
-                }
-                else
-                {
-                    return false
-                    //error = err
-                }
-                
-     //   } Fora manager
+            }
+            
+            hdl.writeData(self.trackHeader.dataUsingEncoding(NSUTF8StringEncoding)!)
+            
+            for tp in self.data {
+                hdl.writeData(tp.xmlText.dataUsingEncoding(NSUTF8StringEncoding)!)
+            }
+            
+            hdl.writeData(self.xmlFooter.dataUsingEncoding(NSUTF8StringEncoding)!)
+            hdl.closeFile()
+            return true
+        }
+        else
+        {
+            return false
+            //error = err
+        }
+        
+        //   } Fora manager
         
     }
     
@@ -384,7 +384,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                         hd.seekToEndOfFile()
                     }
                 }
-                
+                    
                 catch _{
                     
                 }
@@ -395,7 +395,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                 
                 do {
                     self.hdl = try NSFileHandle(forWritingToURL: url)
-                
+                    
                     if let hd = self.hdl{
                         hd.seekToEndOfFile()
                         hd.writeData(self.trackHeader.dataUsingEncoding(NSUTF8StringEncoding)!)
@@ -423,10 +423,6 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             self.hdl = nil
         }
         
-        
-      
-        
-        
         if let pth = self.path {
             if self.data.count < 2  {// No Data!!! De moment canviar per fer proves
                 do {
@@ -440,7 +436,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             {
                 
                 if let ha = heartRates{  // Update Heart Rates
-                    if self.updateHR(ha){
+                    if self.updateHR(ha, force:true){
                         self.writeToURL( NSURL(fileURLWithPath: pth))
                     }
                 }
@@ -457,16 +453,20 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                         forKey:NSURLThumbnailDictionaryKey)
                 }
                 catch _{
-                        NSLog("No puc gravar la imatge :)")
-                    }
+                    NSLog("No puc gravar la imatge :)")
+                }
                 do {
                     try NSFileManager.defaultManager().setUbiquitous(true, itemAtURL: url, destinationURL: destUrl)
                     
                 }catch _{
-                        NSLog("Error al passar al iCLoud ")
-                    }
-                    
+                    NSLog("Error al passar al iCLoud ")
+                }
                 
+                // Now create a new Workout
+                
+                if #available(iOS 9.0, *) {
+                    self.createWorkout(heartRates)
+                }
             }
         }
         
@@ -478,6 +478,101 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         
         let del : AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         del.procesServerQueue(true)
+        
+    }
+    
+    func totalEnergyBurned () -> Double
+    {
+            var tot = 0.0
+        
+        for tp in self.data{
+            tot = tot + tp.calories
+        }
+        
+        return tot
+        
+    }
+    
+    
+    
+    @available(iOS 9.0, *)
+    
+    func createWorkout(heartRates : [HKQuantitySample]?){
+        
+        if let delegate = UIApplication.sharedApplication().delegate as? AppDelegate {
+            
+            if let healthStore = delegate.healthData?.healthStore{ // If healthStore exists we are authorized
+                
+                let tp0 = self.data.first!
+                let tp1 = self.data.last!
+                let date0 = tp0.dtime
+                let date1 = tp1.dtime
+                
+                let u = HKUnit.meterUnit()
+                let d = tp1.distanciaOrigen
+                let dist = HKQuantity(unit: u, doubleValue: d)
+                
+                let cal = HKQuantity(unit: HKUnit.calorieUnit() , doubleValue:totalEnergyBurned())
+                
+                
+                let wk = HKWorkout(activityType: HKWorkoutActivityType.Running, startDate: date0, endDate: date1, duration: date1.timeIntervalSinceDate(date0), totalEnergyBurned: cal, totalDistance: dist, device: nil, metadata: nil)
+                
+                healthStore.saveObject(wk, withCompletion: { (done: Bool, err : NSError?) -> Void in
+                    
+                    if done {
+                        // Now add the hr samples
+                        
+                        if let hr = heartRates {
+                            
+                            healthStore.addSamples(hr, toWorkout: wk, completion: { (done : Bool, err : NSError?) -> Void in
+                                if let er = err where !done {
+                                    NSLog("Error al afegir samples : %@", er.localizedDescription)
+                                    return
+                                }
+                                
+                            })
+                        }
+                        
+                        // Now add calories samples
+                        
+                        let activeCalType = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierActiveEnergyBurned)!
+                        
+                        var tp0 : TGLTrackPoint?
+                        
+                        var samples : [HKQuantitySample] = [HKQuantitySample]()
+                        
+                        for tp in self.data where tp.activeCalories > 0.0{
+                            
+                            let cal = HKQuantity(unit: HKUnit.calorieUnit() , doubleValue:tp.activeCalories*1000.0)
+                            
+                            if let tpx = tp0 {
+                            
+                                let sample = HKQuantitySample(type: activeCalType, quantity: cal, startDate: tpx.dtime, endDate: tp.dtime)
+                                
+                                samples.append(sample)
+                          
+                            
+                            }
+                            
+                            tp0 = tp
+                        }
+                        healthStore.addSamples(samples, toWorkout: wk, completion: { (done : Bool, err : NSError?) -> Void in
+                            if let er = err where !done {
+                                NSLog("Error al afegir samples de calories: %@", er.localizedDescription)
+                                return
+                            }
+                        })
+                        
+                    }
+                    else if let er = err {
+                        NSLog("Error al crear workout : %@", er.localizedDescription)
+                        return
+                    }
+                })
+                
+            }
+            
+        }
         
     }
     
@@ -528,7 +623,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                 if let act = activity{
                     tp.activity = act.activEnum()
                 }
-
+                
                 
                 if pt0 == nil{   // Es tracta del primer punt. Fins que no tinguem un bon fixing no fem res
                     tp.tempsOrigen = 0.0
@@ -631,10 +726,10 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     func addPoints(arr: [TGLTrackPoint])
     {
         var pt1 : TGLTrackPoint?
-//        var pt0 : TGLTrackPoint?
+        //        var pt0 : TGLTrackPoint?
         
         if self.data.count > 0{
-//            pt0 = self.data[0]
+            //            pt0 = self.data[0]
             pt1 = self.data.last
         }
         else{
@@ -680,7 +775,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                 self.lastTimeSent = NSDate()
             }
             
-         } // Fi del for en locations
+        } // Fi del for en locations
         
         // [self updateBoundingBox]; //  Updatinf general data
         
@@ -713,7 +808,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             objc_sync_exit(self.hdl)
         }
     }
-
+    
     
     // MARK: - Utilities
     
@@ -997,56 +1092,91 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         
     }
     
-    func updateHR(results : [HKQuantitySample]) -> Bool {
-    
+    func updateHR(results : [HKQuantitySample], force:Bool=false) -> Bool {
+        
+        // Load Healthkit Data
+        
+        
+        if results.count == 0{
+            return false
+        }
+        
+        let dele = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        var hdata : HealthAuxiliar?
+        
+        if let hd = dele.healthData {
+            hdata = hd
+        }
+        
+        
         var somethingDone = false
-    
-    // Load HeartRate from HealthStore between the two dates
-    
+        
+        // Load HeartRate from HealthStore between the two dates
+        
         let unit = HKUnit(fromString: "count/min")
-    
+        
+        var oldTp : TGLTrackPoint?
+        
         for tp in self.data {
-            if tp.heartRate == 0.0{
+            if tp.heartRate == 0.0 || force{
                 let d = tp.dtime
                 var s0 = results.first!
                 if d.timeIntervalSince1970 < s0.startDate.timeIntervalSince1970 {
                     continue
                 }
-    
+                
                 var s1 = results.last!
-    
+                
                 if d.timeIntervalSince1970 > s1.endDate.timeIntervalSince1970{
                     continue
                 }
                 for i in 1..<results.count {
-                
+                    
                     s1 = results[i]
-    
+                    
                     if s1.startDate.timeIntervalSince1970 >= d.timeIntervalSince1970{
-    
+                        
                         let v0 = s0.quantity.doubleValueForUnit(unit)
                         let v1 = s1.quantity.doubleValueForUnit(unit)
                         let deltav = v1 - v0
-    
-                        let deltat = s1.startDate.timeIntervalSince1970-s0.startDate.timeIntervalSince1970
+                        
+                        let deltat = s1.startDate.timeIntervalSinceDate(s0.startDate)
                         let x = d.timeIntervalSince1970 - s0.startDate.timeIntervalSince1970
-    
+                        
                         let hr = v0 + deltav / deltat * x
                         tp.heartRate = hr
                         tp.filteredHeartRate = hr
+                        
+                        // Compute calories. Get time from previous point
+                        
+                        if let tp0 = oldTp, hd = hdata {
+                            
+                            let d = tp.dtime.timeIntervalSinceDate(tp0.dtime)
+                            
+                            let cal = hd.calories(hr, duracio: d)
+                            
+                            tp.calories = cal.total
+                            tp.activeCalories = cal.activ
+                            
+                        }
+                        
+                        oldTp = tp
+                        
+                        
                         somethingDone = true
                         break;
                     }
                     else{
                         s0 = s1
                     }
-    
+                    
                 }
             }
         }
         
         return somethingDone
-    
+        
     }
     
     //MARK: - Connection with server to register track
@@ -1063,9 +1193,9 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             del.procesServerQueue(false)
         }
         
-     }
+    }
     
-
+    
     
     //MARK:  - NSXMLParserDelegate
     
@@ -1144,8 +1274,8 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     
     public func parser(parser: NSXMLParser, foundCharacters string: String) {
         
-            buildingChars.appendString(string)
-         
+        buildingChars.appendString(string)
+        
     }
     
     public func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
@@ -1250,6 +1380,21 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                     }
                 }
                 
+            case "gpxdata:calories":
+                if let pt = point {
+                    // Compute time Veure el significat. De moment string
+                    pt.calories = buildingChars.doubleValue
+                    
+                }
+
+                
+            case "gpxdata:activecalories":
+                if let pt = point {
+                    // Compute time Veure el significat. De moment string
+                    pt.activeCalories = buildingChars.doubleValue
+                    
+                }
+
             case "elapsedTime":
                 lapTime = Double(buildingChars.integerValue)
                 
@@ -1319,8 +1464,9 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                         
                         if !firstPoint  {
                             if let op = oldPoint{
-                                pt.dtime != op.dtime
-                                speed = d / pt.dtime.timeIntervalSinceDate(op.dtime)
+                                if pt.dtime != op.dtime{
+                                    speed = d / pt.dtime.timeIntervalSinceDate(op.dtime)
+                                }
                             }
                         }
                             

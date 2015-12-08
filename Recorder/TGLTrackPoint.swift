@@ -32,6 +32,8 @@ public class TGLTrackPoint  {
     public var heartRate : Double = 0.0
     public var filteredHeartRate : Double = 0.0
     public var temperatura : Double = 0.0
+    public var calories : Double = 0.0
+    public var activeCalories : Double = 0.0
     
     public var activity : ActivityEnum = .Unknown
     
@@ -102,6 +104,13 @@ public class TGLTrackPoint  {
         str.appendFormat("<gpxdata:hr>%4.2f</gpxdata:hr>\n", self.heartRate)
         str.appendFormat("<gpxdata:temp>%4.2f</gpxdata:temp>\n", self.temperatura)
         str.appendFormat("<gpxdata:distance>%8.2f</gpxdata:distance>\n", self.distanciaOrigen)
+        if self.calories != 0.0 {
+            str.appendFormat("<gpxdata:calories>%8.2f</gpxdata:calories>\n", self.calories)
+        }
+        if self.activeCalories != 0.0 {
+            str.appendFormat("<gpxdata:activecalories>%8.2f</gpxdata:activecalories>\n", self.activeCalories)
+        }
+
         str.appendFormat("<tracesdata:activity>%@</tracesdata:activity>\n", self.activityDesc)
         str.appendFormat("<tracesdata:heading>%8.2f</tracesdata:heading>\n", self.heading)
         str.appendFormat("<tracesdata:distancePedometer>%8.2f</tracesdata:distancePedometer>\n", self.distanciaPedometer)

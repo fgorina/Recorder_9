@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreBluetooth
+import HealthKit
 
 public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     
@@ -29,16 +30,37 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
     struct hrdata {
         var flags : UInt8
         var hr : UInt8
-        var rr : [UInt16]
+        var rr0 : UInt16 = 0
+        var rr1 : UInt16 = 0
+        var rr2 : UInt16 = 0
+        var rr3 : UInt16 = 0
+        var rr4 : UInt16 = 0
+        var rr5 : UInt16 = 0
+        var rr6 : UInt16 = 0
+        var rr7 : UInt16 = 0
+        var rr8 : UInt16 = 0
+        var rr9 : UInt16 = 0
+        
     }
     
     struct battData {
         var value : UInt8
     }
     
+    
+    // Devide id
+    
+    var manufacturer : String?
+    var model : String?
+    var serial : String?
+    var hardwareVer : String?
+    var firmwareVer : String?
+    var softwareVer : String?
+    
+    
     // MARK: - Constants
     
-   static  public let kScanningHRStartedNotification = "kScanningHRStartedNotification"
+    static  public let kScanningHRStartedNotification = "kScanningHRStartedNotification"
     static  public let kScanningHRStopedNotification = "kScanningHRStopedNotification"
     
     static  public let kSubscribedToHRStartedNotification = "kSubscribedToHRStartedNotification"
@@ -50,6 +72,14 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
     
     static  public let kUUIDHeartRateService = "180D"
     static  public let kUUIDHeartRateVariable = "2A37"
+    static  public let kUUIDDeviceInfoService = "180A"
+    static  public let kUUIDManufacturerNameVariable = "2A29"
+    static  public let kUUIDModelNameVariable = "2A24"
+    static  public let kUUIDSerialNumberVariable = "2A25"
+    static  public let kUUIDHardwareVersion = "2A27"
+    static  public let kUUIDFirmwareVersion = "2A26"
+    static  public let kUUIDSoftwareVersion = "2A28"
+    
     
     static  public let kUUIDBatteryLevelService = "180F"
     static  public let kUUIDBatteryLevelVariable = "2A19"
@@ -58,6 +88,11 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
     static  public let kUUIDMioLinkHRZonesVariable = "6C722A82-5BF1-4F64-9170-381C08EC57EE"
     
     static  public let kLastHRDeviceAccessedKey = "XHRDEVICE"
+    
+    static public let kHeartRateType = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierHeartRate)
+    
+    static  public let kBeatsPerMinute = HKUnit(fromString: "count/min")
+    
     
     // MARK:  - Public
     
@@ -68,7 +103,7 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
         self.data =  NSMutableData()
         self.hr = 0
         self.battery = 0
-//        self.delegate = nil
+        //        self.delegate = nil
         
         super.init()
     }
@@ -91,9 +126,6 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
         
     }
     
-    
-    
-    
     // MARK: - Central Manager Delegate
     
     public func centralManagerDidUpdateState(central : CBCentralManager)
@@ -114,19 +146,19 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
             let store = NSUserDefaults.standardUserDefaults()
             let device = store.stringForKey(TMKHeartRateMonitor.kLastHRDeviceAccessedKey)
             
-            if device != nil    // Try to connect to last connected peripheral
+            if device != nil   && false  // Try to connect to last connected peripheral
             {
                 
                 let ids = [NSUUID(UUIDString:device!)!]
                 
-
+                
                 
                 let devs : [CBPeripheral] = self.centralManager!.retrievePeripheralsWithIdentifiers(ids)
                 if devs.count > 0
                 {
                     let peri : CBPeripheral = devs[0]
                     
-                    self.centralManager(central,  didDiscoverPeripheral:peri, advertisementData:["Heelo":"Hello"],  RSSI:NSNumber())
+                    self.centralManager(central,  didDiscoverPeripheral:peri, advertisementData:["Hello":"Hello"],  RSSI:NSNumber())
                     return
                 }
                 
@@ -135,7 +167,7 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
             // If we are here we may try to look for a connected device known to the central manager
             
             let services = [CBUUID(string:TMKHeartRateMonitor.kUUIDHeartRateService)]
-            let moreDevs : [CBPeripheral] = self.centralManager!.retrieveConnectedPeripheralsWithServices(services) 
+            let moreDevs : [CBPeripheral] = self.centralManager!.retrieveConnectedPeripheralsWithServices(services)
             
             if  moreDevs.count > 0
             {
@@ -226,8 +258,15 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
         
         //[peripheral discoverServices:nil];
         
+        manufacturer = ""
+        model = ""
+        serial = ""
+        hardwareVer = ""
+        firmwareVer = ""
+        softwareVer = ""
         
-        peripheral.discoverServices([CBUUID(string:TMKHeartRateMonitor.kUUIDHeartRateService),CBUUID(string:TMKHeartRateMonitor.kUUIDBatteryLevelService), CBUUID(string:TMKHeartRateMonitor.kUUIDMioLinkHRZonesService)])
+        
+        peripheral.discoverServices([CBUUID(string:TMKHeartRateMonitor.kUUIDHeartRateService),CBUUID(string:TMKHeartRateMonitor.kUUIDBatteryLevelService), CBUUID(string:TMKHeartRateMonitor.kUUIDMioLinkHRZonesService), CBUUID(string:TMKHeartRateMonitor.kUUIDDeviceInfoService)])
     }
     
     public func centralManager(central: CBCentralManager,
@@ -243,18 +282,21 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
             let store = NSUserDefaults.standardUserDefaults()
             let device = store.stringForKey(TMKHeartRateMonitor.kLastHRDeviceAccessedKey)
             
-            if(device != nil)   // Try to connect to last connected peripheral
+            if let dev = device  // Try to connect to last connected peripheral
             {
                 
-                let ids  = [NSUUID(UUIDString:device!)!]
-                let devs : [CBPeripheral] = self.centralManager!.retrievePeripheralsWithIdentifiers(ids) 
-                
-                if devs.count > 0
-                {
-                    let peri : CBPeripheral = devs[0]
+                if let theId = NSUUID(UUIDString:dev){
                     
-                    self.centralManager(central,  didDiscoverPeripheral:peri,  advertisementData:["Hello" : "Hello"],  RSSI:NSNumber())
-                    return;
+                    let ids  = [theId]
+                    let devs : [CBPeripheral] = self.centralManager!.retrievePeripheralsWithIdentifiers(ids)
+                    
+                    if devs.count > 0
+                    {
+                        let peri : CBPeripheral = devs[0]
+                        
+                        self.centralManager(central,  didDiscoverPeripheral:peri,  advertisementData:["Hello" : "Hello"],  RSSI:NSNumber())
+                        return;
+                    }
                 }
             }
             
@@ -271,29 +313,41 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
         didDiscoverServices error: NSError?)
     {
         
-
+        
         if let serv = peripheral.services{
-        for sr in serv
-        {
-            NSLog("Service %@", sr.UUID.UUIDString)
-            
-            if sr.UUID.UUIDString == TMKHeartRateMonitor.kUUIDHeartRateService
+            for sr in serv
             {
-                let charUUIDs = [CBUUID(string:TMKHeartRateMonitor.kUUIDHeartRateVariable)]
-                peripheral.discoverCharacteristics(charUUIDs, forService:sr)
-            }
+                NSLog("Service %@", sr.UUID.UUIDString)
                 
-            else if sr.UUID.UUIDString == TMKHeartRateMonitor.kUUIDBatteryLevelService
-            {
-                let charUUIDs = [CBUUID(string:TMKHeartRateMonitor.kUUIDBatteryLevelVariable)]
-                peripheral.discoverCharacteristics(charUUIDs, forService:sr)
+                if sr.UUID.UUIDString == TMKHeartRateMonitor.kUUIDHeartRateService
+                {
+                    let charUUIDs = [CBUUID(string:TMKHeartRateMonitor.kUUIDHeartRateVariable)]
+                    peripheral.discoverCharacteristics(charUUIDs, forService:sr)
+                }
+                    
+                else if sr.UUID.UUIDString == TMKHeartRateMonitor.kUUIDBatteryLevelService
+                {
+                    let charUUIDs = [CBUUID(string:TMKHeartRateMonitor.kUUIDBatteryLevelVariable)]
+                    peripheral.discoverCharacteristics(charUUIDs, forService:sr)
+                }
+                else if sr.UUID.UUIDString == TMKHeartRateMonitor.kUUIDMioLinkHRZonesService
+                {
+                    let charUUIDs = [CBUUID(string:TMKHeartRateMonitor.kUUIDMioLinkHRZonesVariable)]
+                    peripheral.discoverCharacteristics(charUUIDs, forService:sr)
+                }
+                else if sr.UUID.UUIDString == TMKHeartRateMonitor.kUUIDDeviceInfoService{
+                    
+                    let charUUIDs = [CBUUID(string:TMKHeartRateMonitor.kUUIDManufacturerNameVariable),
+                        CBUUID(string:TMKHeartRateMonitor.kUUIDModelNameVariable),
+                        CBUUID(string:TMKHeartRateMonitor.kUUIDSerialNumberVariable),
+                        CBUUID(string:TMKHeartRateMonitor.kUUIDHardwareVersion),
+                        CBUUID(string:TMKHeartRateMonitor.kUUIDFirmwareVersion),
+                        CBUUID(string:TMKHeartRateMonitor.kUUIDSoftwareVersion)]
+                    
+                    peripheral.discoverCharacteristics(charUUIDs, forService:sr)
+                    
+                }
             }
-            else if sr.UUID.UUIDString == TMKHeartRateMonitor.kUUIDMioLinkHRZonesService
-            {
-                let charUUIDs = [CBUUID(string:TMKHeartRateMonitor.kUUIDMioLinkHRZonesVariable)]
-                peripheral.discoverCharacteristics(charUUIDs, forService:sr)
-            }
-        }
         }
         
     }
@@ -307,32 +361,22 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
         // Sembla una bona conexio, la guardem per mes endavant
         let store = NSUserDefaults.standardUserDefaults()
         let idPeripheral = peripheral.identifier.UUIDString
+        
         store.setObject(idPeripheral, forKey:TMKHeartRateMonitor.kLastHRDeviceAccessedKey)
         
         if let characteristics = service.characteristics {
-            var cho : CBCharacteristic?
-            
-            if characteristics.count > 0{
-                cho = characteristics[0]
-            }
-            
-            if let ch = cho {
+            for ch in characteristics {
                 
                 if ch.UUID.UUIDString == TMKHeartRateMonitor.kUUIDHeartRateVariable
                 {
                     peripheral.setNotifyValue(true, forCharacteristic:ch)
-                    self.sendNotification(TMKHeartRateMonitor.kSubscribedToHRStartedNotification, object:nil)
+                    self.sendNotification(TMKHeartRateMonitor.kSubscribedToHRStartedNotification, object:peripheral)
                     self.connected = true
                 }
-                else if ch.UUID.UUIDString == TMKHeartRateMonitor.kUUIDBatteryLevelVariable
-                {
+                else{
                     peripheral.readValueForCharacteristic(ch)
                 }
-                else if ch.UUID.UUIDString == TMKHeartRateMonitor.kUUIDMioLinkHRZonesVariable
-                {
-                    peripheral.readValueForCharacteristic(ch)
-                    
-                }
+                
             }
         }
         
@@ -347,10 +391,19 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
             if characteristic.UUID.UUIDString == TMKHeartRateMonitor.kUUIDHeartRateVariable  // HR
             {
                 
-                var dades = hrdata(flags: 0, hr: 0, rr: [0])
                 
                 
-                characteristic.value!.getBytes(&dades, length: 2)
+                let siz = characteristic.value!.length
+                
+                var nrr = (siz - 2) / 2
+                
+                if nrr > 12{
+                    nrr = 12
+                }
+                
+                var dades = hrdata(flags: 0, hr: 0, rr0:0, rr1:0, rr2:0, rr3:0, rr4:0, rr5:0, rr6:0, rr7:0, rr8:0, rr9:0)
+                
+                characteristic.value!.getBytes(&dades, length: siz)
                 
                 let value = dades.hr
                 //UInt8   flags = dades ->flags;
@@ -358,20 +411,41 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
                 self.hr = Int(value)
                 
                 /* El codi a continuacio permet accedir als valors de RR
-                Com que no els fem servir, simplement ho ignorem.
+                Com que no els fem servir, simplement ho ignorem.*/
                 
-                NSUInteger len = [characteristic.value length];     // Longitut total de ls dades rebudes
-                NSUInteger nRR = (len-2)/2; // Calula el numero de elements RR que tenim. Cada u es un uint16
+                // Longitut total de ls dades rebudes
+                // NSUInteger nRR = (len-2)/2; // Calula el numero de elements RR que tenim. Cada u es un uint16
                 
-                for(NSUInteger i = 0; i < nRR; i++)
-                {
-                uint16_t rr = dades->rr[i];
-                NSLog(@"HR %d - rr %d", value, rr);
+                // COMPTE el rr es base 1024. Per convertir-ho a segons es rr/1024.
                 
+                // Valen fins que son 0.
+                
+               //  NSLog("HR %d - rr %d %d %d %d", value, dades.rr0, dades.rr1, dades.rr2, dades.rr3);
+                
+                
+                
+                
+                // Create a HealthKit value
+                
+                let qt = HKQuantity(unit: TMKHeartRateMonitor.kBeatsPerMinute, doubleValue: Double(value))
+                
+                var sample : HKQuantitySample?
+                
+                if #available(iOS 9.0, *) {
+                    
+                    let idPeripheral = peripheral.identifier.UUIDString
+                    
+                    let device = HKDevice(name: peripheral.name, manufacturer: self.manufacturer, model: self.model, hardwareVersion: self.hardwareVer, firmwareVersion: self.firmwareVer, softwareVersion: self.softwareVer, localIdentifier: "", UDIDeviceIdentifier: idPeripheral)
+                    
+                    
+                    sample = HKQuantitySample(type: TMKHeartRateMonitor.kHeartRateType!, quantity: qt, startDate: NSDate(), endDate: NSDate(), device: device, metadata: nil)
+                    
+                } else {
+                    sample = HKQuantitySample(type:TMKHeartRateMonitor.kHeartRateType!, quantity: qt, startDate: NSDate(), endDate: NSDate())
                 }
                 
-                */
-                self.sendNotification(TMKHeartRateMonitor.kHRReceivedNotification, object:self.hr)
+                
+                self.sendNotification(TMKHeartRateMonitor.kHRReceivedNotification, object:sample)
             }
                 
             else if characteristic.UUID.UUIDString==TMKHeartRateMonitor.kUUIDBatteryLevelVariable  // Battery
@@ -385,6 +459,43 @@ public class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripher
                 self.sendNotification(TMKHeartRateMonitor.kBatteryReceivedNotification, object:self.battery)
                 
             }
+            else if characteristic.UUID.UUIDString==TMKHeartRateMonitor.kUUIDManufacturerNameVariable  {
+                
+                if let data = characteristic.value {
+                    self.manufacturer = String(data:data, encoding: NSUTF8StringEncoding)
+                }
+            }
+            else if characteristic.UUID.UUIDString==TMKHeartRateMonitor.kUUIDModelNameVariable  {
+                
+                if let data = characteristic.value {
+                    self.model = String(data:data, encoding: NSUTF8StringEncoding)
+                }
+            }
+            else if characteristic.UUID.UUIDString==TMKHeartRateMonitor.kUUIDSerialNumberVariable  {
+                
+                if let data = characteristic.value {
+                    self.serial = String(data:data, encoding: NSUTF8StringEncoding)
+                }
+            }
+            else if characteristic.UUID.UUIDString==TMKHeartRateMonitor.kUUIDHardwareVersion  {
+                
+                if let data = characteristic.value {
+                    self.hardwareVer = String(data:data, encoding: NSUTF8StringEncoding)
+                }
+            }
+            else if characteristic.UUID.UUIDString==TMKHeartRateMonitor.kUUIDFirmwareVersion  {
+                
+                if let data = characteristic.value {
+                    self.firmwareVer = String(data:data, encoding: NSUTF8StringEncoding)
+                }
+            }
+            else if characteristic.UUID.UUIDString==TMKHeartRateMonitor.kUUIDSoftwareVersion {
+                
+                if let data = characteristic.value {
+                    self.softwareVer = String(data:data, encoding: NSUTF8StringEncoding)
+                }
+            }
+            
             
             //      De moment passem de això
             

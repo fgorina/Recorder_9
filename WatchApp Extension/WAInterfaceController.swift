@@ -21,6 +21,8 @@ class WAInterfaceController: WKInterfaceController {
     @IBOutlet weak  var workoutTimer :WKInterfaceTimer!
     @IBOutlet weak  var lapTimer : WKInterfaceTimer!
     @IBOutlet weak  var distLabel : WKInterfaceLabel!
+    @IBOutlet weak  var hrLabel : WKInterfaceLabel!
+    @IBOutlet weak  var unitsLabel : WKInterfaceLabel!
     //@IBOutlet weak  var hrCounterLabel : WKInterfaceLabel!
     @IBOutlet weak  var distLapLabel : WKInterfaceLabel!
     
@@ -33,28 +35,42 @@ class WAInterfaceController: WKInterfaceController {
     var startTime : NSDate?
     var ascent : Double? = 0
     var descent : Double? = 0
+    var ascentSpeed : Double? = 0
+    var descentSpeed : Double? = 0
     var altura : Double? = 0
+    var speed : Double? = 0
+    var hr : Int = 0
     
     var wStartTime : NSDate?
     var wDistancia : Double? = 0
     var wAscent : Double? = 0
     var wDescent : Double? = 0
     
+    
     var state : appState = .Stopped
     
     var counter : Int = 0
-   
+    
+    var stateChanged = false
+    
+    var localMode : appMode = .RemoteHR
+    
+    
     //MARK: Other properties
     
     var query : HKQuery?
     
     var wcsession : WCSession? = WCSession.defaultSession()
-
+    
     
     // Heart Rate Follow
-   
+    
     let heartRateUnit = HKUnit(fromString: "count/min")
     var anchor = HKQueryAnchor(fromValue: Int(HKAnchoredObjectQueryNoAnchor))
+    
+    // Navigation
+    
+    var actualPageController : WAInterfaceNavigation?
     
     
     //MARK: Controller Life Cicle
@@ -62,19 +78,22 @@ class WAInterfaceController: WKInterfaceController {
     override func awakeWithContext(context: AnyObject?) {
         super.awakeWithContext(context)
         
+        self.actualPageController = self
         
         if let session = wcsession{
             session.delegate = self
             session.activateSession()
             
         }
-
+        
         // Configure interface objects here.
     }
     
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
+        self.actualPageController = self;
+        self.updateFields()
     }
     
     override func didDeactivate() {
@@ -86,17 +105,26 @@ class WAInterfaceController: WKInterfaceController {
     
     @IBAction func start()
     {
+        
+        
         /// Do start function with Recorder
         
-        self.workoutTimer.setDate(NSDate())
-        self.workoutTimer.start()
-        
-        self.lapTimer.setDate(NSDate())
-        self.lapTimer.start()
-        
-        // Try to send a message with start order to iPhone application
-        
-        self.sendOp("start" , value:nil)
+        if self.state == .Stopped {
+            self.workoutTimer.setDate(NSDate())
+            self.workoutTimer.start()
+            
+            self.lapTimer.setDate(NSDate())
+            self.lapTimer.start()
+            
+            // Try to send a message with start order to iPhone application
+            
+            self.sendOp("start" , value:nil)
+        }
+        else {
+            self.lapTimer.setDate(NSDate())
+            self.lapTimer.start()
+            self.sendOp("waypoint" , value:nil)
+        }
         
     }
     
@@ -148,15 +176,15 @@ class WAInterfaceController: WKInterfaceController {
     
     func sendData(object: [HKQuantitySample]){
         
-         if let session = self.wcsession{
-        
+        if let session = self.wcsession{
+            
             let data : NSData = NSKeyedArchiver.archivedDataWithRootObject(object)
             
             session.sendMessageData(data, replyHandler: nil, errorHandler: { (err : NSError) -> Void in
                 NSLog("Error al enviar dades %@", err)
             })
         }
-     }
+    }
     
     
     func updateData(applicationContext: [String : AnyObject]){
@@ -171,23 +199,34 @@ class WAInterfaceController: WKInterfaceController {
                     self.stopRecording()
                 }
                 
-                self.state = newState
+                if self.state != newState {
+                    self.state = newState
+                    self.stateChanged = true
+                }
             }
         }
         distancia = applicationContext["distancia"] as? Double
         startTime = applicationContext["startTime"] as? NSDate
         ascent = applicationContext["ascent"] as? Double
         descent = applicationContext["descent"] as? Double
+        ascentSpeed = applicationContext["ascentSpeed"] as? Double
+        descentSpeed = applicationContext["descentSpeed"] as? Double
         altura = applicationContext["altura"] as? Double
+        speed = applicationContext["speed"] as? Double
+        
+        if let dhr = applicationContext["HR"] as? Int{
+            hr = dhr
+        }
         
         wDistancia = applicationContext["wDistancia"] as? Double
         wStartTime = applicationContext["wStartTime"] as? NSDate
         wAscent = applicationContext["wAscent"] as? Double
         wDescent = applicationContext["wDescent"] as? Double
-
         
-        updateFields()
         
+        
+        
+        updateScreenFields()
     }
     
     
@@ -208,15 +247,18 @@ class WAInterfaceController: WKInterfaceController {
                 }
             }
             
-            // Create a new one
+            // Create a new one only if my preference is local
             
-            let wsession = HKWorkoutSession(activityType:HKWorkoutActivityType.Running, locationType:HKWorkoutSessionLocationType.Outdoor)
-            wsession.delegate = self
-            
-            hs.startWorkoutSession(wsession)
-            
-            if let del = WKExtension.sharedExtension().delegate as? ExtensionDelegate{
-                del.wkSession = wsession
+            if self.localMode == appMode.LocalHR{
+                
+                let wsession = HKWorkoutSession(activityType:HKWorkoutActivityType.Running, locationType:HKWorkoutSessionLocationType.Outdoor)
+                wsession.delegate = self
+                
+                hs.startWorkoutSession(wsession)
+                
+                if let del = WKExtension.sharedExtension().delegate as? ExtensionDelegate{
+                    del.wkSession = wsession
+                }
             }
         }
     }
@@ -235,82 +277,16 @@ class WAInterfaceController: WKInterfaceController {
         }
     }
     
-    //MARK: Update Screen data
-    
-    
-    func updateFields(){
+    func updateScreenFields(){
         
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            
-            
-            if let time = self.startTime {
-                self.workoutTimer.setDate(time)
-                if self.state == .Recording{
-                    self.workoutTimer.start()
-                }
-                else{
-                    self.workoutTimer.stop()
-                }
-            }
-            
-            if let time = self.wStartTime {
-                self.lapTimer.setDate(time)
-                if self.state == .Recording{
-                    self.lapTimer.start()
-                }
-                else{
-                    self.lapTimer.stop()
-                }
-            }
-
-            
-            if let v = self.distancia {
-                if v < 1000.0 {
-                    
-                    let units = "m"
-                    self.distLabel.setText(String(format: "%3.0f%@", v, units))
-                }
-                else{
-                    let units = "Km"
-                    self.distLabel.setText(String(format: "%5.2f%@", v/1000.0, units))
-                }
-  
-            }
-            
-            if let v = self.wDistancia {
-                if v < 1000.0 {
-                    
-                    let units = "m"
-                    self.distLapLabel.setText(String(format: "%3.0f%@", v, units))
-                }
-                else{
-                    let units = "Km"
-                    self.distLapLabel.setText(String(format: "%5.2f%@", v/1000.0, units))
-                }
-                
-            }
-
-            
-            var stateIcon = "record_64"
-            
-            switch self.state{
-                
-            case .Stopped:
-                stateIcon = "record_64"
-                self.startButton.setBackgroundImageNamed(stateIcon)
-                
-            case .Paused:
-                stateIcon = "pause_64"
-                self.startButton.setBackgroundImageNamed(stateIcon)
-                
-            case .Recording:
-                stateIcon = "record_wp_64"
-                self.startButton.setBackgroundImage(nil)
-            }
-            
-            
-        })
+        if self.actualPageController == nil {
+            self.actualPageController = self
+        }
+        
+        self.actualPageController!.updateFields()
     }
+    
+    
 }
 
 //MARK: WCSessionDelegate
@@ -323,7 +299,7 @@ extension WAInterfaceController : WCSessionDelegate{
     }
     
     func session(session: WCSession, didReceiveApplicationContext applicationContext: [String : AnyObject]){
-
+        
         self.updateData(applicationContext)
     }
 }
@@ -336,7 +312,7 @@ extension WAInterfaceController : HKWorkoutSessionDelegate{
     
     func workoutSession(workoutSession: HKWorkoutSession, didChangeToState toState: HKWorkoutSessionState, fromState: HKWorkoutSessionState, date: NSDate) {
         
-       // NSLog("WKSession state %@ -> %@", fromState.rawValue, toState.rawValue )
+        // NSLog("WKSession state %@ -> %@", fromState.rawValue, toState.rawValue )
         
         switch toState {
         case .Running:
@@ -355,7 +331,7 @@ extension WAInterfaceController : HKWorkoutSessionDelegate{
     }
     
     
-//MARK: HKWorkoutSessionDelegate Auxiliary Functions
+    //MARK: HKWorkoutSessionDelegate Auxiliary Functions
     
     
     func workoutDidStart(date : NSDate) {
@@ -376,7 +352,7 @@ extension WAInterfaceController : HKWorkoutSessionDelegate{
         
         self.sessionOnLabel.setHidden(true)
         
-          if let healthStore = (WKExtension.sharedExtension().delegate as? ExtensionDelegate)?.healthStore {
+        if let healthStore = (WKExtension.sharedExtension().delegate as? ExtensionDelegate)?.healthStore {
             if let q = self.query {
                 healthStore.stopQuery(q)
                 self.startButton.setTitle("")
@@ -387,7 +363,7 @@ extension WAInterfaceController : HKWorkoutSessionDelegate{
     }
     
     
-
+    
     func createHeartRateStreamingQuery(workoutStartDate: NSDate) -> HKQuery? {
         // adding predicate will not work
         // let predicate = HKQuery.predicateForSamplesWithStartDate(workoutStartDate, endDate: nil, options: HKQueryOptions.None)
@@ -418,10 +394,13 @@ extension WAInterfaceController : HKWorkoutSessionDelegate{
             let value = sample.quantity.doubleValueForUnit(self.heartRateUnit)
             //self.label.setText(String(UInt16(value)))
             
-            self.startButton.setTitle(String(UInt16(value)))
+            //self.startButton.setTitle(String(UInt16(value)))
+            
+            self.hrLabel.setText(String(UInt16(value)))
+            
             self.sendData(heartRateSamples)
             self.counter += heartRateSamples.count
-           // self.hrCounterLabel.setText(String(self.counter))
+            // self.hrCounterLabel.setText(String(self.counter))
             
             // retrieve source from sample
             //let name = sample.sourceRevision.source.name
@@ -430,3 +409,94 @@ extension WAInterfaceController : HKWorkoutSessionDelegate{
         }
     }
 }
+
+extension WAInterfaceController : WAInterfaceNavigation
+{
+    
+    func updateFields(){
+        
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            
+            
+            if let time = self.startTime {
+                self.workoutTimer.setDate(time)
+                if self.state == .Recording{
+                    self.workoutTimer.start()
+                }
+                else{
+                    self.workoutTimer.stop()
+                }
+            }
+            
+            if let time = self.wStartTime {
+                self.lapTimer.setDate(time)
+                if self.state == .Recording{
+                    self.lapTimer.start()
+                }
+                else{
+                    self.lapTimer.stop()
+                }
+            }
+            
+            
+            if let v = self.distancia {
+                if v < 1000.0 {
+                    
+                    let units = "m"
+                    self.distLabel.setText(String(format: "%3.0f%@", v, units))
+                }
+                else{
+                    let units = "Km"
+                    self.distLabel.setText(String(format: "%5.2f%@", v/1000.0, units))
+                }
+                
+            }
+            
+            if let wv = self.wDistancia, xv = self.distancia {
+                
+                let v = xv - wv
+                if v < 1000.0 {
+                    
+                    let units = "m"
+                    self.distLapLabel.setText(String(format: "%3.0f%@", v, units))
+                }
+                else{
+                    let units = "Km"
+                    self.distLapLabel.setText(String(format: "%5.2f%@", v/1000.0, units))
+                }
+                
+            }
+            
+            if self.hr != 0 && self.localMode == .RemoteHR && self.state == .Recording {
+                self.hrLabel.setText(String(self.hr))
+            }
+            
+            
+            //  var stateIcon = "record_64"
+            if self.stateChanged{
+                switch self.state{
+                    
+                case .Stopped:
+                    //stateIcon = "record_64"
+                    // self.startButton.setBackgroundImageNamed(stateIcon)
+                    self.hrLabel.setText("START")
+                    self.unitsLabel.setText("")
+                case .Paused:
+                    //stateIcon = "pause_64"
+                    //self.startButton.setBackgroundImageNamed(stateIcon)
+                    self.hrLabel.setText("Paused")
+                    self.unitsLabel .setText("")
+                case .Recording:
+                    //stateIcon = "record_wp_64"
+                    //self.startButton.setBackgroundImage(nil)
+                    self.unitsLabel.setText("bps")
+                    
+                }
+                self.stateChanged = false
+                
+            }
+        })
+    }
+}
+
+

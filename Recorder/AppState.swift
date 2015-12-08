@@ -13,3 +13,8 @@ enum appState : Int {
     case Recording
     case Paused
 }
+
+enum appMode : Int {
+    case LocalHR = 0
+    case RemoteHR
+}

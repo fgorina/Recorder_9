@@ -60,6 +60,9 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
     var deferringUpdates : Bool = false
     
     
+    var ascentSpeed = 0.0       // En m/s
+    var descentSpeed = 0.0       // En m/s
+    
     //MARK: - Init
     
     override init(){
@@ -103,11 +106,6 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
             locm.activityType = CLActivityType.Fitness
             locm.desiredAccuracy = kCLLocationAccuracyBest
             locm.distanceFilter = kCLDistanceFilterNone
-            if #available(iOS 9.0, *) {
-                locm.allowsBackgroundLocationUpdates = true
-            } else {
-                // Fallback on earlier versions
-            }
             
             if CLLocationManager.authorizationStatus() == CLAuthorizationStatus.NotDetermined
                 || CLLocationManager.authorizationStatus() == CLAuthorizationStatus.Denied {
@@ -134,6 +132,58 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         return NSDate().timeIntervalSince1970-NSProcessInfo.processInfo().systemUptime
     }
     
+    func computeAscentDescentRate(ti : NSTimeInterval){
+        
+        let n = self.medidas.count
+        var ascent = 0.0
+        var descent = 0.0
+        var tascent = 0.0
+        var tdescent = 0.0
+       
+        
+        let d = NSDate().timeIntervalSince1970
+        
+        for var i = n-1; i > 0; i-- {
+            let m = self.medidas[i]
+            if m.timestamp < d - ti {
+             break
+            }
+            else{
+                
+                let m0 = self.medidas[i-1]
+                let dt = m.timestamp - m0.timestamp
+                
+                if m.relativeAltitude > m0.relativeAltitude{    // Climb
+                    ascent += (m.relativeAltitude-m0.relativeAltitude)
+                    tascent += dt
+                    
+                }
+                else if m.relativeAltitude < m0.relativeAltitude{       // Descent
+                    descent += (m0.relativeAltitude-m.relativeAltitude)
+                    tdescent += dt
+                }
+                
+            }
+        }
+        
+        // compute speeds
+        
+        if tascent > 0.0 {
+            self.ascentSpeed = ascent / tascent
+        }
+        else{
+            self.ascentSpeed = 0.0
+        }
+        
+        if tdescent > 0.0 {
+            self.descentSpeed = descent / tdescent
+        }
+        else{
+            self.descentSpeed = 0.0
+        }
+        
+        
+    }
     
     // MARK: Operations
     
@@ -194,6 +244,8 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                         objc_sync_enter(self)
                         self.medidas.append(dat)
                         objc_sync_exit(self)
+                        
+                        self.computeAscentDescentRate(60.0)
                     }
             })
         }
@@ -213,6 +265,9 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         // Start reading position data
         
         if let locm = self.locationManager {
+            if #available(iOS 9.0, *) {
+                locm.allowsBackgroundLocationUpdates = true
+            }
             locm.startUpdatingLocation() // Haurem de modificar posteriorment
             debugLaunch("LocationManager started")
             
@@ -249,6 +304,10 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
         
         if let locm = self.locationManager{
             locm.stopUpdatingLocation() // Haurem de modificar posteriorment
+            if #available(iOS 9.0, *) {
+                locm.allowsBackgroundLocationUpdates = false
+            }
+
             debugLaunch("LocationManager stopped")
             
         }
@@ -764,10 +823,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                 self.actualTime = loc.timestamp.timeIntervalSince1970
                 self.actualAltitude = self.altitudeDataForTimestamp(self.actualTime) // Mentre no tinguem un valor no nil no podrem filtrar
                 
-                
-                
                 let  ptx = TGLTrackPoint()
-                
                 
                 ptx.coordinate = loc.coordinate
                 ptx.ele = loc.altitude
@@ -1116,6 +1172,14 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
     {
         debugLaunch("LocationManager received locations")
         
+        // Check if we have the speed and publish it
+        
+        let lastloc = locations.last
+        
+        if let sp = lastloc?.speed, del = self.delegate{
+            del.updateSpeed(sp)
+        }
+        
         // dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
         objc_sync_enter(self)
         
@@ -1153,8 +1217,6 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
             self.deferringUpdates = true
             
         }
-        
-        
     }
     
     

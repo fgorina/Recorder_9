@@ -29,6 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
     
     var rootController : ViewController?
     var dataController : DataController?
+
+    var healthData : HealthAuxiliar?
     
     
     override init()
@@ -42,13 +44,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
         unsentRequests = NSMutableArray()
         super.init()
         
-        if HKHealthStore.isHealthDataAvailable(){
-            
-            self.requestAuthorization()
-            
-        }
-
+        healthData = HealthAuxiliar()
         
+         
         // If iCloud set iCloud up for copying recorded tracks.
         // Data goes to Traces icloud container :)
         if NSFileManager.defaultManager().ubiquityIdentityToken != nil
@@ -473,48 +471,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
             return self.localTracksDirectory()
         }
     }
-    
-    //MARK: HealhtStore
-    
-    func getTypesForIdentifiers(identifiers: [String]) -> Set<HKSampleType>{
         
-        var types : Set<HKSampleType> = Set<HKSampleType>()
-        
-        
-        for v in identifiers{
-            let d = HKSampleType.quantityTypeForIdentifier(v)
-            if let dok = d{
-                types.insert(dok)
-            }
-        }
-        
-        types.insert(HKWorkoutType.workoutType())
-        
-        
-        return types
-        
-    }
-    
-    
-    func requestAuthorization(){
-        
-        let dataTypes = [HKQuantityTypeIdentifierHeartRate, HKQuantityTypeIdentifierFlightsClimbed, HKQuantityTypeIdentifierDistanceWalkingRunning]
-        
-        let types = self.getTypesForIdentifiers(dataTypes)
-        
-        let hs = HKHealthStore()
-        
-            hs.requestAuthorizationToShareTypes(nil , readTypes: types, completion: { (success:Bool, err:NSError?) -> Void in
-                if !success{
-                    if let error = err {
-                        NSLog("Error al demanar autorizacio %@", error)
-                    }
-                }
-            })
-        
-    }
-    
-
-    
     
 }

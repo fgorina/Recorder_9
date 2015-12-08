@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import CoreMotion
+import CoreBluetooth
 
 
 
@@ -22,6 +23,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var lErrorAltura: UILabel!
     @IBOutlet weak var lDescent: UILabel!
     @IBOutlet weak var lHR: UILabel!
+    @IBOutlet weak var hrDevice : UILabel!
     @IBOutlet weak var bStartStop: UIButton!
     @IBOutlet weak var wpButton: UIButton!
     @IBOutlet weak var lwActivityButton: UIButton!
@@ -167,6 +169,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         NSLog("Notification %@", not)
         self.heartOn = true
         
+        if let peripheral = not.object as? CBPeripheral {
+            
+            self.hrDevice.text = peripheral.name
+            
+            
+        }
+        
         let img : UIImage? = UIImage(named: "record_heart_on_64.png")
         self.bStartStop.setImage(img, forState: UIControlState.Normal)
     }
@@ -184,6 +193,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         self.heartOn = false
         self.bStartStop.setImage(UIImage(named: imageName), forState: UIControlState.Normal)
+        self.hrDevice.text = ""
         
     }
     
@@ -195,14 +205,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 dispatch_async(dispatch_get_main_queue(), { () -> Void in
                     let txt = NSString(format: "%d bpm", value)
                     self.lHR.text = txt as String;
-                    if self.heartOn {
+                    
+                    if let dat = self.data{
+                    if self.heartOn  && dat.doRecord == .Recording {
                         self.bStartStop.setImage(UIImage(named: "record_heart_64.png"), forState: UIControlState.Normal)
                         self.heartOn = !self.heartOn
                     }
-                    else
+                    else if dat.doRecord == .Recording
                     {
                         self.bStartStop.setImage(UIImage(named: "record_heart_on_64.png"), forState: UIControlState.Normal)
                         self.heartOn = !self.heartOn
+                    }
                     }
                 })
             }

@@ -10,7 +10,7 @@ import Foundation
 
 struct GlobalConstants {
     static let debug = false
-    static let debugLaunch = true
+    static let debugLaunch = false
 }
 
 func debugMsg(str : String){
