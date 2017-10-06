@@ -10,24 +10,24 @@ import UIKit
 import MapKit
 
 public enum WaypointType{
-    case Waypoint
-    case Start
-    case End
-    case StartSelection
-    case EndSelection
-    case Custom
+    case waypoint
+    case start
+    case end
+    case startSelection
+    case endSelection
+    case custom
 }
 
-public class TMKWaypoint: TGLTrackPoint {
+open class TMKWaypoint: TGLTrackPoint {
     
     // Some public properties
     
-    public var type = WaypointType.Waypoint
-    public var color = MKPinAnnotationColor.Red
-    public var title = "Waypoint"
-    public var subtitle : String?
-    public var notes : String?
-    public weak var track : TGLTrack?
+    open var type = WaypointType.waypoint
+    open var color = MKPinAnnotationColor.red
+    open var title = "Waypoint"
+    open var subtitle : String?
+    open var notes : String?
+    open weak var track : TGLTrack?
     
     
     override init(){
@@ -36,12 +36,12 @@ public class TMKWaypoint: TGLTrackPoint {
     
     // Computed Properties
     
-    public var plainText : String{
+    open var plainText : String{
         
         var str = self.title;
         
         
-        let timeString :String = self.time.stringByReplacingOccurrencesOfString(" ",  withString: "").stringByReplacingOccurrencesOfString("\n",withString: "").stringByReplacingOccurrencesOfString("\r",withString: "")
+        let timeString :String = self.time.replacingOccurrences(of: " ",  with: "").replacingOccurrences(of: "\n",with: "").replacingOccurrences(of: "\r",with: "")
         
         
         str += String(format: "\nLon = %7.5f Lat = %7.5f",self.coordinate.longitude, self.coordinate.latitude)
@@ -62,15 +62,15 @@ public class TMKWaypoint: TGLTrackPoint {
     }
 
     
-    override public var xmlText : String
+    override open var xmlText : String
         {
             let str : NSMutableString = NSMutableString()
             str.appendFormat("<wpt lat=\"%7.5f\" lon=\"%7.5f\">\n", self.coordinate.latitude, self.coordinate.longitude)
             
-            let timeString :String = self.time.stringByReplacingOccurrencesOfString(" ",  withString: "").stringByReplacingOccurrencesOfString("\n",withString: "").stringByReplacingOccurrencesOfString("\r",withString: "")
+            let timeString :String = self.time.replacingOccurrences(of: " ",  with: "").replacingOccurrences(of: "\n",with: "").replacingOccurrences(of: "\r",with: "")
             
             str.appendFormat("<ele>%3.0f</ele>\n", self.ele)
-            str.appendFormat("<time>\(timeString)</time>\n")
+            str.appendFormat("<time>\(timeString)</time>\n" as NSString)
 
             str.appendFormat("<name>%@</name>\n",self.title)
             
@@ -81,27 +81,27 @@ public class TMKWaypoint: TGLTrackPoint {
             
 
             
-            str.appendString("<extensions>\n")
+            str.append("<extensions>\n")
             str.appendFormat("<gpxdata:hr>%4.2f</gpxdata:hr>\n", self.heartRate)
             str.appendFormat("<gpxdata:temp>%4.2f</gpxdata:temp>\n", self.temperatura)
             str.appendFormat("<gpxdata:distance>%8.2f</gpxdata:distance>\n", self.distanciaOrigen)
-            str.appendString("</extensions>\n")
-            str.appendString("</wpt>\n")
+            str.append("</extensions>\n")
+            str.append("</wpt>\n")
             
             return str as String;
     }
     
-    public var xmlFileText : String
+    open var xmlFileText : String
     {
         let str : NSMutableString = NSMutableString()
 
     
-        str.appendString("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
-        str.appendString("<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd\" xmlns:gpxdata=\"http://www.cluetrust.com/XML/GPXDATA/1/0\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n");
+        str.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
+        str.append("<gpx xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.cluetrust.com/XML/GPXDATA/1/0 http://www.cluetrust.com/Schemas/gpxdata10.xsd\" xmlns:gpxdata=\"http://www.cluetrust.com/XML/GPXDATA/1/0\" version=\"1.1\" creator=\"Movescount - http://www.movescount.com\" xmlns=\"http://www.topografix.com/GPX/1/1\">\n");
     
-        str.appendString(self.xmlText)
+        str.append(self.xmlText)
     
-        str.appendString("</gpx>\n")
+        str.append("</gpx>\n")
     
     
         return str as String
@@ -111,7 +111,7 @@ public class TMKWaypoint: TGLTrackPoint {
 
     // Public classes
     
-    public class func newWaypointFromTrackPoint(_trackPoint tp: TGLTrackPoint) -> (TMKWaypoint){
+    open class func newWaypointFromTrackPoint(_trackPoint tp: TGLTrackPoint) -> (TMKWaypoint){
         
         
         let tw = TMKWaypoint()
@@ -128,7 +128,7 @@ public class TMKWaypoint: TGLTrackPoint {
         return tw;
     }
     
-    public func buildNewData(){
+    open func buildNewData(){
         
         if let tr = self.track {
             let ip = tr.nearerTrackPointForLocation(self.location)

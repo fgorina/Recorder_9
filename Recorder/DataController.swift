@@ -21,7 +21,7 @@ class DataController: NSObject {
     static  internal let kDataUpdated = "kDataUpdated"
     static  internal let kActivityUpdated = "kDataUpdated"
     
-    let heartRateUnit = HKUnit(fromString: "count/min")
+    let heartRateUnit = HKUnit(from: "count/min")
     
     // MARK: Data Sources
     
@@ -30,7 +30,7 @@ class DataController: NSObject {
     
     // MARK: State Variables
     
-    var temps : NSTimeInterval = 0.0
+    var temps : TimeInterval = 0.0
     var distancia : Double = 0.0
     var distanciaPedometer : Double = 0.0
     var ascent : Double = 0.0
@@ -39,18 +39,22 @@ class DataController: NSObject {
     var speed : Double = 0.0
     var vdop : Double = 0.0
     var HR : Int = 0
-    var startTime : NSDate?
+    var startTime : Date?
     var activity : CMMotionActivity?
     
-    var wStartTime : NSDate?
+    var wStartTime : Date?
     var wDistancia : Double = 0.0
     var wAscent : Double = 0.0
     var wDescent : Double = 0.0
     
+    var slope : Double = 0.0    // Slope of last knp points. Aprox 5 = 50m
+    var VAM : Double = 0.0    // Slope of last knp points. Aprox 5 = 50m
+    let knp = 2
+    
     
     //MARK: Recording
     
-    var doRecord : appState = .Stopped
+    var doRecord : appState = .stopped
     var recordingTrack : TGLTrack?
     var heartArray : [HKQuantitySample]?
     
@@ -75,12 +79,12 @@ class DataController: NSObject {
         if #available(iOS 9,*){
             if WCSession.isSupported(){
                 
-                let session = WCSession.defaultSession()
+                let session = WCSession.default()
                 session.delegate = self
-                session.activateSession()
+                session.activate()
                 self.wcsession = session
                 
-                if session.paired && session.watchAppInstalled{
+                if session.isPaired && session.isWatchAppInstalled{
                     self.sendToWatch = true
                 }
             }
@@ -99,27 +103,27 @@ class DataController: NSObject {
         
         var dict : Dictionary<String, AnyObject> = [String : AnyObject]()
         
-        dict["state"] = self.doRecord.rawValue
+        dict["state"] = self.doRecord.rawValue as AnyObject?
         
-        dict["temps"] = temps
-        dict["distancia"]  = distancia
-        dict["distanciaPedometer"]  =  distanciaPedometer
-        dict["ascent"]  =  ascent
-        dict["descent"]  =  descent
-        dict["altura"]  =  altura
-        dict["speed"] = speed
-        dict["vdop"]  =  vdop
-        dict["HR"]  =  HR
-        dict["startTime"]  =  startTime
-        dict["activity"]  =  activity?.activEnum().rawValue
-        dict["ascentSpeed"] = self.almeter.ascentSpeed
-        dict["descentSpeed"] = self.almeter.descentSpeed
+        dict["temps"] = temps as AnyObject?
+        dict["distancia"]  = distancia as AnyObject?
+        dict["distanciaPedometer"]  =  distanciaPedometer as AnyObject?
+        dict["ascent"]  =  ascent as AnyObject?
+        dict["descent"]  =  descent as AnyObject?
+        dict["altura"]  =  altura as AnyObject?
+        dict["speed"] = speed as AnyObject?
+        dict["vdop"]  =  vdop as AnyObject?
+        dict["HR"]  =  HR as AnyObject?
+        dict["startTime"]  =  startTime as AnyObject?
+        dict["activity"]  =  activity?.activEnum().rawValue as AnyObject?
+        dict["ascentSpeed"] = self.almeter.ascentSpeed as AnyObject?
+        dict["descentSpeed"] = self.almeter.descentSpeed as AnyObject?
         
-        dict["wStartTime"]  =  wStartTime
-        dict["wDistancia"]  =  wDistancia
-        dict["wAscent"]  =  wAscent
-        dict["wDescent"]  =  wDescent
-        dict["hasHrMonitor"] = self.hrMonitor.connected
+        dict["wStartTime"]  =  wStartTime as AnyObject?
+        dict["wDistancia"]  =  wDistancia as AnyObject?
+        dict["wAscent"]  =  wAscent as AnyObject?
+        dict["wDescent"]  =  wDescent as AnyObject?
+        dict["hasHrMonitor"] = self.hrMonitor.connected as AnyObject?
         
         return dict
         
@@ -130,12 +134,12 @@ class DataController: NSObject {
            // NSNotificationCenter.defaultCenter().addObserver(self, selector: "conexionActive:", name: TMKHeartRateMonitor.kSubscribedToHRStartedNotification, object: nil)
            // NSNotificationCenter.defaultCenter().addObserver(self, selector: "conexionClosed:", name: TMKHeartRateMonitor.kSubscribedToHRStopedNotification, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "hrReceived:", name: TMKHeartRateMonitor.kHRReceivedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(DataController.hrReceived(_:)), name: NSNotification.Name(rawValue: TMKHeartRateMonitor.kHRReceivedNotification), object: nil)
         
         
     }
     
-    func hrReceived(not : NSNotification)
+    func hrReceived(_ not : Notification)
     {
         if let sample = not.object as? HKQuantitySample {
             
@@ -145,7 +149,7 @@ class DataController: NSObject {
             
             self.heartArray!.append(sample)
             
-            let value = Int(floor(sample.quantity.doubleValueForUnit(heartRateUnit)))
+            let value = Int(floor(sample.quantity.doubleValue(for: heartRateUnit)))
             if value != self.HR {
                 self.HR = value
                 self.sendHRUpdatedNotification()
@@ -164,8 +168,8 @@ class DataController: NSObject {
     
     func sendDataUpdatedNotification(){
         
-        let notification = NSNotification(name:DataController.kDataUpdated, object:self)
-        NSNotificationCenter.defaultCenter().postNotification(notification)
+        let notification = Notification(name:Notification.Name(rawValue: DataController.kDataUpdated), object:self)
+        NotificationCenter.default.post(notification)
         
         
         if #available(iOS 9,*){
@@ -174,7 +178,7 @@ class DataController: NSObject {
             }
          }
         if GlobalConstants.debug{
-            NSLog("Sending %@", notification)
+            NSLog("Sending %@", notification.description)
         }
         
         
@@ -185,11 +189,11 @@ class DataController: NSObject {
         if let actv = self.activity {
             let dict = ["activity" : actv]
             
-            let notification = NSNotification(name:DataController.kActivityUpdated, object:self, userInfo: dict)
-            NSNotificationCenter.defaultCenter().postNotification(notification)
+            let notification = Notification(name:Notification.Name(rawValue: DataController.kActivityUpdated), object:self, userInfo: dict)
+            NotificationCenter.default.post(notification)
             
             if GlobalConstants.debug{
-                NSLog("Sending %@", notification)
+                NSLog("Sending %@", notification.description)
             }
         }
     }
@@ -198,11 +202,11 @@ class DataController: NSObject {
         
         let dict = ["hr" : self.HR]
         
-        let notification = NSNotification(name:DataController.kHRUpdated, object:self.HR, userInfo: dict)
-        NSNotificationCenter.defaultCenter().postNotification(notification)
+        let notification = Notification(name:Notification.Name(rawValue: DataController.kHRUpdated), object:self.HR, userInfo: dict)
+        NotificationCenter.default.post(notification)
         
         if GlobalConstants.debug{
-            NSLog("Sending %@", notification)
+            NSLog("Sending %@", notification.description)
         }
         
     }
@@ -212,8 +216,8 @@ class DataController: NSObject {
         
         let dict = ["state" : self.doRecord.rawValue]
         
-        let notification = NSNotification(name:DataController.kAppStateUpdated, object:self, userInfo: dict)
-        NSNotificationCenter.defaultCenter().postNotification(notification)
+        let notification = Notification(name:Notification.Name(rawValue: DataController.kAppStateUpdated), object:self, userInfo: dict)
+        NotificationCenter.default.post(notification)
         
         if #available(iOS 9,*){
             if self.sendToWatch{
@@ -222,7 +226,7 @@ class DataController: NSObject {
         }
         
         if GlobalConstants.debug{
-            NSLog("Sending %@", notification)
+            NSLog("Sending %@", notification.description)
         }
     }
     
@@ -258,9 +262,9 @@ class DataController: NSObject {
                     self.setWpData()
                     let wp = TMKWaypoint.newWaypointFromTrackPoint(_trackPoint: tp)
                     track.addWaypoint(wp)
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
+                    DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async(execute: { () -> Void in
 
-                    let del : AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                    let del : AppDelegate = UIApplication.shared.delegate as! AppDelegate
                     let tpJSON = wp.toJSON()
                     tpJSON.setValue(2, forKey: "start");
                     
@@ -274,9 +278,9 @@ class DataController: NSObject {
     
     func pauseRecording(){
         
-        if self.doRecord == .Recording {
-            self.almeter.pauseUpdating()
-            self.doRecord = .Paused
+        if self.doRecord == .recording {
+            //self.almeter.pauseUpdating()
+            self.doRecord = .paused
         
             self.sendStateUpdatedNotification()
         }
@@ -284,9 +288,9 @@ class DataController: NSObject {
     }
     
     func resumeRecording(){
-        if self.doRecord == .Paused {
-            self.almeter.resumeUpdating()
-            self.doRecord = .Recording
+        if self.doRecord == .paused {
+            //self.almeter.resumeUpdating()
+            self.doRecord = .recording
             
         self.sendStateUpdatedNotification()
         }
@@ -295,21 +299,21 @@ class DataController: NSObject {
     
     func stopRecording(){
         
-        if self.doRecord != .Stopped {
+        if self.doRecord != .stopped {
         
             self.hrMonitor.stopScanning()
             self.almeter.stopUpdating()
-            self.doRecord = .Stopped
+            self.doRecord = .stopped
             let tp = self.recordingTrack?.data.last
             
             self.recordingTrack?.closeRecording(self.heartArray)
             self.recordingTrack = nil
             
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
                 
                 // Resend last point with a 3 in start to stop server status
                 if let tpx = tp {
-                    let del : AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                    let del : AppDelegate = UIApplication.shared.delegate as! AppDelegate
                     let tpJSON = tpx.toJSON()
                     tpJSON.setValue(3, forKey: "start")     // Code for end of track
                     del.pushPoint(tpJSON)
@@ -323,7 +327,7 @@ class DataController: NSObject {
     
     func startRecording(){
         
-        if self.doRecord == .Stopped{
+        if self.doRecord == .stopped{
         
             self.recordingTrack = TGLTrack()
             self.resetViewData()
@@ -340,7 +344,7 @@ class DataController: NSObject {
                 track.openRecording()
                 self.hrMonitor.startScanning()
                 self.almeter.startUpdating()
-                self.doRecord = .Recording
+                self.doRecord = .recording
                 self.sendStateUpdatedNotification()
                 
             }
@@ -359,14 +363,14 @@ class DataController: NSObject {
         self.ascent = 0.0
         self.descent = 0.0
         self.vdop = 0.0
-        self.startTime = NSDate()
+        self.startTime = Date()
         self.setWpData()
         
     }
     
     func setWpData()
     {
-        self.wStartTime = NSDate()
+        self.wStartTime = Date()
         self.wDistancia = self.distancia
         self.wAscent = self.ascent
         self.wDescent = self.descent
@@ -378,7 +382,7 @@ class DataController: NSObject {
 
 extension DataController : TMKAltimeterManagerDelegate {
     
-    func updateActivity(activity : CMMotionActivity){
+    func updateActivity(_ activity : CMMotionActivity){
         
         self.activity = activity
         self.sendActivityUpdatedNotification()
@@ -386,7 +390,7 @@ extension DataController : TMKAltimeterManagerDelegate {
         
     }
     
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]){
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]){
         
         if GlobalConstants.debug {
             if let myLoc = locations.last {
@@ -394,7 +398,7 @@ extension DataController : TMKAltimeterManagerDelegate {
             }
         }
         
-        if self.doRecord == .Recording {
+        if self.doRecord == .recording || self.doRecord == .paused{
             let locs  = locations
             
             if let track = self.recordingTrack {    // Send data to the track
@@ -410,10 +414,12 @@ extension DataController : TMKAltimeterManagerDelegate {
                     self.ascent = track.totalAscent
                     self.descent = track.totalDescent
                     self.vdop = lpt.vPrecision
+                    self.slope  = track.getSlope(knp)
+                    self.VAM  = track.getVAM(knp)
                     
-                    if UIApplication.sharedApplication().applicationState == UIApplicationState.Active{
+                    if UIApplication.shared.applicationState == UIApplicationState.active{
                         
-                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        DispatchQueue.main.async(execute: { () -> Void in
                             self.sendDataUpdatedNotification()
                         })
                     } else{
@@ -429,17 +435,17 @@ extension DataController : TMKAltimeterManagerDelegate {
         
         if !self.deferringUpdates {
             let distance : CLLocationDistance =  1000.0 // Update every km
-            let time : NSTimeInterval = 600.0 // Or every 10'
+            let time : TimeInterval = 600.0 // Or every 10'
             
-            manager.allowDeferredLocationUpdatesUntilTraveled(distance,  timeout:time)
+            manager.allowDeferredLocationUpdates(untilTraveled: distance,  timeout:time)
             self.deferringUpdates = true
             
         }
     }
     
-    func updateTrackPoints(dat : [TGLTrackPoint])
+    func updateTrackPoints(_ dat : [TGLTrackPoint])
     {
-        if self.doRecord == .Recording {
+        if self.doRecord == .recording  || self.doRecord == .paused{
             if let track = self.recordingTrack {
                 track.addPoints(dat)
                 if let lpt = track.data.last as TGLTrackPoint? {
@@ -454,9 +460,12 @@ extension DataController : TMKAltimeterManagerDelegate {
                     self.descent = track.totalDescent
                     self.vdop = lpt.vPrecision
                     
+                    self.slope  = track.getSlope(knp)
+                    self.VAM  = track.getVAM(knp)
+                   
                     NSLog("Dades processades %l", dat.count)
                     
-                    if UIApplication.sharedApplication().applicationState == UIApplicationState.Active{
+                    if UIApplication.shared.applicationState == UIApplicationState.active{
                         self.sendDataUpdatedNotification()
                     }
                     else{
@@ -471,8 +480,8 @@ extension DataController : TMKAltimeterManagerDelegate {
         }
     }
     
-    
-    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         
         if GlobalConstants.debug {
             NSLog("User Auth Request answered")
@@ -481,25 +490,25 @@ extension DataController : TMKAltimeterManagerDelegate {
     }
     
     
-    func locationManager(manager: CLLocationManager, didFinishDeferredUpdatesWithError error: NSError?){
+    func locationManager(_ manager: CLLocationManager, didFinishDeferredUpdatesWithError error: NSError?){
         self.deferringUpdates = false
     }
     
-    func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         
     }
     
-    func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
+    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         
     }
     
     
-    func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: NSError) {
+    func locationManager(_ manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: NSError) {
         NSLog("Error a la regio %@", error);
     }
     
     
-    func updateSpeed(speed: CLLocationSpeed) {
+    func updateSpeed(_ speed: CLLocationSpeed) {
         self.speed = speed
     }
     
@@ -508,10 +517,30 @@ extension DataController : TMKAltimeterManagerDelegate {
 
 @available(iOS 9.0, *)
 extension DataController :  WCSessionDelegate{
+    /** Called when all delegate callbacks for the previously selected watch has occurred. The session can be re-activated for the now selected watch using activateSession. */
+    @available(iOS 9.3, *)
+    public func sessionDidDeactivate(_ session: WCSession) {
     
-    func sessionWatchStateDidChange(session: WCSession) {
+    }
+
+    /** Called when the session can no longer be used to modify or add any new transfers and, all interactive messages will be cancelled, but delegate callbacks for background transfers can still occur. This will happen when the selected watch is being changed. */
+    @available(iOS 9.3, *)
+    public func sessionDidBecomeInactive(_ session: WCSession) {
         
-        if session.paired && session.watchAppInstalled{
+        
+    }
+
+    /** Called when the session has completed activation. If session state is WCSessionActivationStateNotActivated there will be an error with more details. */
+    @available(iOS 9.3, *)
+    public func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        
+        
+    }
+
+    
+    func sessionWatchStateDidChange(_ session: WCSession) {
+        
+        if session.isPaired && session.isWatchAppInstalled{
             self.sendToWatch = true
         }
         else{
@@ -520,9 +549,9 @@ extension DataController :  WCSessionDelegate{
         
     }
     
-    func session(session: WCSession, didReceiveMessageData messageData: NSData) {
+    func session(_ session: WCSession, didReceiveMessageData messageData: Data) {
 
-        if let dades = NSKeyedUnarchiver.unarchiveObjectWithData(messageData) as? [HKQuantitySample]{
+        if let dades = NSKeyedUnarchiver.unarchiveObject(with: messageData) as? [HKQuantitySample]{
             
             // Check if we already have a heart monitor. Forget local data
             
@@ -531,37 +560,37 @@ extension DataController :  WCSessionDelegate{
             }
             
             if self.heartArray != nil{
-                self.heartArray!.appendContentsOf(dades)
+                self.heartArray!.append(contentsOf: dades)
             }
             if let lastSample = dades.last {
-                let  v = lastSample.quantity.doubleValueForUnit(self.heartRateUnit)
+                let  v = lastSample.quantity.doubleValue(for: self.heartRateUnit)
                 self.HR = Int(v)
                 self.sendHRUpdatedNotification()
             }
         }
     }
     
-    func session(session: WCSession, didReceiveMessage message: [String : AnyObject]) {
+    func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         if let op = message["op"] as? String{
             
             switch op {
                 
                 case "start":
                 
-                if self.doRecord == .Stopped {
+                if self.doRecord == .stopped {
                         
                         self.startRecording()
                 }
                 
                 
             case "stop" :
-                if self.doRecord == .Recording || self.doRecord == .Paused {
+                if self.doRecord == .recording || self.doRecord == .paused {
                     
                     self.stopRecording()
                 }
                 
             case "waypoint" :
-                if self.doRecord == .Recording || self.doRecord == .Paused {
+                if self.doRecord == .recording || self.doRecord == .paused {
                     
                     self.doAddWaypoint()
                 }

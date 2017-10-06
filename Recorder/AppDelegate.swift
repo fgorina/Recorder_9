@@ -17,15 +17,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
     let kiCloudChanged = "iCloudChanged"
     var window: UIWindow?
     var genericAlert : UIAlertView?
-    var ubiquityUrl :  NSURL?
+    var ubiquityUrl :  URL?
     
     //let serverUrl = "http://www.gorina.es/insert.php"
     let serverUrl = "http://www.gorina.es/traces/insertJSON.php"
     
-    var serverSession : NSURLSession
+    var serverSession : URLSession
     var serverQueue : NSMutableArray
     var unsentRequests : NSMutableArray
-    let reachability : Reachability
+    //let reachability : Reachability
     
     var rootController : ViewController?
     var dataController : DataController?
@@ -37,9 +37,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
     {
         debugLaunch("AppDelegate.init enter")
         
-        reachability = Reachability.reachabilityForInternetConnection()
-        let config = NSURLSessionConfiguration.ephemeralSessionConfiguration()
-        serverSession = NSURLSession(configuration: config)
+       // reachability = Reachability.reachabilityForInternetConnection()
+        let config = URLSessionConfiguration.ephemeral
+        serverSession = URLSession(configuration: config)
         serverQueue = NSMutableArray()
         unsentRequests = NSMutableArray()
         super.init()
@@ -49,7 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
          
         // If iCloud set iCloud up for copying recorded tracks.
         // Data goes to Traces icloud container :)
-        if NSFileManager.defaultManager().ubiquityIdentityToken != nil
+        if FileManager.default.ubiquityIdentityToken != nil
         {
             self.checkForiCloud()
         }
@@ -59,7 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
     
     
     
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         debugLaunch("AppDelegate didFinishLaunchingWithOptions enter")
           //testImg()  // Just to test icon creation
@@ -69,7 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
         return true
     }
     
-    func pushPoint(point : NSDictionary){
+    func pushPoint(_ point : NSDictionary){
         serverQueue.enqueue(point);
     }
     
@@ -77,13 +77,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
     // Probably if there is no connection everything will fail+
     // But will be added again and again till we get rid of it
     
-    func procesServerQueue(force: Bool){
+    func procesServerQueue(_ force: Bool){
         
         // If we have no connections just do nothing and wait
         
-        if !self.reachability.isReachable() && !force{
-            return;
-        }
+//        if !self.reachability.isReachable() && !force{
+//            return;
+//        }
+        
+        return;
         
         // Build new request with pending points
         
@@ -92,8 +94,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
         let JSONBody = NSMutableArray(capacity: serverQueue.count+10)
         
         while let tp : NSDictionary = serverQueue.dequeue() as? NSDictionary {
-            JSONBody.addObject(tp)
-            if let i = tp.valueForKey("start") as? Int{
+            JSONBody.add(tp)
+            if let i = tp.value(forKey: "start") as? Int{
                 if i == 1 {
                     start = 1
                 }
@@ -105,47 +107,51 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
         
         let message = NSMutableDictionary()
         
-        let uuid = UIDevice.currentDevice().identifierForVendor
-        message.setValue(uuid!.UUIDString, forKey: "dispositivo")
+        let uuid = UIDevice.current.identifierForVendor
+        message.setValue(uuid!.uuidString, forKey: "dispositivo")
         
-        let devName = UIDevice.currentDevice().name
+        let devName = UIDevice.current.name
         message.setValue(devName, forKey: "deviceName")
         message.setValue(start, forKey: "start")    // Activate start
         message.setValue(JSONBody, forKey: "dades")
         
         
-        let bodyData : NSData?
+        let bodyData : Data?
         
         do {
             
-            bodyData = try  NSJSONSerialization.dataWithJSONObject(message, options: NSJSONWritingOptions())
+            bodyData = try  JSONSerialization.data(withJSONObject: message, options: JSONSerialization.WritingOptions())
         } catch _{
             bodyData = nil
         }
         
         
-        if let url = NSURL(string: self.serverUrl) {
+        if let url = URL(string: self.serverUrl) {
             
-            let request = NSMutableURLRequest(URL: url)
-            request.HTTPMethod = "POST"
-            request.HTTPBody = bodyData
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.httpBody = bodyData
             
             // Add request to unsentRequests
             
-            self.unsentRequests.enqueue(request)
+            self.unsentRequests.enqueue(request as AnyObject)
             
         }
         
         // Now process unsent requests
         
-        while let rq : NSMutableURLRequest = unsentRequests.dequeue() as? NSMutableURLRequest{
-            let task = serverSession.dataTaskWithRequest(rq, completionHandler: { (datas:NSData?,  resp: NSURLResponse?,  err: NSError?) -> Void in
+        while let rq : URLRequest = unsentRequests.dequeue() as? URLRequest{
+            
+            //let task = serverSession.dataTask(with: <#T##URLRequest#>, completionHandler: <#T##(Data?, URLResponse?, Error?) -> Void#>)
+        
+            
+            let task = serverSession.dataTask(with: rq, completionHandler: { (datas:Data?,  resp: URLResponse?,  err: Error?) -> Void in
                 if err != nil {
-                    self.unsentRequests.enqueue(rq);        // retry. Perhaps put maxNumber and lastTimeRetried
+                    self.unsentRequests.enqueue(rq as AnyObject);        // retry. Perhaps put maxNumber and lastTimeRetried
                 }
                 else{
                     if let data = datas{
-                        let astr = NSString(data: data, encoding: NSUTF8StringEncoding)
+                        let astr = String(data: data, encoding: .utf8)
                         if let str = astr {
                             NSLog("Resposta  : %@", str)
                         }
@@ -172,8 +178,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
         
         let track = TGLTrack()
         
-        let bundle = NSBundle.mainBundle()
-        let urls = bundle.URLForResource("Movescount_track", withExtension: "gpx")
+        let bundle = Bundle.main
+        let urls = bundle.url(forResource: "Movescount_track", withExtension: "gpx")
         
         if urls == nil {
             NSLog("URL not loaded")
@@ -181,8 +187,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
         
         if let url = urls {
             
-            if let data = NSData(contentsOfURL: url){
-                track.loadData(data, fromFilesystem:FileOrigin.Document, withPath:url.path!)
+            if let data = try? Data(contentsOf: url){
+                track.loadData(data, fromFilesystem:FileOrigin.document, withPath:url.path)
                 
                 if track.data.count == 0{
                     NSLog( "Error in number of points in track")
@@ -209,15 +215,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
         
         // Primer podriem mfer servir el identity Token ?
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,
-            0), { () -> Void in
+        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async(execute: { () -> Void in
                 
                 
-                let fileManager = NSFileManager()
-                self.ubiquityUrl = fileManager.URLForUbiquityContainerIdentifier(nil)
+                let fileManager = FileManager()
+                self.ubiquityUrl = fileManager.url(forUbiquityContainerIdentifier: nil)
                 if self.ubiquityUrl == nil{
                     
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    DispatchQueue.main.async(execute: { () -> Void in
                         self.displayMessage("iCloud Not Configured",
                             withTitle:"Error al activar iCloud")
                     })
@@ -225,8 +230,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
                 else
                 {
                     
-                    let aNot = NSNotification(name:self.kiCloudChanged, object:nil)
-                    NSNotificationCenter.defaultCenter().postNotification(aNot)
+                    let aNot = Notification(name:Notification.Name(rawValue: self.kiCloudChanged), object:nil)
+                    NotificationCenter.default.post(aNot)
                     self.movePendingTracks();
                 }
         })
@@ -243,32 +248,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
         let localTracksUrl = self.localTracksDirectory()
         
         
-        let mgr = NSFileManager()
+        let mgr = FileManager()
         
-        let enume = mgr.enumeratorAtURL(localTracksUrl,
+        let enume = mgr.enumerator(at: localTracksUrl,
             includingPropertiesForKeys: nil,
-            options:[NSDirectoryEnumerationOptions.SkipsSubdirectoryDescendants, NSDirectoryEnumerationOptions.SkipsHiddenFiles]) {
-                (url :NSURL!, error: NSError!) -> Bool in
-                
-                NSLog("Error a enumerar fitxers per  %@", url, error)
+            options:[FileManager.DirectoryEnumerationOptions.skipsSubdirectoryDescendants, FileManager.DirectoryEnumerationOptions.skipsHiddenFiles]) {
+                (url :URL, error: Error) -> Bool in
+                let err = error as NSError
+                NSLog("Error a enumerar fitxers per  %@, %@", url.absoluteString, err)
                 return true
         }
         
         
-        if let enu : NSDirectoryEnumerator = enume {
+        if let enu : FileManager.DirectoryEnumerator = enume {
             
-            while let  url:NSURL = enu.nextObject() as? NSURL       {
-                if url.pathExtension?.uppercaseString == "GPX"{
+            while let  url:URL = enu.nextObject() as? URL       {
+                if url.pathExtension.uppercased() == "GPX"{
                     
                     //
                     if let name : String = url.lastPathComponent{  // Obtenim el nom!!!
                         
-                        let nom = "X" + name.substringFromIndex(name.startIndex.successor())
+                        let nom = "X" + name.substring(from: name.characters.index(after: name.startIndex))
                         
-                        let destUrl = self.applicationDocumentsDirectory().URLByAppendingPathComponent(nom)
+                        let destUrl = self.applicationDocumentsDirectory().appendingPathComponent(nom)
                         
                         do {
-                            try mgr.setUbiquitous(true, itemAtURL: url, destinationURL: destUrl)
+                            try mgr.setUbiquitous(true, itemAt: url, destinationURL: destUrl)
                             
                             NSLog("Recuperat %@", name)
                             
@@ -287,14 +292,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
     
     // MARK: - Application life
     
-    func applicationWillResignActive(application: UIApplication) {
+    func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
         
         if let w = self.window{
             if let vcontroller = w.rootViewController as? ViewController{
                 if let tim = vcontroller.timer{
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    DispatchQueue.main.async(execute: { () -> Void in
                         tim.invalidate()
                         vcontroller.timer = nil
                     })
@@ -304,24 +309,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
     }
     
     
-    func applicationDidEnterBackground(application: UIApplication) {
+    func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
     
-    func applicationWillEnterForeground(application: UIApplication) {
+    func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     }
     
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
         if let w = self.window{
-            if let vcontroller = w.rootViewController as? ViewController, data = self.dataController{
-                if data.doRecord != .Stopped{
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            if let vcontroller = w.rootViewController as? ViewController, let data = self.dataController{
+                if data.doRecord != .stopped{
+                    DispatchQueue.main.async(execute: { () -> Void in
                         
-                        let tim = NSTimer.scheduledTimerWithTimeInterval(1.0, target: vcontroller, selector: "updateTime:", userInfo: nil, repeats: true)
+                        let tim = Timer.scheduledTimer(timeInterval: 1.0, target: vcontroller, selector: #selector(ViewController.updateTime(_:)), userInfo: nil, repeats: true)
                         
                         vcontroller.timer = tim
                         vcontroller.updateTime(tim)
@@ -335,14 +340,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
         }
     }
     
-    func applicationWillTerminate(application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
     
-    func application(application: UIApplication,
-        handleWatchKitExtensionRequest userInfo: [NSObject : AnyObject]?,
-        reply: ([NSObject : AnyObject]?) -> Void)
+    func application(_ application: UIApplication,
+        handleWatchKitExtensionRequest userInfo: [AnyHashable: Any]?,
+        reply: @escaping ([AnyHashable: Any]?) -> Void)
     {
         if let rc = self.dataController{
             if let info = userInfo{
@@ -382,7 +387,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
                 }
             }
         
-            var dades : [NSObject : AnyObject] = [
+            var dades : [AnyHashable: Any] = [
                 "altura"  : rc.altura,
                 "distancia" : rc.distancia,
                 "ascent" : rc.ascent,
@@ -397,7 +402,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
                 dades["startTime"] = st
             }
             else{
-                dades["startTime"] = NSDate()
+                dades["startTime"] = Date()
             }
             
             if let st = rc.wStartTime {
@@ -418,36 +423,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
     //MARK: - Utilities
     
     
-    func displayMessage(msg : String,  withTitle title: String)
+    func displayMessage(_ msg : String,  withTitle title: String)
     {
         self.genericAlert =  UIAlertView(title: title, message: msg, delegate: self, cancelButtonTitle: "OK")
         
         if let alert = self.genericAlert{
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
                 alert.show()
             })
         }
     }
     
-    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
+    func alertView(_ alertView: UIAlertView, clickedButtonAt buttonIndex: Int) {
         if alertView == self.genericAlert
         {
-            alertView.dismissWithClickedButtonIndex(buttonIndex, animated: true)
+            alertView.dismiss(withClickedButtonIndex: buttonIndex, animated: true)
         }
     }
     
     
-    func localTracksDirectory() -> NSURL
+    func localTracksDirectory() -> URL
     {
-        let path = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true).last!
+        let path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).last!
         
         
-        if !NSFileManager.defaultManager().fileExistsAtPath(path){
+        if !FileManager.default.fileExists(atPath: path){
             
             
             do {
                 
-                try NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
             } catch _{
                 NSLog("Unresolved error")
                 abort()
@@ -455,17 +460,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
             }
         }
         
-        let docs = NSFileManager.defaultManager().URLsForDirectory(NSSearchPathDirectory.DocumentDirectory, inDomains: NSSearchPathDomainMask.UserDomainMask).last!
+        let docs = FileManager.default.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: FileManager.SearchPathDomainMask.userDomainMask).last!
         
         return docs
         
         
     }
     
-    func applicationDocumentsDirectory() -> NSURL{
+    func applicationDocumentsDirectory() -> URL{
         
         if let url = self.ubiquityUrl{
-            return url.URLByAppendingPathComponent("Documents")
+            return url.appendingPathComponent("Documents")
         }
         else{
             return self.localTracksDirectory()

@@ -2,8 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSMotionUsageDescription</key>
+	<string>Motion data used and recorded</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Health data may be shared with other applications</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Writes heart rate data to health app</string>
 	<key>CFBundleDocumentTypes</key>
 	<array/>
 	<key>CFBundleExecutable</key>

@@ -26,10 +26,10 @@ class WASpeedInterfaceController: WKInterfaceController {
     
     weak var rootController : WAInterfaceController?
     
-    override func awakeWithContext(context: AnyObject?) {
-        super.awakeWithContext(context)
+    override func awake(withContext context: Any?) {
+        super.awake(withContext: context)
         
-        self.rootController  = WKExtension.sharedExtension().rootInterfaceController as? WAInterfaceController
+        self.rootController  = WKExtension.shared().rootInterfaceController as? WAInterfaceController
         
         
         // Configure interface objects here.
@@ -60,12 +60,12 @@ extension WASpeedInterfaceController : WAInterfaceNavigation{
 
     func updateFields(){
         
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async(execute: { () -> Void in
             
             
             if let time = self.rootController?.startTime {
-                self.workoutTimer.setDate(time)
-                if self.rootController?.state == .Recording{
+                self.workoutTimer.setDate(time as Date)
+                if self.rootController?.state == .recording{
                     self.workoutTimer.start()
                 }
                 else{
@@ -74,8 +74,8 @@ extension WASpeedInterfaceController : WAInterfaceNavigation{
             }
             
             if let time = self.rootController?.wStartTime {
-                self.lapTimer.setDate(time)
-                if self.rootController?.state == .Recording{
+                self.lapTimer.setDate(time as Date)
+                if self.rootController?.state == .recording{
                     self.lapTimer.start()
                 }
                 else{
@@ -130,17 +130,17 @@ extension WASpeedInterfaceController : WAInterfaceNavigation{
             if let stat = self.rootController?.state{
                 switch stat{
                     
-                case .Stopped:
+                case .stopped:
                     //stateIcon = "record_64"
                     // self.startButton.setBackgroundImageNamed(stateIcon)
                     self.speedLabel.setText("START")
                     self.unitsLabel.setText("")
-                case .Paused:
+                case .paused:
                     //stateIcon = "pause_64"
                     //self.startButton.setBackgroundImageNamed(stateIcon)
                     self.speedLabel.setText("Paused")
                     self.unitsLabel .setText("")
-                case .Recording:
+                case .recording:
                     //stateIcon = "record_wp_64"
                     //self.startButton.setBackgroundImage(nil)
                     self.unitsLabel.setText("min/km")

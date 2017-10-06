@@ -27,7 +27,7 @@ class TMKMapUtilities{
     var originShift = floor(2.0 * M_PI * 6378137.0) / 2.0
     
     
-    func metersForLocation(loc : CLLocationCoordinate2D) -> CGPoint {
+    func metersForLocation(_ loc : CLLocationCoordinate2D) -> CGPoint {
         
         let  mx = loc.longitude * self.originShift / 180.0
         
@@ -38,7 +38,7 @@ class TMKMapUtilities{
         
     }
     
-    func locationForMeters(pt : CGPoint) -> CLLocationCoordinate2D {
+    func locationForMeters(_ pt : CGPoint) -> CLLocationCoordinate2D {
         let lon = (Double(pt.x) / self.originShift) * 180.0
         var lat = (Double(pt.y) / self.originShift) * 180.0
         
@@ -47,7 +47,7 @@ class TMKMapUtilities{
         return CLLocationCoordinate2DMake(lat, lon)
     }
     
-    func metersForPixels(pt : IPoint,  zoom: Int) -> CGPoint{
+    func metersForPixels(_ pt : IPoint,  zoom: Int) -> CGPoint{
         
         let res = self.resolutionForZoom(zoom)
         
@@ -58,7 +58,7 @@ class TMKMapUtilities{
         
     }
     
-    func pixelsForMeters(m : CGPoint, forZoom zoom: Int) -> IPoint {
+    func pixelsForMeters(_ m : CGPoint, forZoom zoom: Int) -> IPoint {
         
         
         let res = self.resolutionForZoom(zoom)
@@ -70,7 +70,7 @@ class TMKMapUtilities{
         
     }
     
-    func tileForPixels(px : IPoint, zoom: Int) -> MKTileOverlayPath{
+    func tileForPixels(_ px : IPoint, zoom: Int) -> MKTileOverlayPath{
         
         
         let x = Int(ceil(Double(px.x) /  Double(self.tileSize)) - 1.0)
@@ -83,7 +83,7 @@ class TMKMapUtilities{
     
     // Change origin of coordinates to top left
     
-    func rasterFromPixels(p : IPoint,  forZoom zoom: Int) -> IPoint {
+    func rasterFromPixels(_ p : IPoint,  forZoom zoom: Int) -> IPoint {
         
         let mapSize = self.tileSize * 2^zoom
         
@@ -94,7 +94,7 @@ class TMKMapUtilities{
         
     }
     
-    func tileForMeters(pt : CGPoint, zoom : Int) -> MKTileOverlayPath{
+    func tileForMeters(_ pt : CGPoint, zoom : Int) -> MKTileOverlayPath{
         
         let px = self.pixelsForMeters(pt, forZoom:zoom)
         
@@ -106,7 +106,7 @@ class TMKMapUtilities{
     
     // Retorna els bounds de una tile. De fet origin son els minims.
     
-    func boundsForTile( tile : MKTileOverlayPath) -> CGRect{
+    func boundsForTile( _ tile : MKTileOverlayPath) -> CGRect{
         
         var px = IPoint(x: tile.x * self.tileSize, y:tile.y * self.tileSize)
         
@@ -115,11 +115,11 @@ class TMKMapUtilities{
         px = IPoint(x: (tile.x + 1) * self.tileSize, y:(tile.y + 1) * self.tileSize)
         let maxPt = self.metersForPixels(px, zoom:tile.z)
         
-        return CGRectMake(minPt.x, minPt.y, maxPt.x-minPt.x, maxPt.y-minPt.y)
+        return CGRect(x: minPt.x, y: minPt.y, width: maxPt.x-minPt.x, height: maxPt.y-minPt.y)
         
     }
     
-    func latLonBoundsForTile(tile : MKTileOverlayPath) -> TileCoordinateBounds{
+    func latLonBoundsForTile(_ tile : MKTileOverlayPath) -> TileCoordinateBounds{
         var px = IPoint(x: tile.x * self.tileSize, y:tile.y * self.tileSize)
         
         let minPt = self.metersForPixels(px, zoom:tile.z)
@@ -133,11 +133,11 @@ class TMKMapUtilities{
     
     
     
-    func resolutionForZoom(zoom : Int) -> Double {
+    func resolutionForZoom(_ zoom : Int) -> Double {
         return self.initialResolution / pow(2.0, Double(zoom))
     }
     
-    func zoomForPixelSize(pixelSize : Double) -> Int{
+    func zoomForPixelSize(_ pixelSize : Double) -> Int{
         for i in 0..<30 {
             if pixelSize > self.resolutionForZoom(i){
                 if i != 0 {
@@ -153,7 +153,7 @@ class TMKMapUtilities{
     
     // Retorna una tile per un punt i a un nivell de zoom
     
-    func tileIncludingPoint(pt: CLLocationCoordinate2D, zoom:Int) -> MKTileOverlayPath{
+    func tileIncludingPoint(_ pt: CLLocationCoordinate2D, zoom:Int) -> MKTileOverlayPath{
         
         let mt = self.metersForLocation(pt)
         
@@ -168,11 +168,11 @@ class TMKMapUtilities{
     // Retorna un array de tiles corresponents a un "quadrat"
     
     
-    func tilesForRect(minPt:CLLocationCoordinate2D , maxPt:CLLocationCoordinate2D) -> [MKTileOverlayPath]
+    func tilesForRect(_ minPt:CLLocationCoordinate2D , maxPt:CLLocationCoordinate2D) -> [MKTileOverlayPath]
     {
         let minLoc = CLLocation(latitude: minPt.latitude, longitude: minPt.longitude)
         let maxLoc = CLLocation(latitude: maxPt.latitude, longitude: maxPt.longitude)
-        let d = minLoc.distanceFromLocation(maxLoc)   // Això es la diagonal i defineix el zoom
+        let d = minLoc.distance(from: maxLoc)   // Això es la diagonal i defineix el zoom
         
         let zoom = self.zoomForPixelSize(d / Double(tileSize))
         
@@ -221,7 +221,7 @@ class TMKMapUtilities{
         return arr
     }
     
-    func  googleTile(tile: MKTileOverlayPath) -> MKTileOverlayPath {
+    func  googleTile(_ tile: MKTileOverlayPath) -> MKTileOverlayPath {
         
         var p = 2
         if tile.z == 0{

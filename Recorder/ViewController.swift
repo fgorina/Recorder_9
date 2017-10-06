@@ -17,6 +17,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     @IBOutlet weak var lTemps: UILabel!
     @IBOutlet weak var lDistancia: UILabel!
+    @IBOutlet weak var lSpeed: UILabel!
+    @IBOutlet weak var lSlope: UILabel!
+    @IBOutlet weak var lVAM: UILabel!
     @IBOutlet weak var lPedometerDistance: UILabel!
     @IBOutlet weak var lAscent: UILabel!
     @IBOutlet weak var lAltura: UILabel!
@@ -39,7 +42,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     var heartOn : Bool = false
     
-    weak var timer : NSTimer?
+    weak var timer : Timer?
     weak var data : DataController?
     
     
@@ -72,7 +75,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         
         debugLaunch("ViewController init nibname enter")
@@ -87,7 +90,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         debugLaunch("ViewController commonInit entered")
         
-        let del = UIApplication.sharedApplication().delegate as! AppDelegate
+        let del = UIApplication.shared.delegate as! AppDelegate
         del.dataController = DataController()
         self.data = del.dataController
         del.rootController = self
@@ -108,7 +111,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         // Do any additional setup after loading the view, typically from a nib.
         if(CMMotionActivityManager.isActivityAvailable()){
             if let act = self.lwActivityButton {
-                act.hidden = false
+                act.isHidden = false
             }
         }
         
@@ -120,13 +123,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             switch state {
                 
                 
-            case .Stopped :
+            case .stopped :
                 self.stopRecording()
                 
-            case .Recording :
+            case .recording :
                 self.startRecording()
                 
-            case .Paused :
+            case .paused :
                 self.pauseRecording()
                 
             }
@@ -149,24 +152,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     func initNotifications()
     {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "conexionActive:", name: TMKHeartRateMonitor.kSubscribedToHRStartedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.conexionActive(_:)), name: NSNotification.Name(rawValue: TMKHeartRateMonitor.kSubscribedToHRStartedNotification), object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "conexionClosed:", name: TMKHeartRateMonitor.kSubscribedToHRStopedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.conexionClosed(_:)), name: NSNotification.Name(rawValue: TMKHeartRateMonitor.kSubscribedToHRStopedNotification), object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "hrReceived:", name: DataController.kHRUpdated, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.hrReceived(_:)), name: NSNotification.Name(rawValue: DataController.kHRUpdated), object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateState:", name: DataController.kAppStateUpdated, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.updateState(_:)), name: NSNotification.Name(rawValue: DataController.kAppStateUpdated), object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateActivity", name: DataController.kActivityUpdated, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.updateActivity), name: NSNotification.Name(rawValue: DataController.kActivityUpdated), object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateViewData:", name: DataController.kDataUpdated, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.updateViewData(_:)), name: NSNotification.Name(rawValue: DataController.kDataUpdated), object: nil)
         
         
     }
     
-    func conexionActive(not : NSNotification){
+    func conexionActive(_ not : Notification){
         
-        NSLog("Notification %@", not)
+        NSLog("Notification %@", not.description)
         self.heartOn = true
         
         if let peripheral = not.object as? CBPeripheral {
@@ -177,43 +180,43 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
         
         let img : UIImage? = UIImage(named: "record_heart_on_64.png")
-        self.bStartStop.setImage(img, forState: UIControlState.Normal)
+        self.bStartStop.setImage(img, for: UIControlState())
     }
     
-    func conexionClosed(not : NSNotification){
-        NSLog("Notification %@", not)
+    func conexionClosed(_ not : Notification){
+        NSLog("Notification %@", not.description)
         var imageName = "record_64"
         
         if let record = self.data?.doRecord {
-            if record == .Recording{
+            if record == .recording{
                 imageName = "record_on_64"
                 
             }
         }
         
         self.heartOn = false
-        self.bStartStop.setImage(UIImage(named: imageName), forState: UIControlState.Normal)
+        self.bStartStop.setImage(UIImage(named: imageName), for: UIControlState())
         self.hrDevice.text = ""
         
     }
     
-    func hrReceived(not : NSNotification)
+    func hrReceived(_ not : Notification)
     {
         if let value = not.object as? Int{
-            if UIApplication.sharedApplication().applicationState == UIApplicationState.Active{
+            if UIApplication.shared.applicationState == UIApplicationState.active{
                 
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                DispatchQueue.main.async(execute: { () -> Void in
                     let txt = NSString(format: "%d bpm", value)
                     self.lHR.text = txt as String;
                     
                     if let dat = self.data{
-                    if self.heartOn  && dat.doRecord == .Recording {
-                        self.bStartStop.setImage(UIImage(named: "record_heart_64.png"), forState: UIControlState.Normal)
+                    if self.heartOn  && dat.doRecord == .recording{
+                        self.bStartStop.setImage(UIImage(named: "record_heart_64.png"), for: UIControlState())
                         self.heartOn = !self.heartOn
                     }
-                    else if dat.doRecord == .Recording
+                    else if dat.doRecord == .recording
                     {
-                        self.bStartStop.setImage(UIImage(named: "record_heart_on_64.png"), forState: UIControlState.Normal)
+                        self.bStartStop.setImage(UIImage(named: "record_heart_on_64.png"), for: UIControlState())
                         self.heartOn = !self.heartOn
                     }
                     }
@@ -228,19 +231,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     
     
-    @IBAction func  startStop(src:AnyObject)
+    @IBAction func  startStop(_ src:AnyObject)
     {
         if let dat = self.data {
             
-            if dat.doRecord == .Stopped
+            if dat.doRecord == .stopped
             {
                 dat.startRecording()
             }
-            else if dat.doRecord == .Recording
+            else if dat.doRecord == .recording
             {
                 dat.pauseRecording()
             }
-            else if dat.doRecord == .Paused
+            else if dat.doRecord == .paused
             {
                 dat.resumeRecording()
             }
@@ -249,12 +252,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     
-    @IBAction func  addWaypoint(src:AnyObject)
+    @IBAction func  addWaypoint(_ src:AnyObject)
     {
         
         if let dat = self.data {
             
-            if dat.doRecord == .Paused {
+            if dat.doRecord == .paused {
                 dat.stopRecording()
             }
             else
@@ -265,7 +268,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     
-    func updateState(notification: NSNotification)
+    func updateState(_ notification: Notification)
     {
         
         if let dict = notification.userInfo {
@@ -274,13 +277,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             switch state {
                 
                 
-            case .Stopped :
+            case .stopped :
                 self.stopRecording()
                 
-            case .Recording :
+            case .recording :
                 self.startRecording()
                 
-            case .Paused :
+            case .paused :
                 self.pauseRecording()
                 
             }
@@ -290,10 +293,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     func pauseRecording(){
         
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            self.bStartStop.setImage(UIImage(named: "pause_64"), forState: UIControlState.Normal)
-            self.wpButton.setImage(UIImage(named: "record_64"), forState: .Normal)
-            self.wpButton.setImage(UIImage(named: "record_on_64"), forState: .Highlighted)
+        DispatchQueue.main.async(execute: { () -> Void in
+            self.bStartStop.setImage(UIImage(named: "pause_64"), for: UIControlState())
+            self.wpButton.setImage(UIImage(named: "record_64"), for: UIControlState())
+            self.wpButton.setImage(UIImage(named: "record_on_64"), for: .highlighted)
         })
         
         
@@ -301,50 +304,50 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     func stopRecording(){
         
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async(execute: { () -> Void in
             if let tim = self.timer{
                 tim.invalidate()
                 self.timer = nil
             }
-            self.bStartStop.setImage(UIImage(named: "record_64"), forState: UIControlState.Normal)
+            self.bStartStop.setImage(UIImage(named: "record_64"), for: UIControlState())
             
-            self.wpButton.setImage(UIImage(named: "record_wp_64"), forState: .Normal)
-            self.wpButton.setImage(UIImage(named: "record_wp_on_64"), forState: .Highlighted)
+            self.wpButton.setImage(UIImage(named: "record_wp_64"), for: UIControlState())
+            self.wpButton.setImage(UIImage(named: "record_wp_on_64"), for: .highlighted)
             
-            self.wpButton.hidden = true
+            self.wpButton.isHidden = true
         })
         
         
     }
     
     func startRecording(){
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async(execute: { () -> Void in
             
             if let hrMonitor = self.data?.hrMonitor {
                 if hrMonitor.connected {
                     
-                    self.bStartStop.setImage(UIImage(named: "record_heart_on_64.png"), forState:UIControlState.Normal)
+                    self.bStartStop.setImage(UIImage(named: "record_heart_on_64.png"), for:UIControlState())
                 }
                 else
                 {
-                    self.bStartStop.setImage(UIImage(named: "record_on_64"), forState:UIControlState.Normal)
+                    self.bStartStop.setImage(UIImage(named: "record_on_64"), for:UIControlState())
                 }
             }
             else
             {
-                self.bStartStop.setImage(UIImage(named: "record_on_64"), forState:UIControlState.Normal)
+                self.bStartStop.setImage(UIImage(named: "record_on_64"), for:UIControlState())
             }
             
-            self.wpButton.setImage(UIImage(named: "record_wp_64"), forState: .Normal)
-            self.wpButton.setImage(UIImage(named: "record_wp_on_64"), forState: .Highlighted)
+            self.wpButton.setImage(UIImage(named: "record_wp_64"), for: UIControlState())
+            self.wpButton.setImage(UIImage(named: "record_wp_on_64"), for: .highlighted)
             
-            self.wpButton.hidden = false
+            self.wpButton.isHidden = false
             
             if self.timer == nil {
                 
-                let aTimer = NSTimer(timeInterval: 1.0, target: self, selector: "updateTime:", userInfo: nil, repeats: true)
-                let runLoop = NSRunLoop.currentRunLoop()
-                runLoop.addTimer(aTimer, forMode:NSDefaultRunLoopMode)
+                let aTimer = Timer(timeInterval: 1.0, target: self, selector: #selector(ViewController.updateTime(_:)), userInfo: nil, repeats: true)
+                let runLoop = RunLoop.current
+                runLoop.add(aTimer, forMode:RunLoopMode.defaultRunLoopMode)
                 self.timer = aTimer
                 
             }
@@ -352,17 +355,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
-    func updateTime(timer : NSTimer)
+    func updateTime(_ timer : Timer)
     {
         if let dat = self.data{
-            if let tim = dat.startTime, wtim = dat.wStartTime {
-                let temps = NSDate().timeIntervalSinceDate(tim)
-                let wtemps = NSDate().timeIntervalSinceDate(wtim)
+            if let tim = dat.startTime, let wtim = dat.wStartTime {
+                let temps = Date().timeIntervalSince(tim as Date)
+                let wtemps = Date().timeIntervalSince(wtim as Date)
                 
                 self.tempsStr = TGLTrackPoint.stringFromTimeInterval(temps)
                 let wTempsStr = TGLTrackPoint.stringFromTimeInterval(wtemps)
                 
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                DispatchQueue.main.async(execute: { () -> Void in
                     self.lTemps.text = self.tempsStr
                     self.lwTemps.text = wTempsStr
                 })
@@ -372,29 +375,29 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     func updateActivity()
     {
-        if UIApplication.sharedApplication().applicationState == UIApplicationState.Active{
+        if UIApplication.shared.applicationState == UIApplicationState.active{
             
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
                 
-                if let act = self.data?.activity where self.lwActivity != nil {
+                if let act = self.data?.activity, self.lwActivity != nil {
                     self.lwActivity.text = act.stringDescription
                     let imgName = "act_" + act.stringDescription + "_64"
                     if let img = UIImage(named: imgName)
                     {
-                        self.lwActivityButton.setImage(img, forState: UIControlState.Normal)
+                        self.lwActivityButton.setImage(img, for: UIControlState())
                     }
                 }
             })
         }
     }
     
-    func updateViewData(notification : NSNotification?)
+    func updateViewData(_ notification : Notification?)
     {
         
         //self.lTemps.text = self.tempsStr
         
         if let dat = self.data {
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
                 
                 self.lDistancia.text = NSString(format: "%7.2f", dat.distancia) as String
                 self.lPedometerDistance.text = NSString(format: "%7.2f", dat.distanciaPedometer) as String
@@ -405,7 +408,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 self.lwDistancia.text = NSString(format: "%7.2f", dat.distancia-dat.wDistancia) as String
                 self.lwAscent.text = NSString(format: "%5.0f", dat.ascent-dat.wAscent) as String
                 self.lwDescent.text = NSString(format: "%5.0f", dat.descent - dat.wDescent) as String
-            })
+                
+                // Spped in m/s -> km/h
+                
+                self.lSpeed.text = NSString(format: "%7.1f Km/h", dat.speed * 3.6) as String
+                self.lSlope.text = NSString(format: "%7.1f %%", dat.slope*100.0) as String
+                self.lVAM.text = NSString(format: "%5.0f m/h", dat.VAM) as String
+           })
         }
         
     }
@@ -423,7 +432,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "sSettingsSegue"
         {

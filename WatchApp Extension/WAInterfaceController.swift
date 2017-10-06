@@ -23,6 +23,7 @@ class WAInterfaceController: WKInterfaceController {
     @IBOutlet weak  var distLabel : WKInterfaceLabel!
     @IBOutlet weak  var hrLabel : WKInterfaceLabel!
     @IBOutlet weak  var unitsLabel : WKInterfaceLabel!
+    @IBOutlet weak  var climbingLabel : WKInterfaceLabel!
     //@IBOutlet weak  var hrCounterLabel : WKInterfaceLabel!
     @IBOutlet weak  var distLapLabel : WKInterfaceLabel!
     
@@ -32,7 +33,7 @@ class WAInterfaceController: WKInterfaceController {
     
     
     var distancia : Double? = 0
-    var startTime : NSDate?
+    var startTime : Date?
     var ascent : Double? = 0
     var descent : Double? = 0
     var ascentSpeed : Double? = 0
@@ -41,31 +42,31 @@ class WAInterfaceController: WKInterfaceController {
     var speed : Double? = 0
     var hr : Int = 0
     
-    var wStartTime : NSDate?
+    var wStartTime : Date?
     var wDistancia : Double? = 0
     var wAscent : Double? = 0
     var wDescent : Double? = 0
     
     
-    var state : appState = .Stopped
+    var state : appState = .stopped
     
     var counter : Int = 0
     
     var stateChanged = false
     
-    var localMode : appMode = .RemoteHR
+    var localMode : appMode = .remoteHR
     
     
     //MARK: Other properties
     
     var query : HKQuery?
     
-    var wcsession : WCSession? = WCSession.defaultSession()
+    var wcsession : WCSession? = WCSession.default()
     
     
     // Heart Rate Follow
     
-    let heartRateUnit = HKUnit(fromString: "count/min")
+    let heartRateUnit = HKUnit(from: "count/min")
     var anchor = HKQueryAnchor(fromValue: Int(HKAnchoredObjectQueryNoAnchor))
     
     // Navigation
@@ -75,14 +76,14 @@ class WAInterfaceController: WKInterfaceController {
     
     //MARK: Controller Life Cicle
     
-    override func awakeWithContext(context: AnyObject?) {
-        super.awakeWithContext(context)
+    override func awake(withContext context: Any?) {
+        super.awake(withContext: context)
         
         self.actualPageController = self
         
         if let session = wcsession{
             session.delegate = self
-            session.activateSession()
+            session.activate()
             
         }
         
@@ -109,19 +110,44 @@ class WAInterfaceController: WKInterfaceController {
         
         /// Do start function with Recorder
         
-        if self.state == .Stopped {
-            self.workoutTimer.setDate(NSDate())
+        if self.state == .stopped {
+            
+            // Reset all to 0's
+            
+            let d = Date()
+            self.workoutTimer.setDate(d)
             self.workoutTimer.start()
             
-            self.lapTimer.setDate(NSDate())
+            self.lapTimer.setDate(d)
             self.lapTimer.start()
+            
+            // Set all data to 0
+            
+            self.distancia = 0.0
+            self.startTime = d
+            self.ascent = 0.0
+            self.descent = 0.0
+            self.ascentSpeed = 0.0
+            self.descentSpeed = 0.0
+            self.altura = 0.0
+            self.speed  = 0.0
+            self.hr = 0
+            
+            self.wStartTime = d
+            self.wDistancia = 0.0
+            self.wAscent = 0.0
+            self.wDescent  = 0.0
+
+            updateScreenFields()
             
             // Try to send a message with start order to iPhone application
             
             self.sendOp("start" , value:nil)
+            
+            
         }
         else {
-            self.lapTimer.setDate(NSDate())
+            self.lapTimer.setDate(Date())
             self.lapTimer.start()
             self.sendOp("waypoint" , value:nil)
         }
@@ -145,8 +171,8 @@ class WAInterfaceController: WKInterfaceController {
     {
         /// Do start function with Recorder
         
-        self.workoutTimer.stop()
-        self.lapTimer.stop()
+       // self.workoutTimer.stop()
+        // self.lapTimer.stop()
         
         // Try to send a message with start order to iPhone application
         
@@ -156,46 +182,48 @@ class WAInterfaceController: WKInterfaceController {
     
     //MARK: iOS Communication
     
-    func sendOp(op : String, value : AnyObject?){
+    func sendOp(_ op : String, value : AnyObject?){
         if let session = self.wcsession{
             
-            if session.reachable {
+            if session.isReachable {
                 
-                var dict : [String : AnyObject] = ["op" : op]
+                var dict : [String : AnyObject] = ["op" : op as AnyObject]
                 if let v = value {
                     dict["value"] = v
                 }
-                session.sendMessage(dict, replyHandler: nil, errorHandler: { (err : NSError) -> Void in
+                session.sendMessage(dict, replyHandler: nil, errorHandler: { (err : Error) -> Void in
+                    let error : NSError = err as NSError
+                    NSLog("Error al enviar missatge %@", error)
                     
-                    NSLog("Error al enviar missatge %@", err)
                 })
             }
         }
     }
     
     
-    func sendData(object: [HKQuantitySample]){
+    func sendData(_ object: [HKQuantitySample]){
         
         if let session = self.wcsession{
             
-            let data : NSData = NSKeyedArchiver.archivedDataWithRootObject(object)
+            let data : Data = NSKeyedArchiver.archivedData(withRootObject: object)
             
-            session.sendMessageData(data, replyHandler: nil, errorHandler: { (err : NSError) -> Void in
-                NSLog("Error al enviar dades %@", err)
+            session.sendMessageData(data, replyHandler: nil, errorHandler: { (err : Error) -> Void in
+                let error : NSError = err as NSError
+                NSLog("Error al enviar dades %@", error)
             })
         }
     }
     
     
-    func updateData(applicationContext: [String : AnyObject]){
+    func updateData(_ applicationContext: [String : AnyObject]){
         
         if let rawState = applicationContext["state"] as? Int{
             if let newState = appState(rawValue: rawState){
                 
-                if self.state == .Stopped && newState == .Recording {
+                if self.state == .stopped && newState == .recording {
                     self.startRecording()
                 }
-                else if self.state != .Stopped && newState == .Stopped {
+                else if self.state != .stopped && newState == .stopped {
                     self.stopRecording()
                 }
                 
@@ -206,7 +234,7 @@ class WAInterfaceController: WKInterfaceController {
             }
         }
         distancia = applicationContext["distancia"] as? Double
-        startTime = applicationContext["startTime"] as? NSDate
+        startTime = applicationContext["startTime"] as? Date
         ascent = applicationContext["ascent"] as? Double
         descent = applicationContext["descent"] as? Double
         ascentSpeed = applicationContext["ascentSpeed"] as? Double
@@ -219,7 +247,7 @@ class WAInterfaceController: WKInterfaceController {
         }
         
         wDistancia = applicationContext["wDistancia"] as? Double
-        wStartTime = applicationContext["wStartTime"] as? NSDate
+        wStartTime = applicationContext["wStartTime"] as? Date
         wAscent = applicationContext["wAscent"] as? Double
         wDescent = applicationContext["wDescent"] as? Double
         
@@ -236,27 +264,27 @@ class WAInterfaceController: WKInterfaceController {
         
         // Start Workout Session
         
-        if let hs =  (WKExtension.sharedExtension().delegate as? ExtensionDelegate)?.healthStore{
+        if let hs =  (WKExtension.shared().delegate as? ExtensionDelegate)?.healthStore{
             
             // If in a WK Session close it
             
-            if let wsession = (WKExtension.sharedExtension().delegate as? ExtensionDelegate)?.wkSession {
+            if let wsession = (WKExtension.shared().delegate as? ExtensionDelegate)?.wkSession {
                 
-                if wsession.state == .Running {
-                    hs.endWorkoutSession(wsession)
+                if wsession.state == .running {
+                    hs.end(wsession)
                 }
             }
             
             // Create a new one only if my preference is local
             
-            if self.localMode == appMode.LocalHR{
+            if self.localMode == appMode.localHR{
                 
-                let wsession = HKWorkoutSession(activityType:HKWorkoutActivityType.Running, locationType:HKWorkoutSessionLocationType.Outdoor)
+                let wsession = HKWorkoutSession(activityType:HKWorkoutActivityType.running, locationType:HKWorkoutSessionLocationType.outdoor)
                 wsession.delegate = self
                 
-                hs.startWorkoutSession(wsession)
+                hs.start(wsession)
                 
-                if let del = WKExtension.sharedExtension().delegate as? ExtensionDelegate{
+                if let del = WKExtension.shared().delegate as? ExtensionDelegate{
                     del.wkSession = wsession
                 }
             }
@@ -269,10 +297,10 @@ class WAInterfaceController: WKInterfaceController {
         
         // Stop Workout Session
         
-        if let wsession = (WKExtension.sharedExtension().delegate as? ExtensionDelegate)?.wkSession, hs =  (WKExtension.sharedExtension().delegate as? ExtensionDelegate)?.healthStore {
+        if let wsession = (WKExtension.shared().delegate as? ExtensionDelegate)?.wkSession, let hs =  (WKExtension.shared().delegate as? ExtensionDelegate)?.healthStore {
             
-            if wsession.state == .Running {
-                hs.endWorkoutSession(wsession)
+            if wsession.state == .running {
+                hs.end(wsession)
             }
         }
     }
@@ -292,16 +320,25 @@ class WAInterfaceController: WKInterfaceController {
 //MARK: WCSessionDelegate
 
 extension WAInterfaceController : WCSessionDelegate{
-    
-    func sessionWatchStateDidChange(session: WCSession) {
+    /** Called when the session has completed activation. If session state is WCSessionActivationStateNotActivated there will be an error with more details. */
+    @available(watchOS 2.2, *)
+    public func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         
-        NSLog("WCSessionState changed. Reachable %@", session.reachable)
+        
+    }
+
+    
+//    func sessionWatchStateDidChange(_ session: WCSession) {
+//
+//        NSLog("WCSessionState changed. Reachable %@", session.isReachable)
+//    }
+    
+    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]){
+        
+        self.updateData(applicationContext as [String : AnyObject])
     }
     
-    func session(session: WCSession, didReceiveApplicationContext applicationContext: [String : AnyObject]){
-        
-        self.updateData(applicationContext)
-    }
+    
 }
 
 
@@ -310,51 +347,51 @@ extension WAInterfaceController : WCSessionDelegate{
 
 extension WAInterfaceController : HKWorkoutSessionDelegate{
     
-    func workoutSession(workoutSession: HKWorkoutSession, didChangeToState toState: HKWorkoutSessionState, fromState: HKWorkoutSessionState, date: NSDate) {
+    func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {
         
         // NSLog("WKSession state %@ -> %@", fromState.rawValue, toState.rawValue )
         
         switch toState {
-        case .Running:
+        case .running:
             workoutDidStart(date)
-        case .Ended:
+        case .ended:
             workoutDidEnd(date)
         default:
             print("Unexpected state \(toState)")
         }
     }
     
-    func workoutSession(workoutSession: HKWorkoutSession, didFailWithError error: NSError) {
+    func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
         // Do nothing for now
-        
-        NSLog("Error en workoutSession %@ - %@", workoutSession, error)
+        let err = error as NSError
+        NSLog("Error en workoutSession %@ - %@", workoutSession, err)
     }
     
     
     //MARK: HKWorkoutSessionDelegate Auxiliary Functions
     
     
-    func workoutDidStart(date : NSDate) {
+    func workoutDidStart(_ date : Date) {
         
         self.sessionOnLabel.setHidden(false)
         
-        if let healthStore = (WKExtension.sharedExtension().delegate as? ExtensionDelegate)?.healthStore {
+        if let healthStore = (WKExtension.shared().delegate as? ExtensionDelegate)?.healthStore {
             if let q = createHeartRateStreamingQuery(date) {
                 self.query = q
-                healthStore.executeQuery(q)
+                healthStore.execute(q)
             } else {
                 self.startButton.setTitle("?")
             }
         }
     }
     
-    func workoutDidEnd(date : NSDate) {
+    func workoutDidEnd(_ date : Date) {
         
         self.sessionOnLabel.setHidden(true)
         
-        if let healthStore = (WKExtension.sharedExtension().delegate as? ExtensionDelegate)?.healthStore {
+        if let healthStore = (WKExtension.shared().delegate as? ExtensionDelegate)?.healthStore {
             if let q = self.query {
-                healthStore.stopQuery(q)
+                healthStore.stop(q)
                 self.startButton.setTitle("")
             } else {
                 self.startButton.setTitle("??")
@@ -364,13 +401,13 @@ extension WAInterfaceController : HKWorkoutSessionDelegate{
     
     
     
-    func createHeartRateStreamingQuery(workoutStartDate: NSDate) -> HKQuery? {
+    func createHeartRateStreamingQuery(_ workoutStartDate: Date) -> HKQuery? {
         // adding predicate will not work
         // let predicate = HKQuery.predicateForSamplesWithStartDate(workoutStartDate, endDate: nil, options: HKQueryOptions.None)
         
-        guard let quantityType = HKObjectType.quantityTypeForIdentifier(HKQuantityTypeIdentifierHeartRate) else { return nil }
+        guard let quantityType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate) else { return nil }
         
-        let predicate = HKQuery.predicateForSamplesWithStartDate(NSDate(), endDate: nil, options: HKQueryOptions.None)
+        let predicate = HKQuery.predicateForSamples(withStart: Date(), end: nil, options: HKQueryOptions())
         
         let heartRateQuery = HKAnchoredObjectQuery(type: quantityType, predicate: predicate, anchor: anchor, limit: Int(HKObjectQueryNoLimit)) { (query, sampleObjects, deletedObjects, newAnchor, error) -> Void in
             guard let newAnchor = newAnchor else {return}
@@ -386,12 +423,12 @@ extension WAInterfaceController : HKWorkoutSessionDelegate{
     }
     
     
-    func updateHeartRate(samples: [HKSample]?) {
+    func updateHeartRate(_ samples: [HKSample]?) {
         guard let heartRateSamples = samples as? [HKQuantitySample] else {return}
         
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             guard let sample = heartRateSamples.first else{return}
-            let value = sample.quantity.doubleValueForUnit(self.heartRateUnit)
+            let value = sample.quantity.doubleValue(for: self.heartRateUnit)
             //self.label.setText(String(UInt16(value)))
             
             //self.startButton.setTitle(String(UInt16(value)))
@@ -415,12 +452,12 @@ extension WAInterfaceController : WAInterfaceNavigation
     
     func updateFields(){
         
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.async(execute: { () -> Void in
             
             
             if let time = self.startTime {
                 self.workoutTimer.setDate(time)
-                if self.state == .Recording{
+                if self.state == .recording{
                     self.workoutTimer.start()
                 }
                 else{
@@ -430,7 +467,7 @@ extension WAInterfaceController : WAInterfaceNavigation
             
             if let time = self.wStartTime {
                 self.lapTimer.setDate(time)
-                if self.state == .Recording{
+                if self.state == .recording{
                     self.lapTimer.start()
                 }
                 else{
@@ -452,7 +489,14 @@ extension WAInterfaceController : WAInterfaceNavigation
                 
             }
             
-            if let wv = self.wDistancia, xv = self.distancia {
+            if let v = self.ascent {
+                
+                let units = "m"
+                self.climbingLabel.setText(String(format: "%5.0f%@", v, units))
+                
+            }
+            
+            if let wv = self.wDistancia, let xv = self.distancia {
                 
                 let v = xv - wv
                 if v < 1000.0 {
@@ -467,7 +511,9 @@ extension WAInterfaceController : WAInterfaceNavigation
                 
             }
             
-            if self.hr != 0 && self.localMode == .RemoteHR && self.state == .Recording {
+            
+            
+            if self.hr != 0 && self.localMode == .remoteHR && self.state == .recording {
                 self.hrLabel.setText(String(self.hr))
             }
             
@@ -476,17 +522,17 @@ extension WAInterfaceController : WAInterfaceNavigation
             if self.stateChanged{
                 switch self.state{
                     
-                case .Stopped:
+                case .stopped:
                     //stateIcon = "record_64"
                     // self.startButton.setBackgroundImageNamed(stateIcon)
                     self.hrLabel.setText("START")
                     self.unitsLabel.setText("")
-                case .Paused:
+                case .paused:
                     //stateIcon = "pause_64"
                     //self.startButton.setBackgroundImageNamed(stateIcon)
                     self.hrLabel.setText("Paused")
                     self.unitsLabel .setText("")
-                case .Recording:
+                case .recording:
                     //stateIcon = "record_wp_64"
                     //self.startButton.setBackgroundImage(nil)
                     self.unitsLabel.setText("bps")

@@ -85,7 +85,6 @@
 		0052710E1BB173EE00187BF1 /* ComplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0052710D1BB173EE00187BF1 /* ComplicationController.swift */; };
 		005271101BB173EE00187BF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0052710F1BB173EE00187BF1 /* Assets.xcassets */; };
 		005271151BB173EE00187BF1 /* WatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 005270F61BB173EE00187BF1 /* WatchApp.app */; };
-		005491761B35FD3C005DD749 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 005491751B35FD3C005DD749 /* Reachability.swift */; };
 		005491781B36A844005DD749 /* NSMutableArray+Queues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 005491771B36A844005DD749 /* NSMutableArray+Queues.swift */; };
 		0054917C1B36EB11005DD749 /* TGLTrackPointJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0054917B1B36EB11005DD749 /* TGLTrackPointJSON.swift */; };
 		005491801B36FD1F005DD749 /* JSONMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0054917F1B36FD1F005DD749 /* JSONMessage.swift */; };
@@ -134,7 +133,6 @@
 		00F071FD1ACDCB50006C525F /* record_heart_on_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00F071F61ACDCB50006C525F /* record_heart_on_64@2x.png */; };
 		00F071FE1ACDCB50006C525F /* record_heart_on_64@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00F071F61ACDCB50006C525F /* record_heart_on_64@2x.png */; };
 		00F244861ADE62130097D462 /* Movescount_track.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 001A56FF1A7EB2A100233AC7 /* Movescount_track.gpx */; };
-		00F2448A1ADE7A530097D462 /* ISO8601DateFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 00F244891ADE7A530097D462 /* ISO8601DateFormatter.m */; };
 		00FC97FD1B81FBDA009BF533 /* Gear_32.png in Resources */ = {isa = PBXBuildFile; fileRef = 00FC97FB1B81FBDA009BF533 /* Gear_32.png */; };
 		00FC97FE1B81FBDA009BF533 /* Gear_32.png in Resources */ = {isa = PBXBuildFile; fileRef = 00FC97FB1B81FBDA009BF533 /* Gear_32.png */; };
 		00FC97FF1B81FBDA009BF533 /* Gear_32@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00FC97FC1B81FBDA009BF533 /* Gear_32@2x.png */; };
@@ -256,7 +254,6 @@
 		0052710D1BB173EE00187BF1 /* ComplicationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
 		0052710F1BB173EE00187BF1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		005271111BB173EE00187BF1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		005491751B35FD3C005DD749 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		005491771B36A844005DD749 /* NSMutableArray+Queues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableArray+Queues.swift"; sourceTree = "<group>"; };
 		0054917B1B36EB11005DD749 /* TGLTrackPointJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TGLTrackPointJSON.swift; sourceTree = "<group>"; };
 		0054917F1B36FD1F005DD749 /* JSONMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONMessage.swift; sourceTree = "<group>"; };
@@ -295,8 +292,6 @@
 		00F071F51ACDCB50006C525F /* record_heart_on_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = record_heart_on_64.png; path = RecorderTests/record_heart_on_64.png; sourceTree = SOURCE_ROOT; };
 		00F071F61ACDCB50006C525F /* record_heart_on_64@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "record_heart_on_64@2x.png"; path = "RecorderTests/record_heart_on_64@2x.png"; sourceTree = SOURCE_ROOT; };
 		00F244871ADE7A530097D462 /* Recorder-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Recorder-Bridging-Header.h"; sourceTree = "<group>"; };
-		00F244881ADE7A530097D462 /* ISO8601DateFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISO8601DateFormatter.h; sourceTree = "<group>"; };
-		00F244891ADE7A530097D462 /* ISO8601DateFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISO8601DateFormatter.m; sourceTree = "<group>"; };
 		00FC97FB1B81FBDA009BF533 /* Gear_32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Gear_32.png; sourceTree = "<group>"; };
 		00FC97FC1B81FBDA009BF533 /* Gear_32@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Gear_32@2x.png"; sourceTree = "<group>"; };
 		00FC98011B82018A009BF533 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -472,6 +467,7 @@
 			isa = PBXGroup;
 			children = (
 				005491771B36A844005DD749 /* NSMutableArray+Queues.swift */,
+				001158B31BB5A78600DF237B /* TMKAltimeterManagerDelegate.swift */,
 				00038B151ABE20DA00540327 /* TMKAltimeterManager.swift */,
 				0023C2A01AECBD990080A27A /* CMMotionActivityClass-Description.swift */,
 				005A14A41A7BDD430041A73E /* TGLTrackPoint.swift */,
@@ -483,13 +479,9 @@
 				001888E71AB60F740072B0DB /* TMKHeartRateMonitor.swift */,
 				00038B121ABE088500540327 /* TMKAltitudeData.swift */,
 				009B193D1ADBDC5F0071C149 /* TMKImage.swift */,
-				00F244881ADE7A530097D462 /* ISO8601DateFormatter.h */,
-				00F244891ADE7A530097D462 /* ISO8601DateFormatter.m */,
-				005491751B35FD3C005DD749 /* Reachability.swift */,
 				001158B51BB85D6700DF237B /* AppState.swift */,
 				00FC98011B82018A009BF533 /* SettingsViewController.swift */,
 				001158B11BB5A4A800DF237B /* DataController.swift */,
-				001158B31BB5A78600DF237B /* TMKAltimeterManagerDelegate.swift */,
 				0031BCEF1BBE9A8200589CAC /* GlobalConstants.swift */,
 				0014AF4A1BEBD50400F7951C /* TMKMapUtilities.swift */,
 				00EDB45A1BF3480B0067F4F7 /* HealthAuxiliar.swift */,
@@ -579,16 +571,20 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Paco Gorina";
 				TargetAttributes = {
 					005270F51BB173EE00187BF1 = {
 						CreatedOnToolsVersion = 7.0;
 						DevelopmentTeam = N72U6DTDRE;
+						LastSwiftMigration = 0810;
+						ProvisioningStyle = Automatic;
 					};
 					005271011BB173EE00187BF1 = {
 						CreatedOnToolsVersion = 7.0;
 						DevelopmentTeam = N72U6DTDRE;
+						LastSwiftMigration = 0810;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.HealthKit = {
 								enabled = 1;
@@ -598,6 +594,8 @@
 					005A147D1A7BDCF60041A73E = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = N72U6DTDRE;
+						LastSwiftMigration = 0810;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -616,6 +614,7 @@
 					005A14921A7BDCF60041A73E = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = N72U6DTDRE;
+						LastSwiftMigration = 0810;
 						TestTargetID = 005A147D1A7BDCF60041A73E;
 					};
 				};
@@ -796,7 +795,6 @@
 				0031BCF01BBE9A8200589CAC /* GlobalConstants.swift in Sources */,
 				009B193E1ADBDC5F0071C149 /* TMKImage.swift in Sources */,
 				005A14A51A7BDD430041A73E /* TGLTrackPoint.swift in Sources */,
-				00F2448A1ADE7A530097D462 /* ISO8601DateFormatter.m in Sources */,
 				00038B131ABE088500540327 /* TMKAltitudeData.swift in Sources */,
 				001A57041A7EB6D200233AC7 /* TMKTrackDocument.swift in Sources */,
 				001A57061A7EB74A00233AC7 /* TGLTrack.swift in Sources */,
@@ -810,7 +808,6 @@
 				001158B21BB5A4A800DF237B /* DataController.swift in Sources */,
 				005A14841A7BDCF60041A73E /* AppDelegate.swift in Sources */,
 				001A57081A7F79F900233AC7 /* TMKWaypoint.swift in Sources */,
-				005491761B35FD3C005DD749 /* Reachability.swift in Sources */,
 				005491781B36A844005DD749 /* NSMutableArray+Queues.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -874,12 +871,14 @@
 		005271161BB173EE00187BF1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				IBSC_MODULE = WatchApp_Extension;
@@ -887,8 +886,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = es.gorina.Recorder.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -897,21 +898,25 @@
 		005271171BB173EE00187BF1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				DEVELOPMENT_TEAM = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				IBSC_MODULE = WatchApp_Extension;
 				INFOPLIST_FILE = WatchApp/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = es.gorina.Recorder.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -922,9 +927,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CODE_SIGN_ENTITLEMENTS = "WatchApp Extension/WatchApp Extension.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "WatchApp Extension/Info.plist";
@@ -932,8 +939,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = es.gorina.Recorder.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -944,18 +953,22 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CODE_SIGN_ENTITLEMENTS = "WatchApp Extension/WatchApp Extension.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "WatchApp Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = es.gorina.Recorder.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -974,8 +987,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
@@ -985,6 +1000,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1000,7 +1016,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "b76eaf11-d717-48a2-8ca2-a86683b8db06";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1019,8 +1035,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
@@ -1029,6 +1047,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1037,8 +1056,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PROVISIONING_PROFILE = "b76eaf11-d717-48a2-8ca2-a86683b8db06";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1047,19 +1067,22 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Recorder/Recorder.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Recorder/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "es.gorina.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Recorder/Recorder-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1067,18 +1090,21 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Recorder/Recorder.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Francisco Gorina Vanrell (9Y4D4JGW43)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Recorder/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "es.gorina.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Recorder/Recorder-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -1103,6 +1129,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Recorder.app/Recorder";
 			};
 			name = Debug;
@@ -1123,6 +1150,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "es.gorina.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Recorder.app/Recorder";
 			};
 			name = Release;

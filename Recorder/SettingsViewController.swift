@@ -10,6 +10,12 @@ import UIKit
 
 class SettingsViewController: UIViewController {
 
+    @IBOutlet weak var sTransmit: UISwitch!
+    @IBOutlet weak var sBlock: UISwitch!
+    
+    @IBOutlet weak var fUser: UITextField!
+    @IBOutlet weak var fPassword: UITextField!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -22,9 +28,29 @@ class SettingsViewController: UIViewController {
     }
     
     
+    @IBAction func switchTransmit(_ src : AnyObject){
+        let val = sTransmit.isOn
+        NSLog("Switch Transmit")
+    
+    }
+    
+    @IBAction func switchBlock(_ src : AnyObject){
+        let val = sBlock.isOn
+        NSLog("Switch Transmit")
+        
+        UIApplication.shared.isIdleTimerDisabled = val
+   }
+    
+    @IBAction func login(_ src : AnyObject){
+        NSLog("Switch Transmit")
+        
+    
+    }
+
+
     @IBAction func closeSettings()
     {
-        self.dismissViewControllerAnimated(true, completion: { () -> Void in
+        self.dismiss(animated: true, completion: { () -> Void in
             NSLog("Dismissing Settings")
         })
     }

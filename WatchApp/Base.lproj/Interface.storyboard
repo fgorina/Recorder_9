@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="8191" systemVersion="15B38b" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="AgC-eL-Hgc">
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="9531" systemVersion="15D9c" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="AgC-eL-Hgc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="8092"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="9515"/>
     </dependencies>
     <scenes>
         <!--Interface Controller-->
@@ -44,9 +44,16 @@
                         </group>
                         <group width="135" alignment="left" verticalAlignment="bottom" id="2p0-uY-o7O">
                             <items>
-                                <label alignment="left" verticalAlignment="bottom" text="0" id="Vge-gc-njE">
-                                    <fontDescription key="font" type="system" pointSize="25"/>
-                                </label>
+                                <group width="68" height="44" alignment="left" layout="vertical" spacing="1" id="xy0-if-IsP">
+                                    <items>
+                                        <label alignment="left" verticalAlignment="bottom" text="0" id="Vge-gc-njE">
+                                            <fontDescription key="font" type="system" pointSize="20"/>
+                                        </label>
+                                        <label alignment="left" verticalAlignment="bottom" text="0" id="yGO-nD-dd1">
+                                            <fontDescription key="font" style="UICTFontTextStyleBody"/>
+                                        </label>
+                                    </items>
+                                </group>
                                 <group width="58" alignment="right" verticalAlignment="bottom" layout="vertical" id="cc4-ZO-Za1">
                                     <items>
                                         <timer alignment="right" verticalAlignment="bottom" id="LbM-fv-Og1"/>
@@ -72,6 +79,7 @@
                         </items>
                     </menu>
                     <connections>
+                        <outlet property="climbingLabel" destination="yGO-nD-dd1" id="h7x-il-5hx"/>
                         <outlet property="distLabel" destination="Vge-gc-njE" id="CUB-Ay-Y3U"/>
                         <outlet property="distLapLabel" destination="fE7-G4-NMy" id="jHb-9g-Dzn"/>
                         <outlet property="hrLabel" destination="AB0-tq-7Hu" id="uSk-ka-Y5X"/>

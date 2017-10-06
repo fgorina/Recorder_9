@@ -10,49 +10,50 @@ import UIKit
 import MapKit
 import CoreMotion
 
-public class TGLTrackPoint  {
+open class TGLTrackPoint  {
     
     let PRECISION = 10.0;
     
-    public var coordinate : CLLocationCoordinate2D = CLLocationCoordinate2DMake(0.0, 0.0)
-    public var ele : Double = 0.0
-    public var filteredEle : Double = 0.0
-    public var dtime : NSDate = NSDate()
+    open var coordinate : CLLocationCoordinate2D = CLLocationCoordinate2DMake(0.0, 0.0)
+    open var ele : Double = 0.0
+    open var relativeEle : Double = 0.0
+    open var filteredEle : Double = 0.0
+    open var dtime : Date = Date()
     
     
-    public var hPrecision : CLLocationAccuracy = -1.0  // Bad Point
-    public var vPrecision : CLLocationAccuracy = -1.0  // Bad Point
-    public var distanciaOrigen : CLLocationDistance = 0.0
-    public var tempsOrigen : NSTimeInterval = 0.0
-    public var speed : CLLocationSpeed = 0.0
-    public var filteredSpeed : CLLocationSpeed = 0.0
-    public var heading : CLLocationDirection = 0.0
-    public var distanciaPedometer : Double = 0.0
+    open var hPrecision : CLLocationAccuracy = -1.0  // Bad Point
+    open var vPrecision : CLLocationAccuracy = -1.0  // Bad Point
+    open var distanciaOrigen : CLLocationDistance = 0.0
+    open var tempsOrigen : TimeInterval = 0.0
+    open var speed : CLLocationSpeed = 0.0
+    open var filteredSpeed : CLLocationSpeed = 0.0
+    open var heading : CLLocationDirection = 0.0
+    open var distanciaPedometer : Double = 0.0
     
-    public var heartRate : Double = 0.0
-    public var filteredHeartRate : Double = 0.0
-    public var temperatura : Double = 0.0
-    public var calories : Double = 0.0
-    public var activeCalories : Double = 0.0
+    open var heartRate : Double = 0.0
+    open var filteredHeartRate : Double = 0.0
+    open var temperatura : Double = 0.0
+    open var calories : Double = 0.0
+    open var activeCalories : Double = 0.0
     
-    public var activity : ActivityEnum = .Unknown
-    
-    
+    open var activity : ActivityEnum = .unknown
     
     
-    public var selected = false
     
-    var otherFormatter : NSDateFormatter;
+    
+    open var selected = false
+    
+    var otherFormatter : DateFormatter;
     
     // Returns position as a CLLocation instance
     
     public init()
     {
 
-        self.otherFormatter = NSDateFormatter();
-        self.otherFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+        self.otherFormatter = DateFormatter();
+        self.otherFormatter.locale = Locale(identifier: "en_US_POSIX")
         
-        self.otherFormatter.timeZone = NSTimeZone(abbreviation: "UTC")
+        self.otherFormatter.timeZone = TimeZone(abbreviation: "UTC")
         self.otherFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'.000Z'"
 
     }
@@ -60,34 +61,34 @@ public class TGLTrackPoint  {
     // MARK: - Calculated properties
     
     
-    public var activityDesc : String
+    open var activityDesc : String
     {        
         return CMMotionActivity.activityDescription(self.activity)
     }
     
-    public var time : String
+    open var time : String
     {
-        return self.otherFormatter.stringFromDate(self.dtime);
+        return self.otherFormatter.string(from: self.dtime);
     }
-    public var location : CLLocation
+    open var location : CLLocation
     {
        return CLLocation.init(latitude: coordinate.latitude,longitude: coordinate.longitude);
     }
 
-    public var tempsOrigenAsString :String
+    open var tempsOrigenAsString :String
     {
         return TGLTrackPoint.stringFromTimeInterval(self.tempsOrigen);
     }
     
-    public var xmlText : String
+    open var xmlText : String
     {
         let str : NSMutableString = NSMutableString();
         str.appendFormat("<trkpt lat=\"%7.5f\" lon=\"%7.5f\">\n", self.coordinate.latitude, self.coordinate.longitude)
         
-        let timeString :String = self.time.stringByReplacingOccurrencesOfString(" ",  withString: "").stringByReplacingOccurrencesOfString("\n",withString: "").stringByReplacingOccurrencesOfString("\r",withString: "")
+        let timeString :String = self.time.replacingOccurrences(of: " ",  with: "").replacingOccurrences(of: "\n",with: "").replacingOccurrences(of: "\r",with: "")
         
         str.appendFormat("<ele>%3.0f</ele>\n", self.ele)
-        str.appendFormat("<time>\(timeString)</time>\n")
+        str.appendFormat("<time>\(timeString)</time>\n" as NSString)
         
         if self.hPrecision != -1
         {
@@ -100,7 +101,7 @@ public class TGLTrackPoint  {
         }
         
         
-        str.appendString("<extensions>\n")
+        str.append("<extensions>\n")
         str.appendFormat("<gpxdata:hr>%4.2f</gpxdata:hr>\n", self.heartRate)
         str.appendFormat("<gpxdata:temp>%4.2f</gpxdata:temp>\n", self.temperatura)
         str.appendFormat("<gpxdata:distance>%8.2f</gpxdata:distance>\n", self.distanciaOrigen)
@@ -114,8 +115,8 @@ public class TGLTrackPoint  {
         str.appendFormat("<tracesdata:activity>%@</tracesdata:activity>\n", self.activityDesc)
         str.appendFormat("<tracesdata:heading>%8.2f</tracesdata:heading>\n", self.heading)
         str.appendFormat("<tracesdata:distancePedometer>%8.2f</tracesdata:distancePedometer>\n", self.distanciaPedometer)
-        str.appendString("</extensions>\n")
-        str.appendString("</trkpt>\n")
+        str.append("</extensions>\n")
+        str.append("</trkpt>\n")
         
         return str as String;
     }
@@ -128,7 +129,7 @@ public class TGLTrackPoint  {
 
     // MARK: - Test and compare functions
     
-    public func isEqualTo (pt : TGLTrackPoint?) -> (Bool)
+    open func isEqualTo (_ pt : TGLTrackPoint?) -> (Bool)
     {
         if let pt0 = pt{
             return fabs(self.distanciaOrigen - pt0.distanciaOrigen) < PRECISION
@@ -139,33 +140,33 @@ public class TGLTrackPoint  {
         }
     }
 
-    public func compareDistance (pt : TGLTrackPoint) -> (NSComparisonResult)
+    open func compareDistance (_ pt : TGLTrackPoint) -> (ComparisonResult)
     {
         if self.distanciaOrigen < pt.distanciaOrigen
         {
-            return NSComparisonResult.OrderedAscending;
+            return ComparisonResult.orderedAscending;
         }
         else if self.distanciaOrigen > pt.distanciaOrigen
         {
-            return NSComparisonResult.OrderedDescending;
+            return ComparisonResult.orderedDescending;
         }
         else
         {
-            return NSComparisonResult.OrderedSame;
+            return ComparisonResult.orderedSame;
         }
         
     }
 
     // MARK: - Utilities functions
     
-    public func distanceFrom ( pt : TGLTrackPoint) -> (CLLocationDistance)   // In Meters
+    open func distanceFrom ( _ pt : TGLTrackPoint) -> (CLLocationDistance)   // In Meters
     {
-        return self.location.distanceFromLocation(pt.location);
+        return self.location.distance(from: pt.location);
     }
     
-    public func distanceFromLocation (loc: CLLocation) -> (CLLocationDistance) // In Meters
+    open func distanceFromLocation (_ loc: CLLocation) -> (CLLocationDistance) // In Meters
     {
-        return self.location.distanceFromLocation(loc);
+        return self.location.distance(from: loc);
     }
     
     
@@ -181,18 +182,18 @@ public class TGLTrackPoint  {
             self.heartRate) as String
     }
     
-    func getUrl(server : String) -> NSURL? {
+    func getUrl(_ server : String) -> URL? {
         
-            let fmt = NSDateFormatter()
+            let fmt = DateFormatter()
             fmt.dateFormat = "yyyy-MM-dd+HH:mm:ss"
-            let sdate = fmt.stringFromDate(self.dtime)
+            let sdate = fmt.string(from: self.dtime)
             
-            let uuid = UIDevice.currentDevice().identifierForVendor
-            let suuid = uuid!.UUIDString
+            let uuid = UIDevice.current.identifierForVendor
+            let suuid = uuid!.uuidString
             
             let param = String(format: "%@?id=%@&date=%@&lat=%0.5f&lon=%0.5f&ele=%0.2f", server,suuid, sdate, self.coordinate.latitude, self.coordinate.longitude, self.ele)
         
-            return NSURL(string: param)
+            return URL(string: param)
     }
     
     func toJSON() -> NSDictionary {
@@ -205,7 +206,7 @@ public class TGLTrackPoint  {
 
     // MARK: -  Class utilities
     
-    class func stringFromTimeInterval (interval: NSTimeInterval) -> (String){ // Veure de convertir-ho a type o
+    class func stringFromTimeInterval (_ interval: TimeInterval) -> (String){ // Veure de convertir-ho a type o
         let ti : Int = Int(interval)
         let seconds : Int  = ti % 60;
         let minutes : Int  = (ti / 60) % 60;

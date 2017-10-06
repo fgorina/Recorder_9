@@ -14,10 +14,10 @@ import MapKit
 protocol TMKAltimeterManagerDelegate {
     // protocol definition goes here
     
-    func updateActivity(activity: CMMotionActivity)
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
-    func updateTrackPoints(dat : [TGLTrackPoint])
-    func updateSpeed(speed : CLLocationSpeed)
+    func updateActivity(_ activity: CMMotionActivity)
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
+    func updateTrackPoints(_ dat : [TGLTrackPoint])
+    func updateSpeed(_ speed : CLLocationSpeed)
 
     
 }

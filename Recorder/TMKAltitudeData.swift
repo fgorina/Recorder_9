@@ -13,7 +13,7 @@ class TMKAltitudeData: NSObject {
     
     var relativeAltitude : Double = 0.0
     var pressure : Double = 0.0
-    var timestamp : NSTimeInterval = 0.0
+    var timestamp : TimeInterval = 0.0
     override var description : String{
         return NSString(format: "Altitut %@ Pressio %@ Temps %f",self.relativeAltitude,self.pressure,self.timestamp) as String
     }
@@ -28,7 +28,7 @@ class TMKAltitudeData: NSObject {
         super.init()
     }
     
-    internal init(altitude: Double, pressure: Double, timestamp time: NSTimeInterval){
+    internal init(altitude: Double, pressure: Double, timestamp time: TimeInterval){
         
         self.relativeAltitude = altitude
         self.pressure = pressure
@@ -49,11 +49,11 @@ class TMKAltitudeData: NSObject {
     internal convenience init(CMAltitudeNow alt:CMAltitudeData){
         self.init(altitude:alt.relativeAltitude.doubleValue,
             pressure:alt.pressure.doubleValue,
-            timestamp: NSDate().timeIntervalSince1970)
+            timestamp: Date().timeIntervalSince1970)
         
     }
     
-    internal func setDataWithAltitude(altitude: Double, pressure:Double, timestamp time:NSTimeInterval)
+    internal func setDataWithAltitude(_ altitude: Double, pressure:Double, timestamp time:TimeInterval)
     {
         self.relativeAltitude = altitude
         self.pressure = pressure

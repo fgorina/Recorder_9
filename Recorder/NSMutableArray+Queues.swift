@@ -12,10 +12,10 @@ import Foundation
 
 extension NSMutableArray{
     
-    func enqueue(obj : AnyObject){
+    func enqueue(_ obj : AnyObject){
         
         objc_sync_enter(self);
-        self.addObject(obj);
+        self.add(obj);
         objc_sync_exit(self);
     }
     
@@ -25,18 +25,18 @@ extension NSMutableArray{
         
         objc_sync_enter(self)
         
-        if let ob: AnyObject = self.firstObject{
+        if let ob: AnyObject = self.firstObject as AnyObject?{
             o = ob
-            self.removeObjectAtIndex(0)
+            self.removeObject(at: 0)
         }
         objc_sync_exit(self)
         
         return o
     }
     
-    func push(obj : AnyObject){
+    func push(_ obj : AnyObject){
         objc_sync_enter(self);
-        self.insertObject(obj, atIndex: 0)
+        self.insert(obj, at: 0)
         objc_sync_exit(self);
     }
     

@@ -36,13 +36,13 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate {
     
 //MARK: HealhtStore
     
-    func getTypesForIdentifiers(identifiers: [String]) -> Set<HKSampleType>{
+    func getTypesForIdentifiers(_ identifiers: [HKQuantityTypeIdentifier]) -> Set<HKSampleType>{
         
         var types : Set<HKSampleType> = Set<HKSampleType>()
         
         
         for v in identifiers{
-            let d = HKSampleType.quantityTypeForIdentifier(v)
+            let d = HKSampleType.quantityType(forIdentifier: v)
             if let dok = d{
                 types.insert(dok)
             }
@@ -58,7 +58,7 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate {
     
     func requestAuthorization(){
         
-        let dataTypes = [HKQuantityTypeIdentifierHeartRate, HKQuantityTypeIdentifierFlightsClimbed, HKQuantityTypeIdentifierDistanceWalkingRunning]
+        let dataTypes = [HKQuantityTypeIdentifier.heartRate, HKQuantityTypeIdentifier.flightsClimbed, HKQuantityTypeIdentifier.distanceWalkingRunning]
         
         let types = self.getTypesForIdentifiers(dataTypes)
         
@@ -66,9 +66,9 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate {
         
         if let hs = self.healthStore{
             
-            hs.requestAuthorizationToShareTypes(nil , readTypes: types, completion: { (success:Bool, err:NSError?) -> Void in
+            hs.requestAuthorization(toShare: nil , read: types, completion: { (success:Bool, err:Error?) -> Void in
                 if !success{
-                    if let error = err {
+                    if let error = err as? NSError{
                     NSLog("Error al demanar autorizacio %@", error)
                     }
                 }

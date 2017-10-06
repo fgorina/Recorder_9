@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-public class JSONMessage {
+open class JSONMessage {
     
     var dispositivo : String        // Vendor ID del dispositiu
     var dades : NSArray             // Array de TGLTrackPointJSON
@@ -17,16 +17,16 @@ public class JSONMessage {
     
     public init(punts : NSArray){
         
-        let uuid = UIDevice.currentDevice().identifierForVendor
-        self.dispositivo = uuid!.UUIDString
+        let uuid = UIDevice.current.identifierForVendor
+        self.dispositivo = uuid!.uuidString
         self.dades = punts
         
     }
     
-    public func getJSONData() -> NSData? {
+    open func getJSONData() -> Data? {
     
         do {
-        let data : NSData? = try NSJSONSerialization.dataWithJSONObject(self, options: NSJSONWritingOptions())
+        let data : Data? = try JSONSerialization.data(withJSONObject: self, options: JSONSerialization.WritingOptions())
         
     
         return data
@@ -35,7 +35,7 @@ public class JSONMessage {
             
         }
         
-        let data : NSData? = nil
+        let data : Data? = nil
         
         return data
     

@@ -20,10 +20,10 @@ class TMKImage: UIImage {
     
     
     
-    class func  beginImageContextWithSize(size:CGSize)
+    class func  beginImageContextWithSize(_ size:CGSize)
     {
-        if UIScreen.mainScreen().respondsToSelector("scale") {
-            if UIScreen.mainScreen().scale == 2.0 {
+        if UIScreen.main.responds(to: #selector(NSDecimalNumberBehaviors.scale)) {
+            if UIScreen.main.scale == 2.0 {
                 UIGraphicsBeginImageContextWithOptions(size, true, 2.0)
     } else {
                 UIGraphicsBeginImageContext(size)
@@ -38,29 +38,29 @@ class TMKImage: UIImage {
         UIGraphicsEndImageContext()
     }
     
-    class func imageFromView(view : UIView) -> UIImage
+    class func imageFromView(_ view : UIView) -> UIImage
     {
         self.beginImageContextWithSize(view.bounds.size)
-        let hidden = view.hidden
-        view.hidden = false
-        view.layer.renderInContext(UIGraphicsGetCurrentContext()!)
+        let hidden = view.isHidden
+        view.isHidden = false
+        view.layer.render(in: UIGraphicsGetCurrentContext()!)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         self.endImageContext()
-        view.hidden = hidden;
-        return image
+        view.isHidden = hidden;
+        return image!
     }
     
-    class func imageWithImage(image:UIImage,  scaledToSize newSize:CGSize) -> UIImage
+    class func imageWithImage(_ image:UIImage,  scaledToSize newSize:CGSize) -> UIImage
     {
         self.beginImageContextWithSize(newSize)
-        image.drawInRect(CGRectMake(0,0,newSize.width,newSize.height))
+        image.draw(in: CGRect(x: 0,y: 0,width: newSize.width,height: newSize.height))
         let newImage = UIGraphicsGetImageFromCurrentImageContext()
         self.endImageContext()
-        return newImage
+        return newImage!
     }
     
     
-    class func imageFromView( view: UIView,  scaledToSize newSize:(CGSize)) -> UIImage
+    class func imageFromView( _ view: UIView,  scaledToSize newSize:(CGSize)) -> UIImage
     {
         var image = self.imageFromView(view)
         if view.bounds.size.width != newSize.width ||

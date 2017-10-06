@@ -26,10 +26,10 @@ class WAClimbInterfaceController: WKInterfaceController {
         
         weak var rootController : WAInterfaceController?
         
-        override func awakeWithContext(context: AnyObject?) {
-            super.awakeWithContext(context)
+        override func awake(withContext context: Any?) {
+            super.awake(withContext: context)
             
-            self.rootController  = WKExtension.sharedExtension().rootInterfaceController as? WAInterfaceController
+            self.rootController  = WKExtension.shared().rootInterfaceController as? WAInterfaceController
             
             
             // Configure interface objects here.
@@ -39,7 +39,7 @@ class WAClimbInterfaceController: WKInterfaceController {
             // This method is called when watch view controller is about to be visible to user
             super.willActivate()
             
-            if let root = WKExtension.sharedExtension().rootInterfaceController as? WAInterfaceController {
+            if let root = WKExtension.shared().rootInterfaceController as? WAInterfaceController {
                 root.actualPageController = self
             }
             
@@ -59,12 +59,12 @@ class WAClimbInterfaceController: WKInterfaceController {
         
         func updateFields(){
             
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            DispatchQueue.main.async(execute: { () -> Void in
                 
                 
                 if let time = self.rootController?.startTime {
-                    self.workoutTimer.setDate(time)
-                    if self.rootController?.state == .Recording{
+                    self.workoutTimer.setDate(time as Date)
+                    if self.rootController?.state == .recording{
                         self.workoutTimer.start()
                     }
                     else{
@@ -73,8 +73,8 @@ class WAClimbInterfaceController: WKInterfaceController {
                 }
                 
                 if let time = self.rootController?.wStartTime {
-                    self.lapTimer.setDate(time)
-                    if self.rootController?.state == .Recording{
+                    self.lapTimer.setDate(time as Date)
+                    if self.rootController?.state == .recording{
                         self.lapTimer.start()
                     }
                     else{
@@ -114,7 +114,7 @@ class WAClimbInterfaceController: WKInterfaceController {
                     self.heightLabel.setText(s)
                 }
                 
-                if let v = self.rootController?.ascentSpeed, v1 = self.rootController?.descentSpeed {
+                if let v = self.rootController?.ascentSpeed, let v1 = self.rootController?.descentSpeed {
                     
                     let speed = (v-v1) * 3600.0
                     let s = String(format: "%4.0f%@", speed, " m/h")
@@ -127,17 +127,17 @@ class WAClimbInterfaceController: WKInterfaceController {
                 if let stat = self.rootController?.state{
                     switch stat{
                         
-                    case .Stopped:
+                    case .stopped:
                         //stateIcon = "record_64"
                         // self.startButton.setBackgroundImageNamed(stateIcon)
                         self.heightLabel.setText("START")
                         self.unitsLabel.setText("")
-                    case .Paused:
+                    case .paused:
                         //stateIcon = "pause_64"
                         //self.startButton.setBackgroundImageNamed(stateIcon)
                         self.heightLabel.setText("Paused")
                         self.unitsLabel .setText("")
-                    case .Recording:
+                    case .recording:
                         //stateIcon = "record_wp_64"
                         //self.startButton.setBackgroundImage(nil)
                         //self.unitsLabel.setText("min/km")

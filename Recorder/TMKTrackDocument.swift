@@ -8,18 +8,18 @@
 
 import UIKit
 
-public class TMKTrackDocument: UIDocument {
+open class TMKTrackDocument: UIDocument {
     
-    public unowned var track : TGLTrack;
+    open unowned var track : TGLTrack;
     
     // Els inicialitzadors canvien de la versió de O-C per obligar a incloure la track
     
     init(track : TGLTrack){
         self.track = track;
-        super.init(fileURL:NSURL(fileURLWithPath:track.path!));
+        super.init(fileURL:URL(fileURLWithPath:track.path!));
     }
     
-    init(fileURL url: NSURL, track:TGLTrack) {
+    init(fileURL url: URL, track:TGLTrack) {
         self.track = track;
         super.init(fileURL:url);
     }
@@ -36,7 +36,7 @@ public class TMKTrackDocument: UIDocument {
     //
     //
     
-    public override func contentsForType(typeName: String) throws -> AnyObject {
+    open override func contents(forType typeName: String) throws -> Any {
         return self.track;
     }
     
@@ -44,8 +44,8 @@ public class TMKTrackDocument: UIDocument {
     // Sustituim aquest metode per poder parsejar a mida que llegim de l'arxiu
     //
     
-    public override func readFromURL(url: NSURL) throws {
-        self.track.loadURL(url, fromFilesystem:FileOrigin.Document);
+    open override func read(from url: URL) throws {
+        self.track.loadURL(url, fromFilesystem:FileOrigin.document);
         
     }
     
@@ -56,20 +56,20 @@ public class TMKTrackDocument: UIDocument {
     // D'aquesta forma la traduccio a xml no cal tenir-la a memoria
     //
     
-    override public func writeContents(contents: AnyObject, toURL url: NSURL, forSaveOperation saveOperation: UIDocumentSaveOperation, originalContentsURL: NSURL?) throws {
+    override open func writeContents(_ contents: Any, to url: URL, for saveOperation: UIDocumentSaveOperation, originalContentsURL: URL?) throws {
         
         self.track.writeToURL(url)
     }
     
     
-    public override func handleError(error: NSError, userInteractionPermitted:Bool)
+    open override func handleError(_ error: Error, userInteractionPermitted:Bool)
     {
-    
-        NSLog("Error al obrir arxiu : %@", error);
+        let err = error as NSError
+        NSLog("Error al obrir arxiu : %@", err);
     }
     
     
-    public override func updateUserActivityState(userActivity:NSUserActivity)
+    open override func updateUserActivityState(_ userActivity:NSUserActivity)
     {
         super.updateUserActivityState(userActivity);
     

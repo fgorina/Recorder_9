@@ -13,13 +13,13 @@ struct GlobalConstants {
     static let debugLaunch = false
 }
 
-func debugMsg(str : String){
+func debugMsg(_ str : String){
     if GlobalConstants.debug{
         NSLog(str)
     }
 }
 
-func debugLaunch(str : String){
+func debugLaunch(_ str : String){
     if GlobalConstants.debugLaunch{
         NSLog(str)
     }

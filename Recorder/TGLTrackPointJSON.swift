@@ -16,9 +16,9 @@ public extension NSMutableDictionary {
     
     public func setJSONPoint(trackPoint tp : TGLTrackPoint){
         
-        let fmt = NSDateFormatter()
+        let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let sdate = fmt.stringFromDate(tp.dtime)
+        let sdate = fmt.string(from: tp.dtime as Date)
         
         
         self.setValue(tp.coordinate.longitude, forKey: "lon")

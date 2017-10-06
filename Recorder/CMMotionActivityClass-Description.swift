@@ -9,61 +9,61 @@
 import CoreMotion
 
 public enum ActivityEnum : Int{
-    case Unknown = 0
-    case Stationary
-    case Walking
-    case Running
-    case Cycling
-    case Automotive
+    case unknown = 0
+    case stationary
+    case walking
+    case running
+    case cycling
+    case automotive
 }
 
 extension CMMotionActivity {
     
     public func activEnum() -> ActivityEnum {
         if self.walking{
-            return ActivityEnum.Walking
+            return ActivityEnum.walking
         }
         if self.running{
-            return ActivityEnum.Running
+            return ActivityEnum.running
         }
         if self.cycling{
-            return ActivityEnum.Cycling
+            return ActivityEnum.cycling
         }
         if self.automotive{
-            return ActivityEnum.Automotive
+            return ActivityEnum.automotive
         }
         if self.stationary{
-            return ActivityEnum.Stationary
+            return ActivityEnum.stationary
         }
-        return ActivityEnum.Unknown
+        return ActivityEnum.unknown
     }
     
     public var stringDescription : String {
         return CMMotionActivity.activityDescription(self.activEnum())
     }
     
-    class public func activityDescription (activ : ActivityEnum) -> String{
+    class public func activityDescription (_ activ : ActivityEnum) -> String{
         
         switch activ{
-        case .Stationary : return "Stationary"
-        case .Walking : return "Walking"
-        case .Running : return "Running"
-        case .Cycling : return "Cycling"
-        case .Automotive : return "Automotive"
+        case .stationary : return "Stationary"
+        case .walking : return "Walking"
+        case .running : return "Running"
+        case .cycling : return "Cycling"
+        case .automotive : return "Automotive"
         default : return "Unknown"
         }
         
     }
     
-    class public func activityFromString(str : String) -> ActivityEnum {
+    class public func activityFromString(_ str : String) -> ActivityEnum {
         
         switch str {
-        case "Stationary" : return .Stationary
-        case "Walking" : return .Walking
-        case "Running" : return .Running
-        case "Cycling" : return .Cycling
-        case "Automotive" : return .Automotive
-        default: return .Unknown
+        case "Stationary" : return .stationary
+        case "Walking" : return .walking
+        case "Running" : return .running
+        case "Cycling" : return .cycling
+        case "Automotive" : return .automotive
+        default: return .unknown
             
         }
         

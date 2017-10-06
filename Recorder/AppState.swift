@@ -9,12 +9,12 @@
 import Foundation
 
 enum appState : Int {
-    case Stopped = 0
-    case Recording
-    case Paused
+    case stopped = 0
+    case recording
+    case paused
 }
 
 enum appMode : Int {
-    case LocalHR = 0
-    case RemoteHR
+    case localHR = 0
+    case remoteHR
 }

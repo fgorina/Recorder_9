@@ -15,18 +15,18 @@ import HealthKit
 
 
 public enum FileOrigin {
-    case Document
-    case Dropbox
+    case document
+    case dropbox
 }
 
-public class TGLTrack: NSObject, NSXMLParserDelegate {
+open class TGLTrack: NSObject, XMLParserDelegate {
     
     // Some Constants
     
     let DISTANCE = 0.0 // 10.0 m
     let TEMPS = 0.0     // 5.0 s
     
-    var lastTimeSent : NSDate?  = nil // Last time data sent
+    var lastTimeSent : Date?  = nil // Last time data sent
     var deltaSend : Double = 60.0     // Send every minute!!!
     
     
@@ -52,18 +52,18 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     
     // Some public data
     
-    public var data  = Array<TGLTrackPoint>()      // Points that form the track
-    public var waypoints  = Array<TMKWaypoint>() // Sustituir posteriorment per Waypoints
-    public var laps = Array<Double>()        // Laps en Suunto
+    open var data  = Array<TGLTrackPoint>()      // Points that form the track
+    open var waypoints  = Array<TMKWaypoint>() // Sustituir posteriorment per Waypoints
+    open var laps = Array<Double>()        // Laps en Suunto
     //public var laps = Array<TGLTrackPoint>() // Ni idea que es
     
     // Document data
     
-    public var name = "New Track"     // Name of the track
-    public var color = UIColor.greenColor()    // Color of the track
-    public var doc : TMKTrackDocument? = nil   // UIDocument si origin es document
-    public var origin = FileOrigin.Document    // Tipus de origin del fitxer
-    public var path : String?                  // Si Document es Url si Dropbox es DBPath
+    open var name = "New Track"     // Name of the track
+    open var color = UIColor.green    // Color of the track
+    open var doc : TMKTrackDocument? = nil   // UIDocument si origin es document
+    open var origin = FileOrigin.document    // Tipus de origin del fitxer
+    open var path : String?                  // Si Document es Url si Dropbox es DBPath
     
     // Envelop data
     
@@ -77,7 +77,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     
     // Recording file data -- Usually es written to a local file first
     
-    var hdl : NSFileHandle?
+    var hdl : FileHandle?
     var lastPointWritten : Int = 0
     
     // Some constants and accessories
@@ -135,7 +135,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         super.init()
     }
     
-    public class func newTrackWithURL(url:NSURL) -> (TGLTrack)
+    open class func newTrackWithURL(_ url:URL) -> (TGLTrack)
     {
         let tr  = TGLTrack();
         
@@ -143,10 +143,9 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         
         
         tr.path = url.path;
-        if let nom = url.lastPathComponent
-        {
-            tr.name = nom
-        }
+        let nom = url.lastPathComponent
+        tr.name = nom
+        
         //[tr updateBoundingBox];
         
         return tr;
@@ -154,12 +153,12 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     
     // MARK : - Loading Data
     
-    public func loadURL(url:NSURL, fromFilesystem fs:FileOrigin)
+    open func loadURL(_ url:URL, fromFilesystem fs:FileOrigin)
     {
         
         
         
-        if let parser = NSXMLParser(contentsOfURL: url)
+        if let parser = XMLParser(contentsOf: url)
         {
             parser.delegate = self
             parser.parse()
@@ -182,16 +181,16 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             let wp = TMKWaypoint.newWaypointFromTrackPoint(_trackPoint: tp)
             wp.title = "Start";
             wp.track = self;
-            wp.type = WaypointType.Start
+            wp.type = WaypointType.start
             
-            self.waypoints.insert(wp, atIndex: 0)
+            self.waypoints.insert(wp, at: 0)
         }
         
         if let tp = self.data.last {
             let wp = TMKWaypoint.newWaypointFromTrackPoint(_trackPoint: tp)
             wp.title = "End";
             wp.track = self;
-            wp.type = WaypointType.End
+            wp.type = WaypointType.end
             self.waypoints.append(wp)
             
             
@@ -212,10 +211,10 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     
     
     
-    public func loadData(data : NSData, fromFilesystem fs:FileOrigin, withPath path:String)
+    open func loadData(_ data : Data, fromFilesystem fs:FileOrigin, withPath path:String)
     {
         
-        let parser = NSXMLParser(data: data)
+        let parser = XMLParser(data: data)
         parser.delegate = self
         parser.parse()
         
@@ -238,16 +237,16 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                 let wp = TMKWaypoint.newWaypointFromTrackPoint(_trackPoint: tp)
                 wp.title = "Start";
                 wp.track = self;
-                wp.type = WaypointType.Start
+                wp.type = WaypointType.start
                 
-                self.waypoints.insert(wp, atIndex: 0)
+                self.waypoints.insert(wp, at: 0)
             }
             
             if let tp = self.data.last {
                 let wp = TMKWaypoint.newWaypointFromTrackPoint(_trackPoint: tp)
                 wp.title = "End";
                 wp.track = self;
-                wp.type = WaypointType.End
+                wp.type = WaypointType.end
                 self.waypoints.append(wp)
                 
                 
@@ -274,8 +273,8 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     func newRecordingName() -> String
     {
         
-        let store = NSUserDefaults.standardUserDefaults()
-        var oldPath = store.stringForKey("XRECORDINGPATH")
+        let store = UserDefaults.standard
+        var oldPath = store.string(forKey: "XRECORDINGPATH")
         
         // Si oldPath existeix es que ha petat la gravació. Recuperem les dades
         var newName : String = "new track.gpx"
@@ -286,18 +285,18 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         }
         else
         {
-            let ldateFormatter = NSDateFormatter()
-            let enUSPOSIXLocale = NSLocale(localeIdentifier: "en_US_POSIX")
+            let ldateFormatter = DateFormatter()
+            let enUSPOSIXLocale = Locale(identifier: "en_US_POSIX")
             
             ldateFormatter.locale = enUSPOSIXLocale
             ldateFormatter.dateFormat = "'R_'yyyyMMdd'_'HHmmss'_Track.gpx'"
-            newName = ldateFormatter.stringFromDate(NSDate())
+            newName = ldateFormatter.string(from: Date())
         }
         return newName
     }
     
     
-    public func writeToURL(url : NSURL) -> (Bool)
+    open func writeToURL(_ url : URL) -> (Bool)
     {
         //let cord : NSFileCoordinator = NSFileCoordinator(filePresenter: self.doc)
         //var error : NSError?
@@ -309,35 +308,35 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         
         // Check if it exits
         
-        let mgr =  NSFileManager()
+        let mgr =  FileManager()
         
         
         
-        let exists = mgr.fileExistsAtPath(url.path!)
+        let exists = mgr.fileExists(atPath: url.path)
         
         if !exists{
-            mgr.createFileAtPath(url.path!, contents: "Hello".dataUsingEncoding(NSUTF8StringEncoding), attributes:nil)
+            mgr.createFile(atPath: url.path, contents: "Hello".data(using: String.Encoding.utf8), attributes:nil)
         }
         
         
         
-        if let hdl = NSFileHandle(forWritingAtPath: url.path!){
-            hdl.truncateFileAtOffset(0)
-            hdl.writeData(self.xmlHeader.dataUsingEncoding(NSUTF8StringEncoding)!)
+        if let hdl = FileHandle(forWritingAtPath: url.path){
+            hdl.truncateFile(atOffset: 0)
+            hdl.write(self.xmlHeader.data(using: String.Encoding.utf8)!)
             
             for wp in self.waypoints {
-                if wp.type != WaypointType.Start && wp.type != WaypointType.End{
-                    hdl.writeData(wp.xmlText.dataUsingEncoding(NSUTF8StringEncoding)!)
+                if wp.type != WaypointType.start && wp.type != WaypointType.end{
+                    hdl.write(wp.xmlText.data(using: String.Encoding.utf8)!)
                 }
             }
             
-            hdl.writeData(self.trackHeader.dataUsingEncoding(NSUTF8StringEncoding)!)
+            hdl.write(self.trackHeader.data(using: String.Encoding.utf8)!)
             
             for tp in self.data {
-                hdl.writeData(tp.xmlText.dataUsingEncoding(NSUTF8StringEncoding)!)
+                hdl.write(tp.xmlText.data(using: String.Encoding.utf8)!)
             }
             
-            hdl.writeData(self.xmlFooter.dataUsingEncoding(NSUTF8StringEncoding)!)
+            hdl.write(self.xmlFooter.data(using: String.Encoding.utf8)!)
             hdl.closeFile()
             return true
         }
@@ -355,31 +354,31 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     {
         // Get new name or old if not closed OK
         
-        let del  = UIApplication.sharedApplication().delegate as! AppDelegate
+        let del  = UIApplication.shared.delegate as! AppDelegate
         
-        let url = del.localTracksDirectory().URLByAppendingPathComponent(self.newRecordingName())
+        let url = del.localTracksDirectory().appendingPathComponent(self.newRecordingName())
         
-        let store = NSUserDefaults.standardUserDefaults()
-        store.setObject(url.path, forKey:"XRECORDINGPATH")
+        let store = UserDefaults.standard
+        store.set(url.path, forKey:"XRECORDINGPATH")
         store.synchronize()
         
         // set our path and name to new data
         
         self.path = url.path
         
-        if let nom = url.lastPathComponent {
-            self.name = nom
-        }
+        let nom = url.lastPathComponent
+        self.name = nom
+        
         
         // If file exists go to end of file. If not create it
         
         
-        if let path = url.path {
-            if NSFileManager.defaultManager().fileExistsAtPath(path){
+        let path = url.path
+            if FileManager.default.fileExists(atPath: path){
                 
                 do{
                     
-                    self.hdl =  try NSFileHandle(forWritingToURL: url)
+                    self.hdl =  try FileHandle(forWritingTo: url)
                     if let hd = self.hdl {
                         hd.seekToEndOfFile()
                     }
@@ -391,14 +390,14 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             }
             else{
                 
-                NSFileManager.defaultManager().createFileAtPath(path, contents:self.xmlHeader.dataUsingEncoding(NSUTF8StringEncoding), attributes:nil)
+                FileManager.default.createFile(atPath: path, contents:self.xmlHeader.data(using: String.Encoding.utf8), attributes:nil)
                 
                 do {
-                    self.hdl = try NSFileHandle(forWritingToURL: url)
+                    self.hdl = try FileHandle(forWritingTo: url)
                     
                     if let hd = self.hdl{
                         hd.seekToEndOfFile()
-                        hd.writeData(self.trackHeader.dataUsingEncoding(NSUTF8StringEncoding)!)
+                        hd.write(self.trackHeader.data(using: String.Encoding.utf8)!)
                     }
                 }
                 catch _{
@@ -408,17 +407,17 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             
             self.lastPointWritten = -1;
             
-        }
+        
     }
     
     
-    func closeRecording(heartRates : [HKQuantitySample]?)
+    func closeRecording(_ heartRates : [HKQuantitySample]?)
     {
         
         self.updateBoundingBox()
         
         if let hd = self.hdl{
-            hd.writeData(self.xmlFooter.dataUsingEncoding(NSUTF8StringEncoding)!)
+            hd.write(self.xmlFooter.data(using: String.Encoding.utf8)!)
             hd.closeFile()
             self.hdl = nil
         }
@@ -426,7 +425,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         if let pth = self.path {
             if self.data.count < 2  {// No Data!!! De moment canviar per fer proves
                 do {
-                    try NSFileManager.defaultManager().removeItemAtPath(pth)
+                    try FileManager.default.removeItem(atPath: pth)
                 }
                 catch _{
                     NSLog("Error al esborrar arxiu %@", pth)
@@ -437,26 +436,26 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                 
                 if let ha = heartRates{  // Update Heart Rates
                     if self.updateHR(ha, force:true){
-                        self.writeToURL( NSURL(fileURLWithPath: pth))
+                        self.writeToURL( URL(fileURLWithPath: pth))
                     }
                 }
                 
                 let thumb = self.imageWithWidth(256, height: 256)
                 
                 let name = NSString(string: pth).lastPathComponent  // Obtenim el nom!!!
-                let del = UIApplication.sharedApplication().delegate as! AppDelegate
-                let destUrl = del.applicationDocumentsDirectory().URLByAppendingPathComponent(name)
+                let del = UIApplication.shared.delegate as! AppDelegate
+                let destUrl = del.applicationDocumentsDirectory().appendingPathComponent(name)
                 
-                let url = NSURL(fileURLWithPath: pth)
+                let url = URL(fileURLWithPath: pth)
                 do {
-                    try url.setResourceValue([NSThumbnail1024x1024SizeKey: thumb],
-                        forKey:NSURLThumbnailDictionaryKey)
+                    try (url as NSURL).setResourceValue([URLThumbnailDictionaryItem.NSThumbnail1024x1024SizeKey: thumb],
+                        forKey:URLResourceKey.thumbnailDictionaryKey)
                 }
                 catch _{
                     NSLog("No puc gravar la imatge :)")
                 }
                 do {
-                    try NSFileManager.defaultManager().setUbiquitous(true, itemAtURL: url, destinationURL: destUrl)
+                    try FileManager.default.setUbiquitous(true, itemAt: url, destinationURL: destUrl)
                     
                 }catch _{
                     NSLog("Error al passar al iCLoud ")
@@ -470,13 +469,13 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             }
         }
         
-        let store = NSUserDefaults.standardUserDefaults()
-        store.removeObjectForKey("XRECORDINGPATH")
+        let store = UserDefaults.standard
+        store.removeObject(forKey: "XRECORDINGPATH")
         store.synchronize()
         
         // Now send a processServerQueue so pending points get sent to the Server
         
-        let del : AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let del : AppDelegate = UIApplication.shared.delegate as! AppDelegate
         del.procesServerQueue(true)
         
     }
@@ -497,9 +496,9 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     
     @available(iOS 9.0, *)
     
-    func createWorkout(heartRates : [HKQuantitySample]?){
+    func createWorkout(_ heartRates : [HKQuantitySample]?){
         
-        if let delegate = UIApplication.sharedApplication().delegate as? AppDelegate {
+        if let delegate = UIApplication.shared.delegate as? AppDelegate {
             
             if let healthStore = delegate.healthData?.healthStore{ // If healthStore exists we are authorized
                 
@@ -508,24 +507,24 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                 let date0 = tp0.dtime
                 let date1 = tp1.dtime
                 
-                let u = HKUnit.meterUnit()
+                let u = HKUnit.meter()
                 let d = tp1.distanciaOrigen
                 let dist = HKQuantity(unit: u, doubleValue: d)
                 
-                let cal = HKQuantity(unit: HKUnit.calorieUnit() , doubleValue:totalEnergyBurned())
+                let cal = HKQuantity(unit: HKUnit.calorie() , doubleValue:totalEnergyBurned())
                 
                 
-                let wk = HKWorkout(activityType: HKWorkoutActivityType.Running, startDate: date0, endDate: date1, duration: date1.timeIntervalSinceDate(date0), totalEnergyBurned: cal, totalDistance: dist, device: nil, metadata: nil)
+                let wk = HKWorkout(activityType: HKWorkoutActivityType.running, start: date0 as Date, end: date1 as Date, duration: date1.timeIntervalSince(date0 as Date), totalEnergyBurned: cal, totalDistance: dist, device: nil, metadata: nil)
                 
-                healthStore.saveObject(wk, withCompletion: { (done: Bool, err : NSError?) -> Void in
+                healthStore.save(wk, withCompletion: { (done: Bool, err : Error?) -> Void in
                     
                     if done {
                         // Now add the hr samples
                         
                         if let hr = heartRates {
                             
-                            healthStore.addSamples(hr, toWorkout: wk, completion: { (done : Bool, err : NSError?) -> Void in
-                                if let er = err where !done {
+                            healthStore.add(hr, to: wk, completion: { (done : Bool, err : Error?) -> Void in
+                                if let er = err as? NSError, !done {
                                     NSLog("Error al afegir samples : %@", er.localizedDescription)
                                     return
                                 }
@@ -535,7 +534,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                         
                         // Now add calories samples
                         
-                        let activeCalType = HKQuantityType.quantityTypeForIdentifier(HKQuantityTypeIdentifierActiveEnergyBurned)!
+                        let activeCalType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.activeEnergyBurned)!
                         
                         var tp0 : TGLTrackPoint?
                         
@@ -543,11 +542,11 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                         
                         for tp in self.data where tp.activeCalories > 0.0{
                             
-                            let cal = HKQuantity(unit: HKUnit.calorieUnit() , doubleValue:tp.activeCalories*1000.0)
+                            let cal = HKQuantity(unit: HKUnit.calorie() , doubleValue:tp.activeCalories*1000.0)
                             
                             if let tpx = tp0 {
                             
-                                let sample = HKQuantitySample(type: activeCalType, quantity: cal, startDate: tpx.dtime, endDate: tp.dtime)
+                                let sample = HKQuantitySample(type: activeCalType, quantity: cal, start: tpx.dtime, end: tp.dtime)
                                 
                                 samples.append(sample)
                           
@@ -556,16 +555,16 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                             
                             tp0 = tp
                         }
-                        healthStore.addSamples(samples, toWorkout: wk, completion: { (done : Bool, err : NSError?) -> Void in
-                            if let er = err where !done {
-                                NSLog("Error al afegir samples de calories: %@", er.localizedDescription)
+                        healthStore.add(samples, to: wk, completion: { (done : Bool, err : Error?) -> Void in
+                            if let er = err as? NSString, !done {
+                                NSLog("Error al afegir samples de calories: %@", er)
                                 return
                             }
                         })
                         
                     }
-                    else if let er = err {
-                        NSLog("Error al crear workout : %@", er.localizedDescription)
+                    else if let er = err as? NSString {
+                        NSLog("Error al crear workout : %@", er)
                         return
                     }
                 })
@@ -576,13 +575,13 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         
     }
     
-    func addWaypoint(wp : TMKWaypoint){
+    func addWaypoint(_ wp : TMKWaypoint){
         
         if let ahdl = self.hdl{
             objc_sync_enter(self.hdl)
             self.waypoints.append(wp)
-            if let dat = wp.xmlText.dataUsingEncoding(NSUTF8StringEncoding){
-                ahdl.writeData(dat)
+            if let dat = wp.xmlText.data(using: String.Encoding.utf8){
+                ahdl.write(dat)
             }
             objc_sync_exit(self.hdl)
             
@@ -590,7 +589,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     }
     
     
-    func addLocations(arr: [CLLocation], hr:Int, force:Bool, activity: CMMotionActivity?)
+    func addLocations(_ arr: [CLLocation], hr:Int, force:Bool, activity: CMMotionActivity?)
     {
         var pt1 : TGLTrackPoint?
         var pt0 : TGLTrackPoint?
@@ -643,12 +642,12 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                     }
                 }
                 else if pt1 != nil {    // pt0 i pt1 tenen sempre valors.
-                    tp.tempsOrigen = tp.dtime.timeIntervalSinceDate(pt0!.dtime)
-                    let d = tp.location.distanceFromLocation(pt1!.location)
-                    let dt = tp.dtime.timeIntervalSinceDate(pt1!.dtime)
+                    tp.tempsOrigen = tp.dtime.timeIntervalSince(pt0!.dtime)
+                    let d = tp.location.distance(from: pt1!.location)
+                    let dt = tp.dtime.timeIntervalSince(pt1!.dtime as Date)
                     let dh = tp.ele - pt1!.ele
                     if d >= DISTANCE || dt >= TEMPS {
-                        tp.distanciaOrigen = pt1!.distanciaOrigen + tp.location.distanceFromLocation(pt1!.location)
+                        tp.distanciaOrigen = pt1!.distanciaOrigen + tp.location.distance(from: pt1!.location)
                         pt1 = tp
                         tp.filteredEle = tp.ele;
                         
@@ -682,7 +681,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                 }
                 self.sendPoint(tp, procesa: doit)
                 if doit {
-                    self.lastTimeSent = NSDate()
+                    self.lastTimeSent = Date()
                 }
                 //tp = nil
             }
@@ -697,11 +696,11 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             objc_sync_enter(self.hdl)
             
             if let ahdl = self.hdl{
-                for var i = self.lastPointWritten+1; i < lastArrayPoint; i++ {
+                for i in self.lastPointWritten+1 ..< lastArrayPoint {
                     let pt = self.data[i]
                     
-                    if let dat = pt.xmlText.dataUsingEncoding(NSUTF8StringEncoding){
-                        ahdl.writeData(dat)
+                    if let dat = pt.xmlText.data(using: String.Encoding.utf8){
+                        ahdl.write(dat)
                     }
                     
                     
@@ -723,7 +722,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     }
     
     
-    func addPoints(arr: [TGLTrackPoint])
+    func addPoints(_ arr: [TGLTrackPoint])
     {
         var pt1 : TGLTrackPoint?
         //        var pt0 : TGLTrackPoint?
@@ -772,7 +771,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             
             self.sendPoint(pt, procesa: doit)
             if doit {
-                self.lastTimeSent = NSDate()
+                self.lastTimeSent = Date()
             }
             
         } // Fi del for en locations
@@ -786,11 +785,11 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             objc_sync_enter(self.hdl)
             
             if let ahdl = self.hdl{
-                for var i = self.lastPointWritten+1; i < lastArrayPoint; i++ {
+                for i in self.lastPointWritten+1 ..< lastArrayPoint {
                     let pt = self.data[i]
                     
-                    if let dat = pt.xmlText.dataUsingEncoding(NSUTF8StringEncoding){
-                        ahdl.writeData(dat)
+                    if let dat = pt.xmlText.data(using: String.Encoding.utf8){
+                        ahdl.write(dat)
                     }
                 }
                 self.lastPointWritten = lastArrayPoint - 1
@@ -811,6 +810,73 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     
     
     // MARK: - Utilities
+    
+    func getSlope(_ np : Int) -> Double{
+        
+        if self.data.count < 2 {    // Need a minimum of 2 points
+            return 0.0
+        }
+        
+        let last = self.data.count - 1
+        var first = self.data.count - np
+        
+        if first < 0{
+            first = 0
+        }
+        
+        var deltay = 0.0
+        
+        if self.data[last].relativeEle != 0.0 || self.data[first].ele != 0.0{
+            deltay = self.data[last].relativeEle - self.data[first].relativeEle
+        } else {
+            deltay = self.data[last].ele - self.data[first].ele
+        }
+        
+        let deltax = self.data[last].distanciaOrigen - self.data[first].distanciaOrigen
+        
+        if deltax == 0{
+            return 0.0
+        }else {
+            return deltay / deltax
+        }
+        
+        
+    }
+    
+    func getVAM(_ np : Int) -> Double{
+        
+        if self.data.count < 2 {    // Need a minimum of 2 points
+            return 0.0
+        }
+        
+        let last = self.data.count - 1
+        var first = self.data.count - np
+        
+        if first < 0{
+            first = 0
+        }
+        
+        var deltay = 0.0
+        
+        if self.data[last].relativeEle != 0.0 || self.data[first].ele != 0.0{
+            deltay = self.data[last].relativeEle - self.data[first].relativeEle
+        } else {
+            deltay = self.data[last].ele - self.data[first].ele
+        }
+        
+        let deltax = self.data[last].dtime.timeIntervalSince(self.data[first].dtime as Date)
+
+   
+        
+        if deltax == 0{
+            return 0.0
+        }else {
+            return (deltay / deltax) * 3600.0   // Volem m/h
+        }
+        
+        
+    }
+
     
     func updateBoundingBox() -> ()
     {
@@ -859,13 +925,13 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                     self.minLon = tpt.coordinate.longitude
                 }
                 
-                dist = dist + tpt.location.distanceFromLocation(oldPt.location)
+                dist = dist + tpt.location.distance(from: oldPt.location)
                 
                 //if(tpt.distanciaOrigen < 0.0) // era per evitar modificar les dades exportades pero amb millors algoritmes no cals
                 
                 tpt.distanciaOrigen = dist;
                 
-                tpt.tempsOrigen = tpt.dtime.timeIntervalSinceDate(zeroDate)
+                tpt.tempsOrigen = tpt.dtime.timeIntervalSince(zeroDate)
                 
                 if oldOldPt != nil
                 {
@@ -888,7 +954,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         if self.laps.count > 0{
             
             var iLap = 0;
-            var t : NSTimeInterval = 0.0;
+            var t : TimeInterval = 0.0;
             
             for lp : Double in self.laps
             {
@@ -901,15 +967,15 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                     let wp = TMKWaypoint.newWaypointFromTrackPoint(_trackPoint: tp)
                     wp.title = "Lap \(iLap)"
                     wp.track = self;
-                    wp.type = WaypointType.Waypoint
+                    wp.type = WaypointType.waypoint
                     
                     self.waypoints.append(wp)
                 }
                 
-                iLap++
+                iLap += 1
             }
             
-            self.laps.removeAll(keepCapacity: true)   // Clear data
+            self.laps.removeAll(keepingCapacity: true)   // Clear data
         }
         
         
@@ -922,7 +988,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         
         //self.waypoints.so sortUsingSelector:@selector(compareDistance:)];
         
-        self.waypoints.sortInPlace { (p1 : TMKWaypoint, p2 : TMKWaypoint) -> Bool in
+        self.waypoints.sort { (p1 : TMKWaypoint, p2 : TMKWaypoint) -> Bool in
             return p1.distanciaOrigen <= p2.distanciaOrigen
         }
         
@@ -937,7 +1003,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     }
     
     
-    public func nearerTrackPointForTime(t : NSTimeInterval) -> (Int)
+    open func nearerTrackPointForTime(_ t : TimeInterval) -> (Int)
     {
         
         // Fem una busqueda binaria per trobar un punt
@@ -966,7 +1032,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         
     }
     
-    public func nearerTrackPointForLocation(loc : CLLocation) -> (Int){
+    open func nearerTrackPointForLocation(_ loc : CLLocation) -> (Int){
         
         var ip = -1;
         var dist = CLLocationDistanceMax  // No hi ha cap lloc a la Terra tan lluny!!!
@@ -984,19 +1050,19 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         return ip
     }
     
-    public func imageWithWidth(wid:Double,  height:Double) -> UIImage {
+    open func imageWithWidth(_ wid:Double,  height:Double) -> UIImage {
         
-        TMKImage.beginImageContextWithSize(CGSizeMake(CGFloat(wid) , CGFloat(height)))
+        TMKImage.beginImageContextWithSize(CGSize(width: CGFloat(wid) , height: CGFloat(height)))
         
-        var rect = CGRectMake(0, 0, CGFloat(wid), CGFloat(height))   // Total rectangle
+        var rect = CGRect(x: 0, y: 0, width: CGFloat(wid), height: CGFloat(height))   // Total rectangle
         
         var bz = UIBezierPath(rect: rect)
         
-        UIColor.whiteColor().set()
+        UIColor.white.set()
         bz.fill()
         bz.stroke()
         
-        rect = CGRectInset(rect, 3.0, 3.0);
+        rect = rect.insetBy(dx: 3.0, dy: 3.0);
         
         bz = UIBezierPath(rect:rect)
         bz.lineWidth = 2.0
@@ -1037,18 +1103,18 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             let y : CGFloat = CGFloat((p.y-miny) * scale + offset.y)
             if primer
             {
-                bz.moveToPoint(CGPointMake(x,y))
+                bz.move(to: CGPoint(x: x,y: y))
                 primer = false
             }
             else{
-                bz.addLineToPoint(CGPointMake(x,y))
+                bz.addLine(to: CGPoint(x: x,y: y))
             }
             
         }
         
         bz.lineWidth = 5.0
-        bz.lineJoinStyle = CGLineJoin.Round
-        UIColor.redColor().setStroke()
+        bz.lineJoinStyle = CGLineJoin.round
+        UIColor.red.setStroke()
         bz.stroke()
         let img = UIGraphicsGetImageFromCurrentImageContext()
         TMKImage.endImageContext()
@@ -1088,11 +1154,11 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         //        }
         
         
-        return img
+        return img!
         
     }
     
-    func updateHR(results : [HKQuantitySample], force:Bool=false) -> Bool {
+    func updateHR(_ results : [HKQuantitySample], force:Bool=false) -> Bool {
         
         // Load Healthkit Data
         
@@ -1101,7 +1167,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             return false
         }
         
-        let dele = UIApplication.sharedApplication().delegate as! AppDelegate
+        let dele = UIApplication.shared.delegate as! AppDelegate
         
         var hdata : HealthAuxiliar?
         
@@ -1114,7 +1180,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         
         // Load HeartRate from HealthStore between the two dates
         
-        let unit = HKUnit(fromString: "count/min")
+        let unit = HKUnit(from: "count/min")
         
         var oldTp : TGLTrackPoint?
         
@@ -1137,11 +1203,11 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                     
                     if s1.startDate.timeIntervalSince1970 >= d.timeIntervalSince1970{
                         
-                        let v0 = s0.quantity.doubleValueForUnit(unit)
-                        let v1 = s1.quantity.doubleValueForUnit(unit)
+                        let v0 = s0.quantity.doubleValue(for: unit)
+                        let v1 = s1.quantity.doubleValue(for: unit)
                         let deltav = v1 - v0
                         
-                        let deltat = s1.startDate.timeIntervalSinceDate(s0.startDate)
+                        let deltat = s1.startDate.timeIntervalSince(s0.startDate)
                         let x = d.timeIntervalSince1970 - s0.startDate.timeIntervalSince1970
                         
                         let hr = v0 + deltav / deltat * x
@@ -1150,9 +1216,9 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                         
                         // Compute calories. Get time from previous point
                         
-                        if let tp0 = oldTp, hd = hdata {
+                        if let tp0 = oldTp, let hd = hdata {
                             
-                            let d = tp.dtime.timeIntervalSinceDate(tp0.dtime)
+                            let d = tp.dtime.timeIntervalSince(tp0.dtime as Date)
                             
                             let cal = hd.calories(hr, duracio: d)
                             
@@ -1181,11 +1247,11 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     
     //MARK: - Connection with server to register track
     
-    func sendPoint(tp : TGLTrackPoint, procesa : Bool)
+    func sendPoint(_ tp : TGLTrackPoint, procesa : Bool)
     {
         // Get the App Delegate
         
-        let del : AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let del : AppDelegate = UIApplication.shared.delegate as! AppDelegate
         let tpJSON = tp.toJSON()
         
         del.pushPoint(tpJSON)
@@ -1199,15 +1265,15 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     
     //MARK:  - NSXMLParserDelegate
     
-    public func cleanBC(){
+    open func cleanBC(){
         if self.buildingChars.length > 0{
             let range = NSRange(location: 0, length: self.buildingChars.length)
-            self.buildingChars.deleteCharactersInRange(range)
+            self.buildingChars.deleteCharacters(in: range)
         }
         
     }
     
-    public func  parserDidStartDocument(parser: NSXMLParser) {
+    open func  parserDidStartDocument(_ parser: XMLParser) {
         self.data = Array()
         self.waypoints = Array()
         self.laps = Array()
@@ -1225,7 +1291,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
         self.cleanBC()
     }
     
-    public func  parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
+    open func  parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
         
         //NSLog(@"Starting %@", elementName);
         
@@ -1240,8 +1306,8 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             
             if let pt = point {
                 
-                let sLat : NSString? = attributeDict["lat"]
-                let sLon : NSString? = attributeDict["lon"]
+                let sLat : NSString? = attributeDict["lat"] as NSString?
+                let sLon : NSString? = attributeDict["lon"] as NSString?
                 
                 pt.coordinate = CLLocationCoordinate2DMake( sLat!.doubleValue, sLon!.doubleValue)
                 pt.distanciaOrigen = -1.0
@@ -1255,8 +1321,8 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             
             if let pt = point {
                 
-                let sLat : NSString? = attributeDict["lat"]
-                let sLon : NSString? = attributeDict["lon"]
+                let sLat : NSString? = attributeDict["lat"] as NSString?
+                let sLon : NSString? = attributeDict["lon"] as NSString?
                 
                 pt.coordinate = CLLocationCoordinate2DMake( sLat!.doubleValue, sLon!.doubleValue)
                 pt.distanciaOrigen = -1.0
@@ -1265,20 +1331,20 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
             
             
         default:
-            buildingChars.deleteCharactersInRange(NSMakeRange(0, buildingChars.length))
+            buildingChars.deleteCharacters(in: NSMakeRange(0, buildingChars.length))
             
             
         }
     }
     
     
-    public func parser(parser: NSXMLParser, foundCharacters string: String) {
+    open func parser(_ parser: XMLParser, foundCharacters string: String) {
         
-        buildingChars.appendString(string)
+        buildingChars.append(string)
         
     }
     
-    public func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
+    open func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         
         var nt = 0
         
@@ -1296,7 +1362,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                 
             case "time":
                 
-                let dat : NSDate? = self.dateFormatter.dateFromString(buildingChars as String)
+                let dat : Date? = self.dateFormatter.date(from: buildingChars as String)
                 
                 if let d1 = dat {
                     pt.dtime = d1
@@ -1317,22 +1383,22 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                     
                     
                     let colorString = buildingChars
-                    let sRed = colorString.substringWithRange(rRed)
-                    let sGreen = colorString.substringWithRange(rGreen)
-                    let sBlue = colorString.substringWithRange(rBlue)
+                    let sRed = colorString.substring(with: rRed)
+                    let sGreen = colorString.substring(with: rGreen)
+                    let sBlue = colorString.substring(with: rBlue)
                     
                     var iRed : UInt32 = 0
                     var iGreen : UInt32 = 0
                     var iBlue : UInt32 = 0
                     
-                    let scanRed = NSScanner(string:sRed)
-                    scanRed.scanHexInt(&iRed)
+                    let scanRed = Scanner(string:sRed)
+                    scanRed.scanHexInt32(&iRed)
                     
-                    let scanGreen = NSScanner(string:sGreen)
-                    scanGreen.scanHexInt(&iGreen)
+                    let scanGreen = Scanner(string:sGreen)
+                    scanGreen.scanHexInt32(&iGreen)
                     
-                    let scanBlue = NSScanner(string:sBlue)
-                    scanBlue.scanHexInt(&iBlue)
+                    let scanBlue = Scanner(string:sBlue)
+                    scanBlue.scanHexInt32(&iBlue)
                     
                     
                     let red  = CGFloat(CGFloat(iRed) / CGFloat(255.0))
@@ -1422,7 +1488,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                 if let wp : TMKWaypoint = point as? TMKWaypoint {
                     
                     wp.track = self;
-                    wp.color = MKPinAnnotationColor.Red
+                    wp.color = MKPinAnnotationColor.red
                     
                     if wp.title != "Start" && wp.title != "End"{
                         self.waypoints.append(wp)
@@ -1447,11 +1513,11 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                     
                     
                     if let op = oldPoint{
-                        d = pt.location.distanceFromLocation(op.location)
+                        d = pt.location.distance(from: op.location)
                         
                         
                         if pt.dtime.timeIntervalSince1970 > op.dtime.timeIntervalSince1970{
-                            dt = pt.dtime.timeIntervalSinceDate(op.dtime)
+                            dt = pt.dtime.timeIntervalSince(op.dtime as Date)
                         }
                     }
                     
@@ -1465,7 +1531,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                         if !firstPoint  {
                             if let op = oldPoint{
                                 if pt.dtime != op.dtime{
-                                    speed = d / pt.dtime.timeIntervalSinceDate(op.dtime)
+                                    speed = d / pt.dtime.timeIntervalSince(op.dtime as Date)
                                 }
                             }
                         }
@@ -1487,7 +1553,7 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
                 }
                 
             default:
-                nt++
+                nt += 1
                 
             }
         }
@@ -1495,17 +1561,17 @@ public class TGLTrack: NSObject, NSXMLParserDelegate {
     }
     
     
-    public func  parserDidEndDocument(parser: NSXMLParser) {
+    open func  parserDidEndDocument(_ parser: XMLParser) {
         point = nil
-        buildingChars.deleteCharactersInRange(NSRange(location: 0, length: buildingChars.length))
+        buildingChars.deleteCharacters(in: NSRange(location: 0, length: buildingChars.length))
         oldPoint = nil
     }
     
     
-    public func parser(parser: NSXMLParser, parseErrorOccurred parseError: NSError) {
+    open func parser(_ parser: XMLParser, parseErrorOccurred parseError: Error) {
         // NSLog(@"Datos %@", self.data);
         
-        let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let delegate = UIApplication.shared.delegate as! AppDelegate
         
         let msg = String(format:"Error en el parsing %@ linea %d columna %d",
             parseError.localizedDescription,
