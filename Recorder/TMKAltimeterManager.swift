@@ -235,7 +235,7 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
             self.updating = true
             
             altm.startRelativeAltitudeUpdates(to: self.altQueue!,
-                withHandler: { (alts : CMAltitudeData?, error : NSError?) -> Void in
+                withHandler: { (alts : CMAltitudeData?, error : Error?) -> Void in
                     
                     if let alt = alts {
                         let dat = TMKAltitudeData(altitude: alt.relativeAltitude.doubleValue, pressure: alt.pressure.doubleValue, timestamp: alt.timestamp+self.bootTime)
@@ -245,21 +245,28 @@ class TMKAltimeterManager: NSObject, CLLocationManagerDelegate{
                         self.medidas.append(dat)
                         objc_sync_exit(self)
                         
-                        self.computeAscentDescentRate(60.0)
+                        if self.medidas.count > 1{
+                            self.computeAscentDescentRate(60.0)
+                        }
                     }
-            } as! CMAltitudeHandler)
+            })
         }
+        
+        
+        
+        
+        
         
         // Start updating pedometer data
         
         if let p = self.pedometer{
             
-            p.startUpdates(from: self.startTime!, withHandler: { (datas:CMPedometerData?, err:NSError?) -> Void in
+            p.startUpdates(from: self.startTime!, withHandler: { (datas:CMPedometerData?, err:Error?) -> Void in
                 
                 if let data = datas {
                     self.distancias.append(data)
                 }
-            } as! CMPedometerHandler)
+            })
         }
         
         // Start reading position data

@@ -61,7 +61,7 @@ class WAInterfaceController: WKInterfaceController {
     
     var query : HKQuery?
     
-    var wcsession : WCSession? = WCSession.default()
+    var wcsession : WCSession? = WCSession.default
     
     
     // Heart Rate Follow

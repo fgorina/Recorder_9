@@ -451,12 +451,20 @@ open class TMKHeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripheral
             else if characteristic.uuid.uuidString==TMKHeartRateMonitor.kUUIDBatteryLevelVariable  // Battery
             {
                 
-                var dades = battData(value: 0)
-                (characteristic.value! as NSData).getBytes(&dades, length: 1)
+                var dades:[UInt8] = []
                 
-                self.battery = Int(dades.value)
+                if let v = characteristic.value{
+                    dades = Array(v)
+                    if v.count > 0{
+                    self.battery = Int(dades[0])
+                    self.sendNotification(TMKHeartRateMonitor.kBatteryReceivedNotification, object:self.battery as AnyObject?)
+                    }
+                }
+                //(characteristic.value! as NSData).getBytes(&dades, length: 1)
                 
-                self.sendNotification(TMKHeartRateMonitor.kBatteryReceivedNotification, object:self.battery as AnyObject?)
+                
+                
+                
                 
             }
             else if characteristic.uuid.uuidString==TMKHeartRateMonitor.kUUIDManufacturerNameVariable  {

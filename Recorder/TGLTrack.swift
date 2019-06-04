@@ -1070,9 +1070,9 @@ open class TGLTrack: NSObject, XMLParserDelegate {
         
         
         
-        let p0 = MKMapPointForCoordinate(CLLocationCoordinate2DMake(self.minLat, self.minLon))
+        let p0 = MKMapPoint.init(CLLocationCoordinate2DMake(self.minLat, self.minLon))
         
-        let p1 = MKMapPointForCoordinate(CLLocationCoordinate2DMake(self.maxLat, self.maxLon))
+        let p1 = MKMapPoint.init(CLLocationCoordinate2DMake(self.maxLat, self.maxLon))
         
         // Get Midpoint
         
@@ -1087,9 +1087,9 @@ open class TGLTrack: NSObject, XMLParserDelegate {
         
         // Compute midpoint
         
-        let pm = MKMapPointMake((p0.x+p1.x)/2.0, (p0.y+p1.y)/2.0)
-        let pmc = MKMapPointMake((pm.x-minx)*scale, (pm.y-miny)*scale)
-        let offset = MKMapPointMake((wid/2.0)-pmc.x, (height/2.0)-pmc.y)
+        let pm = MKMapPoint.init(x: (p0.x+p1.x)/2.0, y: (p0.y+p1.y)/2.0)
+        let pmc = MKMapPoint.init(x: (pm.x-minx)*scale, y: (pm.y-miny)*scale)
+        let offset = MKMapPoint.init(x: (wid/2.0)-pmc.x, y: (height/2.0)-pmc.y)
         
         bz  = UIBezierPath()
         
@@ -1097,7 +1097,7 @@ open class TGLTrack: NSObject, XMLParserDelegate {
         
         
         for pt : TGLTrackPoint in self.data {
-            let p = MKMapPointForCoordinate(pt.coordinate)
+            let p = MKMapPoint.init(pt.coordinate)
             
             let x : CGFloat = CGFloat((p.x-minx) * scale + offset.x)
             let y : CGFloat = CGFloat((p.y-miny) * scale + offset.y)

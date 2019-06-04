@@ -56,7 +56,7 @@ open class TMKTrackDocument: UIDocument {
     // D'aquesta forma la traduccio a xml no cal tenir-la a memoria
     //
     
-    override open func writeContents(_ contents: Any, to url: URL, for saveOperation: UIDocumentSaveOperation, originalContentsURL: URL?) throws {
+    override open func writeContents(_ contents: Any, to url: URL, for saveOperation: UIDocument.SaveOperation, originalContentsURL: URL?) throws {
         
         self.track.writeToURL(url)
     }

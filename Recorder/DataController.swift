@@ -79,7 +79,7 @@ class DataController: NSObject {
         if #available(iOS 9,*){
             if WCSession.isSupported(){
                 
-                let session = WCSession.default()
+                let session = WCSession.default
                 session.delegate = self
                 session.activate()
                 self.wcsession = session
@@ -139,7 +139,7 @@ class DataController: NSObject {
         
     }
     
-    func hrReceived(_ not : Notification)
+    @objc func hrReceived(_ not : Notification)
     {
         if let sample = not.object as? HKQuantitySample {
             
@@ -417,7 +417,7 @@ extension DataController : TMKAltimeterManagerDelegate {
                     self.slope  = track.getSlope(knp)
                     self.VAM  = track.getVAM(knp)
                     
-                    if UIApplication.shared.applicationState == UIApplicationState.active{
+                    if UIApplication.shared.applicationState == UIApplication.State.active{
                         
                         DispatchQueue.main.async(execute: { () -> Void in
                             self.sendDataUpdatedNotification()
@@ -465,7 +465,7 @@ extension DataController : TMKAltimeterManagerDelegate {
                    
                     NSLog("Dades processades %l", dat.count)
                     
-                    if UIApplication.shared.applicationState == UIApplicationState.active{
+                    if UIApplication.shared.applicationState == UIApplication.State.active{
                         self.sendDataUpdatedNotification()
                     }
                     else{

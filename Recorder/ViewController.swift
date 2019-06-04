@@ -167,7 +167,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
-    func conexionActive(_ not : Notification){
+    @objc func conexionActive(_ not : Notification){
         
         NSLog("Notification %@", not.description)
         self.heartOn = true
@@ -180,10 +180,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
         
         let img : UIImage? = UIImage(named: "record_heart_on_64.png")
-        self.bStartStop.setImage(img, for: UIControlState())
+        self.bStartStop.setImage(img, for: UIControl.State())
     }
     
-    func conexionClosed(_ not : Notification){
+    @objc func conexionClosed(_ not : Notification){
         NSLog("Notification %@", not.description)
         var imageName = "record_64"
         
@@ -195,15 +195,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
         
         self.heartOn = false
-        self.bStartStop.setImage(UIImage(named: imageName), for: UIControlState())
+        self.bStartStop.setImage(UIImage(named: imageName), for: UIControl.State())
         self.hrDevice.text = ""
         
     }
     
-    func hrReceived(_ not : Notification)
+    @objc func hrReceived(_ not : Notification)
     {
         if let value = not.object as? Int{
-            if UIApplication.shared.applicationState == UIApplicationState.active{
+            if UIApplication.shared.applicationState == UIApplication.State.active{
                 
                 DispatchQueue.main.async(execute: { () -> Void in
                     let txt = NSString(format: "%d bpm", value)
@@ -211,12 +211,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                     
                     if let dat = self.data{
                     if self.heartOn  && dat.doRecord == .recording{
-                        self.bStartStop.setImage(UIImage(named: "record_heart_64.png"), for: UIControlState())
+                        self.bStartStop.setImage(UIImage(named: "record_heart_64.png"), for: UIControl.State())
                         self.heartOn = !self.heartOn
                     }
                     else if dat.doRecord == .recording
                     {
-                        self.bStartStop.setImage(UIImage(named: "record_heart_on_64.png"), for: UIControlState())
+                        self.bStartStop.setImage(UIImage(named: "record_heart_on_64.png"), for: UIControl.State())
                         self.heartOn = !self.heartOn
                     }
                     }
@@ -268,7 +268,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     
-    func updateState(_ notification: Notification)
+    @objc func updateState(_ notification: Notification)
     {
         
         if let dict = notification.userInfo {
@@ -294,8 +294,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     func pauseRecording(){
         
         DispatchQueue.main.async(execute: { () -> Void in
-            self.bStartStop.setImage(UIImage(named: "pause_64"), for: UIControlState())
-            self.wpButton.setImage(UIImage(named: "record_64"), for: UIControlState())
+            self.bStartStop.setImage(UIImage(named: "pause_64"), for: UIControl.State())
+            self.wpButton.setImage(UIImage(named: "record_64"), for: UIControl.State())
             self.wpButton.setImage(UIImage(named: "record_on_64"), for: .highlighted)
         })
         
@@ -309,9 +309,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 tim.invalidate()
                 self.timer = nil
             }
-            self.bStartStop.setImage(UIImage(named: "record_64"), for: UIControlState())
+            self.bStartStop.setImage(UIImage(named: "record_64"), for: UIControl.State())
             
-            self.wpButton.setImage(UIImage(named: "record_wp_64"), for: UIControlState())
+            self.wpButton.setImage(UIImage(named: "record_wp_64"), for: UIControl.State())
             self.wpButton.setImage(UIImage(named: "record_wp_on_64"), for: .highlighted)
             
             self.wpButton.isHidden = true
@@ -326,19 +326,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             if let hrMonitor = self.data?.hrMonitor {
                 if hrMonitor.connected {
                     
-                    self.bStartStop.setImage(UIImage(named: "record_heart_on_64.png"), for:UIControlState())
+                    self.bStartStop.setImage(UIImage(named: "record_heart_on_64.png"), for:UIControl.State())
                 }
                 else
                 {
-                    self.bStartStop.setImage(UIImage(named: "record_on_64"), for:UIControlState())
+                    self.bStartStop.setImage(UIImage(named: "record_on_64"), for:UIControl.State())
                 }
             }
             else
             {
-                self.bStartStop.setImage(UIImage(named: "record_on_64"), for:UIControlState())
+                self.bStartStop.setImage(UIImage(named: "record_on_64"), for:UIControl.State())
             }
             
-            self.wpButton.setImage(UIImage(named: "record_wp_64"), for: UIControlState())
+            self.wpButton.setImage(UIImage(named: "record_wp_64"), for: UIControl.State())
             self.wpButton.setImage(UIImage(named: "record_wp_on_64"), for: .highlighted)
             
             self.wpButton.isHidden = false
@@ -347,7 +347,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 
                 let aTimer = Timer(timeInterval: 1.0, target: self, selector: #selector(ViewController.updateTime(_:)), userInfo: nil, repeats: true)
                 let runLoop = RunLoop.current
-                runLoop.add(aTimer, forMode:RunLoopMode.defaultRunLoopMode)
+                runLoop.add(aTimer, forMode:RunLoop.Mode.default)
                 self.timer = aTimer
                 
             }
@@ -355,7 +355,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
-    func updateTime(_ timer : Timer)
+    @objc func updateTime(_ timer : Timer)
     {
         if let dat = self.data{
             if let tim = dat.startTime, let wtim = dat.wStartTime {
@@ -373,9 +373,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
     }
     
-    func updateActivity()
+    @objc func updateActivity()
     {
-        if UIApplication.shared.applicationState == UIApplicationState.active{
+        if UIApplication.shared.applicationState == UIApplication.State.active{
             
             DispatchQueue.main.async(execute: { () -> Void in
                 
@@ -384,14 +384,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                     let imgName = "act_" + act.stringDescription + "_64"
                     if let img = UIImage(named: imgName)
                     {
-                        self.lwActivityButton.setImage(img, for: UIControlState())
+                        self.lwActivityButton.setImage(img, for: UIControl.State())
                     }
                 }
             })
         }
     }
     
-    func updateViewData(_ notification : Notification?)
+    @objc func updateViewData(_ notification : Notification?)
     {
         
         //self.lTemps.text = self.tempsStr

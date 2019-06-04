@@ -59,7 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIAlertViewDelegate{
     
     
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         debugLaunch("AppDelegate didFinishLaunchingWithOptions enter")
           //testImg()  // Just to test icon creation

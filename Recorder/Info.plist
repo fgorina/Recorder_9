@@ -2,16 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSMotionUsageDescription</key>
-	<string>Motion data used and recorded</string>
-	<key>NSHealthShareUsageDescription</key>
-	<string>Health data may be shared with other applications</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
-	<key>NSHealthUpdateUsageDescription</key>
-	<string>Writes heart rate data to health app</string>
-	<key>CFBundleDocumentTypes</key>
-	<array/>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -30,8 +22,23 @@
 	<string>2</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Health data may be shared with other applications</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Writes heart rate data to health app</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Data from your location is used</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>As a mapping and localization application needs access to current position to be able to present you in the map and record your track.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Locations are used to get your position</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Motion data used and recorded</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>
@@ -50,10 +57,5 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
 </dict>
 </plist>
